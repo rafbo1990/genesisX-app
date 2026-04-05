@@ -7,1057 +7,1240 @@
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="apple-mobile-web-app-title" content="GenesisX">
-<title>GenesisX™ — Ultimate Interface</title>
-<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+<title>GenesisX™ Mobile</title>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
 <style>
-:root {
-  --bg:#060810; --bg2:#0d1220; --card:#0f1623; --card2:#141d2e;
-  --border:#1a2540; --border2:#243050;
-  --green:#00ff88; --blue:#0ea5e9; --purple:#a855f7;
-  --yellow:#fbbf24; --red:#ef4444; --orange:#f97316;
-  --text:#e2e8f0; --text2:#94a3b8; --text3:#475569;
-  --sidebar-w:260px;
+:root{
+  --bg:#060810;--bg2:#0d1220;--card:#0f1623;--card2:#141d2e;
+  --border:#1a2540;--green:#00ff88;--blue:#0ea5e9;--purple:#a855f7;
+  --yellow:#fbbf24;--red:#ef4444;--orange:#f97316;
+  --text:#e2e8f0;--text2:#94a3b8;--text3:#475569;
 }
 *{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent;}
-html,body{height:100%;}
-body{background:var(--bg);color:var(--text);font-family:'Space Grotesk',sans-serif;overflow-x:hidden;}
+html,body{height:100%;overflow:hidden;}
+body{background:var(--bg);color:var(--text);font-family:'Space Grotesk',sans-serif;}
 
-body::before{
-  content:'';position:fixed;inset:0;
-  background:radial-gradient(ellipse at 15% 15%,rgba(0,255,136,0.04) 0%,transparent 50%),
-             radial-gradient(ellipse at 85% 85%,rgba(14,165,233,0.04) 0%,transparent 50%);
-  pointer-events:none;z-index:0;
-}
+/* SPLASH */
+#splash{position:fixed;inset:0;background:var(--bg);display:flex;flex-direction:column;align-items:center;justify-content:center;z-index:9999;transition:opacity 0.5s,transform 0.5s;}
+#splash.out{opacity:0;transform:scale(1.05);pointer-events:none;}
+.sp-logo{font-size:52px;font-weight:800;background:linear-gradient(135deg,var(--green),var(--blue),var(--purple));-webkit-background-clip:text;-webkit-text-fill-color:transparent;animation:glow 2s infinite;}
+@keyframes glow{0%,100%{filter:drop-shadow(0 0 15px rgba(0,255,136,0.5))}50%{filter:drop-shadow(0 0 30px rgba(14,165,233,0.8))}}
+.sp-sub{color:var(--text3);font-size:12px;letter-spacing:4px;text-transform:uppercase;margin:6px 0 40px;}
+.sp-bar{width:200px;height:2px;background:var(--border);border-radius:2px;overflow:hidden;}
+.sp-prog{height:100%;background:linear-gradient(90deg,var(--green),var(--blue));animation:load 2s ease forwards;}
+@keyframes load{0%{width:0}100%{width:100%}}
+.sp-txt{margin-top:16px;font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--text3);text-align:center;line-height:2.2;}
+.sp-txt span{display:block;opacity:0;animation:fi 0.3s forwards;}
+.sp-txt span:nth-child(1){animation-delay:0.2s}
+.sp-txt span:nth-child(2){animation-delay:0.6s}
+.sp-txt span:nth-child(3){animation-delay:1.0s}
+.sp-txt span:nth-child(4){animation-delay:1.4s}
+@keyframes fi{to{opacity:1;color:var(--green)}}
 
-/* ======== SPLASH ======== */
-#splash{
-  position:fixed;inset:0;background:var(--bg);
-  display:flex;flex-direction:column;align-items:center;justify-content:center;
-  z-index:9999;transition:opacity 0.6s,transform 0.6s;
-}
-#splash.out{opacity:0;transform:scale(1.04);pointer-events:none;}
-.sp-logo{
-  font-size:56px;font-weight:800;letter-spacing:-2px;margin-bottom:6px;
-  background:linear-gradient(135deg,var(--green),var(--blue),var(--purple));
-  -webkit-background-clip:text;-webkit-text-fill-color:transparent;
-  animation:logoGlow 2s ease-in-out infinite;
-}
-@keyframes logoGlow{0%,100%{filter:drop-shadow(0 0 20px rgba(0,255,136,0.5))}50%{filter:drop-shadow(0 0 40px rgba(14,165,233,0.8))}}
-.sp-sub{color:var(--text3);font-size:13px;letter-spacing:4px;text-transform:uppercase;margin-bottom:48px;}
-.sp-bar{width:220px;height:2px;background:var(--border);border-radius:2px;overflow:hidden;margin-bottom:20px;}
-.sp-prog{height:100%;background:linear-gradient(90deg,var(--green),var(--blue));animation:spLoad 2s ease forwards;}
-@keyframes spLoad{0%{width:0}100%{width:100%}}
-.sp-log{font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--text3);text-align:center;line-height:2;}
-.sp-log span{display:block;opacity:0;animation:spItem 0.3s forwards;}
-.sp-log span:nth-child(1){animation-delay:0.3s}
-.sp-log span:nth-child(2){animation-delay:0.7s}
-.sp-log span:nth-child(3){animation-delay:1.1s}
-.sp-log span:nth-child(4){animation-delay:1.5s}
-@keyframes spItem{to{opacity:1;color:var(--green)}}
+/* APP SHELL */
+.app{position:fixed;inset:0;display:flex;flex-direction:column;overflow:hidden;}
 
-/* ======== LAYOUT ======== */
-.app{display:flex;min-height:100vh;position:relative;}
-
-/* ======== SIDEBAR (desktop) ======== */
-.sidebar{
-  width:var(--sidebar-w);background:var(--bg2);
-  border-right:1px solid var(--border);
-  display:flex;flex-direction:column;
-  position:fixed;top:0;left:0;bottom:0;z-index:200;
-  transition:transform 0.3s;
-}
-.sb-logo{
-  padding:20px 18px;border-bottom:1px solid var(--border);
-  display:flex;align-items:center;gap:12px;
-}
-.sb-icon{
-  width:40px;height:40px;border-radius:12px;
-  background:linear-gradient(135deg,var(--green),var(--blue));
-  display:flex;align-items:center;justify-content:center;
-  font-size:20px;box-shadow:0 0 20px rgba(0,255,136,0.3);
-  flex-shrink:0;
-}
-.sb-name{font-size:18px;font-weight:800;letter-spacing:-0.5px;}
-.sb-name span{color:var(--green);}
-.sb-ver{font-size:10px;color:var(--text3);margin-top:2px;}
-.sb-nav{flex:1;padding:14px 10px;overflow-y:auto;scrollbar-width:none;}
-.sb-nav::-webkit-scrollbar{display:none;}
-.sb-sec{margin-bottom:20px;}
-.sb-sec-title{font-size:9px;font-weight:800;color:var(--text3);text-transform:uppercase;letter-spacing:1.5px;padding:0 8px;margin-bottom:6px;}
-.sb-item{
-  display:flex;align-items:center;gap:10px;
-  padding:9px 10px;border-radius:10px;cursor:pointer;
-  color:var(--text2);font-size:13px;font-weight:500;
-  transition:all 0.15s;margin-bottom:1px;
-}
-.sb-item:hover{background:rgba(255,255,255,0.04);color:var(--text);}
-.sb-item.active{background:rgba(0,255,136,0.1);color:var(--green);border:1px solid rgba(0,255,136,0.15);}
-.sb-ic{font-size:16px;width:18px;text-align:center;flex-shrink:0;}
-.sb-badge{margin-left:auto;padding:1px 7px;border-radius:10px;font-size:10px;font-weight:800;}
-.bg-green{background:var(--green);color:#000;}
-.bg-yellow{background:var(--yellow);color:#000;}
-.bg-red{background:var(--red);color:#fff;}
-.sb-bottom{padding:14px;border-top:1px solid var(--border);}
-.sb-status{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:12px;}
-.sb-st-row{display:flex;justify-content:space-between;align-items:center;font-size:11px;margin-bottom:5px;}
-.sb-st-row:last-child{margin:0;}
-
-/* ======== MAIN ======== */
-.main{margin-left:var(--sidebar-w);flex:1;display:flex;flex-direction:column;min-height:100vh;}
-
-/* ======== TOPBAR ======== */
-.topbar{
-  background:rgba(6,8,16,0.92);backdrop-filter:blur(20px);
+/* HEADER */
+.hdr{
+  background:rgba(6,8,16,0.95);backdrop-filter:blur(20px);
   border-bottom:1px solid var(--border);
-  padding:12px 20px;display:flex;align-items:center;gap:12px;
-  position:sticky;top:0;z-index:150;
+  padding:12px 16px 10px;flex-shrink:0;
+  padding-top:max(12px,env(safe-area-inset-top));
 }
-.tb-menu{display:none;background:none;border:1px solid var(--border);border-radius:8px;padding:6px 10px;color:var(--text);font-size:16px;cursor:pointer;}
-.tb-info{flex:1;}
-.tb-title{font-size:17px;font-weight:700;}
-.tb-sub{font-size:11px;color:var(--text3);}
-.tb-clock{font-family:'JetBrains Mono',monospace;font-size:13px;color:var(--text2);}
-.btn{padding:8px 14px;border-radius:10px;font-size:12px;font-weight:700;cursor:pointer;font-family:'Space Grotesk',sans-serif;border:none;transition:all 0.2s;}
-.btn-g{background:linear-gradient(135deg,var(--green),var(--blue));color:#000;}
-.btn-g:hover{opacity:0.9;transform:translateY(-1px);}
-.btn-s{background:var(--card);border:1px solid var(--border);color:var(--text);}
-.btn-s:hover{border-color:var(--green);color:var(--green);}
-.btn-r{background:rgba(239,68,68,0.1);border:1px solid rgba(239,68,68,0.3);color:var(--red);}
-.btn-r:hover{background:rgba(239,68,68,0.2);}
+.hdr-row{display:flex;align-items:center;justify-content:space-between;}
+.hdr-logo{display:flex;align-items:center;gap:8px;}
+.hdr-icon{width:32px;height:32px;background:linear-gradient(135deg,var(--green),var(--blue));border-radius:9px;display:flex;align-items:center;justify-content:center;font-size:16px;}
+.hdr-name{font-size:18px;font-weight:800;letter-spacing:-0.5px;}
+.hdr-name span{color:var(--green);}
+.hdr-right{display:flex;align-items:center;gap:8px;}
+.hdr-badge{padding:3px 9px;border-radius:20px;font-size:9px;font-weight:800;background:rgba(251,191,36,0.15);color:var(--yellow);border:1px solid rgba(251,191,36,0.3);}
+.hdr-portfolio{text-align:right;}
+.hdr-val{font-size:17px;font-weight:800;color:var(--green);font-family:'JetBrains Mono',monospace;}
+.hdr-pnl{font-size:10px;color:var(--green);}
 
-/* ======== TICKER ======== */
-.ticker-wrap{background:var(--bg2);border-bottom:1px solid var(--border);height:30px;overflow:hidden;display:flex;align-items:center;}
-.ticker{display:flex;gap:28px;animation:tick 35s linear infinite;white-space:nowrap;padding:0 14px;}
-.ticker:hover{animation-play-state:paused;}
+/* TICKER */
+.ticker-wrap{background:var(--bg2);border-bottom:1px solid var(--border);height:28px;overflow:hidden;display:flex;align-items:center;flex-shrink:0;}
+.ticker{display:flex;gap:24px;animation:tick 30s linear infinite;white-space:nowrap;padding:0 12px;}
 @keyframes tick{0%{transform:translateX(0)}100%{transform:translateX(-50%)}}
-.ti{display:flex;align-items:center;gap:7px;font-size:11px;font-family:'JetBrains Mono',monospace;}
-.ti-sym{color:var(--text2);font-weight:700;}
+.ti{display:flex;align-items:center;gap:6px;font-size:10px;font-family:'JetBrains Mono',monospace;}
+.ti-s{color:var(--text2);font-weight:700;}
 .up{color:var(--green);}
-.down{color:var(--red);}
+.dn{color:var(--red);}
 
-/* ======== PAGES ======== */
-.page{display:none;padding:20px;animation:fadeIn 0.25s ease;}
+/* TABS */
+.tabs{display:flex;background:var(--bg2);border-bottom:1px solid var(--border);overflow-x:auto;scrollbar-width:none;flex-shrink:0;}
+.tabs::-webkit-scrollbar{display:none;}
+.tab{padding:10px 14px;font-size:11px;font-weight:700;color:var(--text3);cursor:pointer;border-bottom:2px solid transparent;white-space:nowrap;text-transform:uppercase;letter-spacing:0.3px;transition:all 0.2s;}
+.tab.active{color:var(--green);border-bottom-color:var(--green);}
+
+/* PAGES */
+.pages{flex:1;overflow:hidden;position:relative;}
+.page{position:absolute;inset:0;overflow-y:auto;overflow-x:hidden;display:none;padding:12px 12px 80px;-webkit-overflow-scrolling:touch;}
 .page.active{display:block;}
-@keyframes fadeIn{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:translateY(0)}}
 
-/* ======== GRIDS ======== */
-.g4{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:16px;}
-.g3{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-bottom:16px;}
-.g2{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:16px;}
-.g21{display:grid;grid-template-columns:2fr 1fr;gap:14px;margin-bottom:16px;}
-.g12{display:grid;grid-template-columns:1fr 2fr;gap:14px;margin-bottom:16px;}
-
-/* ======== CARDS ======== */
-.card{
-  background:var(--card);border:1px solid var(--border);
-  border-radius:18px;padding:18px;position:relative;overflow:hidden;
+/* BOTTOM NAV */
+.bnav{
+  position:absolute;bottom:0;left:0;right:0;
+  background:rgba(13,18,32,0.97);backdrop-filter:blur(20px);
+  border-top:1px solid var(--border);
+  display:flex;padding:6px 0 max(6px,env(safe-area-inset-bottom));
+  z-index:100;flex-shrink:0;
 }
+.bn-item{flex:1;display:flex;flex-direction:column;align-items:center;gap:2px;cursor:pointer;padding:4px 2px;color:var(--text3);transition:color 0.2s;position:relative;}
+.bn-item.active{color:var(--green);}
+.bn-item.active::before{content:'';position:absolute;top:-6px;width:20px;height:2px;background:var(--green);border-radius:2px;box-shadow:0 0 6px var(--green);}
+.bn-ic{font-size:20px;line-height:1;}
+.bn-lbl{font-size:8px;font-weight:700;text-transform:uppercase;}
+
+/* MODAL */
+.modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,0.7);z-index:500;display:flex;align-items:flex-end;backdrop-filter:blur(4px);opacity:0;pointer-events:none;transition:opacity 0.3s;}
+.modal-overlay.open{opacity:1;pointer-events:all;}
+.modal{background:var(--bg2);border-radius:24px 24px 0 0;padding:20px 16px;width:100%;max-height:85vh;overflow-y:auto;transform:translateY(100%);transition:transform 0.3s;border-top:1px solid var(--border);}
+.modal-overlay.open .modal{transform:translateY(0);}
+.modal-handle{width:36px;height:4px;background:var(--border2);border-radius:2px;margin:0 auto 16px;}
+.modal-title{font-size:18px;font-weight:800;margin-bottom:16px;display:flex;align-items:center;gap:10px;}
+.modal-close{margin-left:auto;background:var(--card);border:none;color:var(--text2);width:32px;height:32px;border-radius:10px;font-size:18px;cursor:pointer;display:flex;align-items:center;justify-content:center;}
+
+/* CARDS */
+.card{background:var(--card);border:1px solid var(--border);border-radius:16px;padding:14px;margin-bottom:10px;position:relative;overflow:hidden;}
 .card::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(90deg,transparent,rgba(0,255,136,0.15),transparent);}
-.ch{display:flex;justify-content:space-between;align-items:center;margin-bottom:14px;}
-.ct{font-size:11px;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:0.8px;}
-.ca{font-size:12px;color:var(--green);cursor:pointer;font-weight:600;}
+.card-title{font-size:10px;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:0.8px;margin-bottom:12px;display:flex;align-items:center;justify-content:space-between;}
 
-/* ======== STAT CARDS ======== */
-.sc{
-  background:var(--card);border:1px solid var(--border);border-radius:18px;padding:18px;
-  transition:transform 0.2s,border-color 0.2s;cursor:default;
-}
-.sc:hover{transform:translateY(-2px);border-color:rgba(0,255,136,0.25);}
-.sc-icon{font-size:26px;margin-bottom:12px;}
-.sc-label{font-size:10px;color:var(--text3);font-weight:700;text-transform:uppercase;letter-spacing:0.5px;margin-bottom:5px;}
-.sc-val{font-size:26px;font-weight:800;font-family:'JetBrains Mono',monospace;line-height:1;}
-.sc-ch{font-size:11px;margin-top:5px;}
-.sc-ch.up{color:var(--green);}
-.sc-ch.dn{color:var(--red);}
+/* CLICKABLE ROWS */
+.row{display:flex;align-items:center;gap:10px;padding:11px 0;border-bottom:1px solid var(--border);cursor:pointer;transition:background 0.15s;border-radius:8px;margin:0 -4px;padding:11px 4px;}
+.row:last-child{border:none;}
+.row:active{background:rgba(255,255,255,0.04);}
+.row-arrow{color:var(--text3);font-size:14px;margin-left:auto;flex-shrink:0;}
 
-/* ======== PROGRESS ======== */
-.prog{background:var(--border);border-radius:10px;height:5px;overflow:hidden;margin-top:6px;}
-.prog-f{height:100%;border-radius:10px;background:linear-gradient(90deg,var(--green),var(--blue));transition:width 1s;}
+/* METRICS */
+.mg{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:10px;}
+.met{background:var(--card2);border:1px solid var(--border);border-radius:14px;padding:12px;cursor:pointer;transition:all 0.15s;active:scale(0.97);}
+.met:active{transform:scale(0.97);border-color:var(--green);}
+.met-lbl{font-size:9px;color:var(--text3);text-transform:uppercase;letter-spacing:0.5px;margin-bottom:6px;font-weight:700;}
+.met-val{font-size:22px;font-weight:800;font-family:'JetBrains Mono',monospace;line-height:1;}
+.met-sub{font-size:10px;color:var(--text2);margin-top:3px;}
 
-/* ======== BADGES ======== */
-.badge{display:inline-flex;align-items:center;gap:4px;padding:2px 9px;border-radius:20px;font-size:10px;font-weight:700;}
-.b-g{background:rgba(0,255,136,0.1);color:var(--green);border:1px solid rgba(0,255,136,0.2);}
-.b-y{background:rgba(251,191,36,0.1);color:var(--yellow);border:1px solid rgba(251,191,36,0.2);}
-.b-r{background:rgba(239,68,68,0.1);color:var(--red);border:1px solid rgba(239,68,68,0.2);}
-.b-b{background:rgba(14,165,233,0.1);color:var(--blue);border:1px solid rgba(14,165,233,0.2);}
-.b-p{background:rgba(168,85,247,0.1);color:var(--purple);border:1px solid rgba(168,85,247,0.2);}
+/* PROG */
+.prog{background:var(--border);border-radius:6px;height:5px;overflow:hidden;margin-top:5px;}
+.prog-f{height:100%;border-radius:6px;background:linear-gradient(90deg,var(--green),var(--blue));transition:width 1s;}
 
-/* ======== TABLE ======== */
-.tbl{width:100%;border-collapse:collapse;}
-.tbl th{padding:9px 12px;text-align:left;font-size:10px;font-weight:700;color:var(--text3);text-transform:uppercase;border-bottom:1px solid var(--border);letter-spacing:0.5px;}
-.tbl td{padding:11px 12px;font-size:13px;border-bottom:1px solid rgba(26,37,64,0.4);}
-.tbl tr:last-child td{border:none;}
-.tbl tr:hover td{background:rgba(255,255,255,0.02);}
-.mono{font-family:'JetBrains Mono',monospace;}
+/* BADGES */
+.badge{display:inline-flex;align-items:center;padding:2px 8px;border-radius:20px;font-size:10px;font-weight:700;}
+.bg{background:rgba(0,255,136,0.1);color:var(--green);border:1px solid rgba(0,255,136,0.2);}
+.by{background:rgba(251,191,36,0.1);color:var(--yellow);border:1px solid rgba(251,191,36,0.2);}
+.br{background:rgba(239,68,68,0.1);color:var(--red);border:1px solid rgba(239,68,68,0.2);}
+.bb{background:rgba(14,165,233,0.1);color:var(--blue);border:1px solid rgba(14,165,233,0.2);}
+.bp{background:rgba(168,85,247,0.1);color:var(--purple);border:1px solid rgba(168,85,247,0.2);}
 
-/* ======== POSITION CARD ======== */
-.pos-card{
-  background:var(--card2);border:1px solid var(--border);border-radius:14px;padding:15px;
-  margin-bottom:10px;position:relative;overflow:hidden;
-}
+/* ACTION BTNS */
+.act-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:14px;}
+.act-btn{padding:12px;border-radius:12px;border:none;font-size:13px;font-weight:700;cursor:pointer;font-family:'Space Grotesk',sans-serif;display:flex;align-items:center;justify-content:center;gap:6px;transition:all 0.15s;}
+.act-btn:active{transform:scale(0.96);}
+.act-primary{background:linear-gradient(135deg,var(--green),var(--blue));color:#000;}
+.act-secondary{background:var(--card2);border:1px solid var(--border);color:var(--text);}
+.act-danger{background:rgba(239,68,68,0.1);border:1px solid rgba(239,68,68,0.3);color:var(--red);}
+.act-yellow{background:rgba(251,191,36,0.1);border:1px solid rgba(251,191,36,0.3);color:var(--yellow);}
+.act-full{grid-column:1/-1;}
+
+/* POSITION */
+.pos-card{background:var(--card2);border:1px solid var(--border);border-radius:14px;padding:13px;margin-bottom:8px;cursor:pointer;transition:all 0.15s;position:relative;overflow:hidden;}
 .pos-card::before{content:'';position:absolute;left:0;top:0;bottom:0;width:3px;background:var(--green);box-shadow:0 0 8px var(--green);}
-.pos-h{display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;}
-.pos-av{width:36px;height:36px;border-radius:10px;background:linear-gradient(135deg,var(--green),var(--blue));display:flex;align-items:center;justify-content:center;font-size:14px;font-weight:800;color:#000;}
-.pos-name{font-size:15px;font-weight:700;}
-.pos-ex{font-size:11px;color:var(--text2);}
-.pos-pnl{font-size:17px;font-weight:800;color:var(--green);font-family:'JetBrains Mono',monospace;}
-.pos-pct{font-size:11px;color:var(--green);}
-.pos-dg{display:grid;grid-template-columns:1fr 1fr;gap:8px;}
-.pos-d{background:var(--card);border-radius:8px;padding:8px 10px;}
-.pos-dl{font-size:9px;color:var(--text3);text-transform:uppercase;margin-bottom:3px;}
-.pos-dv{font-size:12px;font-weight:600;font-family:'JetBrains Mono',monospace;}
-.sl-wrap{margin-top:10px;display:flex;align-items:center;gap:8px;font-size:10px;}
-.sl-bar{flex:1;height:4px;background:var(--border);border-radius:4px;position:relative;}
-.sl-cur{position:absolute;top:-4px;width:12px;height:12px;background:var(--green);border-radius:50%;border:2px solid var(--bg);box-shadow:0 0 6px var(--green);transform:translateX(-50%);}
+.pos-card:active{transform:scale(0.98);}
+.pos-h{display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;}
+.pos-av{width:34px;height:34px;border-radius:10px;background:linear-gradient(135deg,var(--green),var(--blue));display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:800;color:#000;}
+.pos-name{font-size:14px;font-weight:700;}
+.pos-ex{font-size:10px;color:var(--text2);}
+.pos-pnl{font-size:16px;font-weight:800;color:var(--green);font-family:'JetBrains Mono',monospace;}
+.pos-pct{font-size:10px;color:var(--green);}
+.pos-dg{display:grid;grid-template-columns:1fr 1fr 1fr 1fr;gap:6px;}
+.pos-d{background:var(--card);border-radius:8px;padding:6px 8px;}
+.pos-dl{font-size:8px;color:var(--text3);text-transform:uppercase;margin-bottom:2px;}
+.pos-dv{font-size:11px;font-weight:600;font-family:'JetBrains Mono',monospace;}
+.sl-w{margin-top:8px;display:flex;align-items:center;gap:6px;font-size:9px;}
+.sl-bar{flex:1;height:3px;background:var(--border);border-radius:3px;position:relative;}
+.sl-cur{position:absolute;top:-4px;width:10px;height:10px;background:var(--green);border-radius:50%;border:2px solid var(--bg);box-shadow:0 0 5px var(--green);transform:translateX(-50%);}
 
-/* ======== BOT CARD ======== */
-.bot-card{
-  background:var(--card2);border:1px solid var(--border);border-radius:14px;padding:13px;
-  margin-bottom:8px;display:flex;align-items:center;gap:12px;cursor:pointer;transition:all 0.15s;
-}
-.bot-card:hover{background:var(--card);border-color:var(--border2);}
-.bot-rank{font-size:11px;font-weight:800;color:var(--text3);font-family:'JetBrains Mono',monospace;width:18px;text-align:center;flex-shrink:0;}
-.bot-av{width:44px;height:44px;border-radius:13px;display:flex;align-items:center;justify-content:center;font-size:20px;flex-shrink:0;}
-.bot-info{flex:1;min-width:0;}
-.bot-name{font-size:14px;font-weight:700;margin-bottom:2px;display:flex;align-items:center;gap:6px;}
-.bot-pers{font-size:11px;color:var(--text2);margin-bottom:5px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
-.bot-sc-row{display:flex;align-items:center;gap:8px;}
-.bot-sc-bar{flex:1;height:4px;background:var(--border);border-radius:4px;overflow:hidden;}
-.bot-sc-f{height:100%;border-radius:4px;}
-.bot-sc-n{font-size:12px;font-weight:800;color:var(--green);font-family:'JetBrains Mono',monospace;flex-shrink:0;}
-.bot-stats{display:flex;gap:10px;margin-top:5px;}
-.bot-stat{font-size:10px;color:var(--text2);}
-.bot-stat b{color:var(--text);}
+/* BOT CARD */
+.bot-card{background:var(--card2);border:1px solid var(--border);border-radius:14px;padding:12px;margin-bottom:8px;display:flex;align-items:center;gap:10px;cursor:pointer;transition:all 0.15s;}
+.bot-card:active{transform:scale(0.98);background:var(--card);}
+.bot-rnk{font-size:10px;font-weight:800;color:var(--text3);width:16px;text-align:center;flex-shrink:0;}
+.bot-av{width:42px;height:42px;border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:20px;flex-shrink:0;}
+.bot-inf{flex:1;min-width:0;}
+.bot-nm{font-size:14px;font-weight:700;margin-bottom:1px;display:flex;align-items:center;gap:6px;flex-wrap:wrap;}
+.bot-pr{font-size:10px;color:var(--text2);margin-bottom:4px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.bot-sb{display:flex;align-items:center;gap:6px;}
+.bot-bar{flex:1;height:4px;background:var(--border);border-radius:4px;overflow:hidden;}
+.bot-bf{height:100%;border-radius:4px;}
+.bot-sc{font-size:12px;font-weight:800;color:var(--green);font-family:'JetBrains Mono',monospace;flex-shrink:0;}
+.bot-sts{display:flex;gap:8px;margin-top:4px;}
+.bot-st{font-size:9px;color:var(--text2);}
+.bot-st b{color:var(--text);}
 
-/* ======== SENTIMENT ======== */
-.sent-meter{height:8px;background:linear-gradient(90deg,var(--red),var(--yellow),var(--green));border-radius:8px;position:relative;margin:12px 0;}
-.sent-needle{position:absolute;top:-5px;width:18px;height:18px;background:white;border-radius:50%;border:2px solid var(--bg);box-shadow:0 2px 8px rgba(0,0,0,0.5);transform:translateX(-50%);transition:left 1s ease;}
-.sent-labels{display:flex;justify-content:space-between;font-size:9px;color:var(--text3);}
-
-/* ======== SIGNAL ITEM ======== */
-.sig-item{display:flex;align-items:center;gap:10px;padding:9px 0;border-bottom:1px solid var(--border);}
-.sig-item:last-child{border:none;}
-.sig-asset{font-size:13px;font-weight:700;width:36px;}
+/* SIGNAL */
+.sig-row{display:flex;align-items:center;gap:8px;padding:9px 0;border-bottom:1px solid var(--border);cursor:pointer;transition:all 0.15s;}
+.sig-row:last-child{border:none;}
+.sig-row:active{background:rgba(255,255,255,0.03);border-radius:8px;}
+.sig-asset{font-size:13px;font-weight:700;width:34px;flex-shrink:0;}
 .sig-bar{flex:1;height:5px;background:var(--border);border-radius:5px;overflow:hidden;}
 .sig-fill{height:100%;border-radius:5px;}
-.sig-lbl{font-size:10px;font-weight:700;width:65px;text-align:right;}
-.sig-conf{font-size:10px;color:var(--text2);width:30px;text-align:right;}
+.sig-lbl{font-size:10px;font-weight:700;width:60px;text-align:right;flex-shrink:0;}
+.sig-conf{font-size:10px;color:var(--text2);width:30px;text-align:right;flex-shrink:0;}
 
-/* ======== FLOW ITEM ======== */
-.flow-item{display:flex;align-items:center;gap:10px;padding:9px 0;border-bottom:1px solid var(--border);}
-.flow-item:last-child{border:none;}
+/* FLOW */
+.flow-row{display:flex;align-items:center;gap:10px;padding:10px 0;border-bottom:1px solid var(--border);cursor:pointer;transition:all 0.15s;}
+.flow-row:last-child{border:none;}
+.flow-row:active{background:rgba(255,255,255,0.03);}
 .flow-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0;}
-.flow-name{font-size:13px;font-weight:600;flex:1;}
-.flow-trigger{font-size:11px;color:var(--text3);}
-.flow-runs{font-size:11px;color:var(--text2);}
-.toggle{width:38px;height:21px;background:var(--border);border-radius:11px;position:relative;cursor:pointer;transition:background 0.2s;flex-shrink:0;}
-.toggle.on{background:var(--green);}
-.toggle::after{content:'';position:absolute;top:2.5px;left:2.5px;width:16px;height:16px;background:white;border-radius:50%;transition:transform 0.2s;box-shadow:0 1px 4px rgba(0,0,0,0.3);}
-.toggle.on::after{transform:translateX(17px);}
+.flow-nm{font-size:13px;font-weight:600;flex:1;}
+.flow-tr{font-size:10px;color:var(--text3);}
+.tog{width:40px;height:22px;background:var(--border);border-radius:11px;position:relative;cursor:pointer;transition:background 0.2s;flex-shrink:0;}
+.tog.on{background:var(--green);}
+.tog::after{content:'';position:absolute;top:3px;left:3px;width:16px;height:16px;background:white;border-radius:50%;transition:transform 0.2s;}
+.tog.on::after{transform:translateX(18px);}
 
-/* ======== EXCHANGE ITEM ======== */
-.ex-item{display:flex;align-items:center;gap:12px;padding:10px 0;border-bottom:1px solid var(--border);}
-.ex-item:last-child{border:none;}
+/* EXCHANGE */
+.ex-row{display:flex;align-items:center;gap:10px;padding:11px 0;border-bottom:1px solid var(--border);cursor:pointer;transition:all 0.15s;}
+.ex-row:last-child{border:none;}
+.ex-row:active{background:rgba(255,255,255,0.03);}
 .ex-dot{width:9px;height:9px;border-radius:50%;flex-shrink:0;}
 .ex-g{background:var(--green);box-shadow:0 0 5px var(--green);}
 .ex-y{background:var(--yellow);}
-.ex-name{font-size:13px;font-weight:600;}
-.ex-type{font-size:10px;color:var(--text3);}
-.ex-bal{font-family:'JetBrains Mono',monospace;font-size:13px;font-weight:700;margin-left:auto;}
+.ex-nm{font-size:14px;font-weight:700;}
+.ex-tp{font-size:10px;color:var(--text3);}
+.ex-bal{font-family:'JetBrains Mono',monospace;font-size:13px;font-weight:700;}
 .ex-st{font-size:10px;color:var(--text2);}
 
-/* ======== CAIO ======== */
-.caio-box{
-  background:linear-gradient(135deg,rgba(0,255,136,0.06),rgba(14,165,233,0.06));
-  border:1px solid rgba(0,255,136,0.2);border-radius:18px;padding:18px;
-  display:flex;flex-direction:column;
-}
-.caio-hdr{display:flex;align-items:center;gap:14px;margin-bottom:14px;padding-bottom:14px;border-bottom:1px solid var(--border);}
-.caio-av{width:52px;height:52px;background:linear-gradient(135deg,var(--green),var(--blue),var(--purple));border-radius:16px;display:flex;align-items:center;justify-content:center;font-size:26px;box-shadow:0 0 20px rgba(0,255,136,0.3);flex-shrink:0;}
-.caio-name{font-size:17px;font-weight:800;color:var(--green);}
-.caio-title{font-size:11px;color:var(--text2);margin-top:2px;}
-.caio-online{display:flex;align-items:center;gap:5px;font-size:11px;color:var(--green);margin-top:3px;}
-.online-dot{width:7px;height:7px;background:var(--green);border-radius:50%;animation:pulse 2s infinite;}
-@keyframes pulse{0%,100%{opacity:1}50%{opacity:0.5}}
-.chat-msgs{flex:1;overflow-y:auto;display:flex;flex-direction:column;gap:10px;min-height:250px;max-height:350px;scrollbar-width:thin;scrollbar-color:var(--border) transparent;padding-right:2px;}
-.msg{display:flex;gap:9px;}
-.msg.u{flex-direction:row-reverse;}
-.msg-av{width:30px;height:30px;border-radius:9px;display:flex;align-items:center;justify-content:center;font-size:13px;flex-shrink:0;}
-.cav{background:linear-gradient(135deg,var(--green),var(--blue));}
-.uav{background:var(--card2);}
-.bubble{max-width:78%;padding:9px 13px;border-radius:14px;font-size:13px;line-height:1.5;}
-.cb{background:var(--card2);border:1px solid var(--border);border-top-left-radius:3px;color:var(--text);}
-.ub{background:linear-gradient(135deg,var(--green),var(--blue));color:#000;font-weight:600;border-top-right-radius:3px;}
-.typing-ind{display:flex;gap:4px;padding:9px 13px;background:var(--card2);border:1px solid var(--border);border-radius:14px;border-top-left-radius:3px;width:fit-content;}
-.td{width:5px;height:5px;background:var(--text2);border-radius:50%;animation:bounce 1.2s infinite;}
-.td:nth-child(2){animation-delay:0.2s}
-.td:nth-child(3){animation-delay:0.4s}
-@keyframes bounce{0%,60%,100%{transform:translateY(0)}30%{transform:translateY(-5px)}}
-.chat-inp-wrap{display:flex;gap:8px;margin-top:12px;padding-top:12px;border-top:1px solid var(--border);}
-.chat-inp{flex:1;background:var(--card2);border:1px solid var(--border);border-radius:11px;padding:11px 14px;color:var(--text);font-size:13px;font-family:'Space Grotesk',sans-serif;outline:none;}
-.chat-inp:focus{border-color:var(--green);}
-.chat-send{width:44px;height:44px;background:linear-gradient(135deg,var(--green),var(--blue));border:none;border-radius:11px;color:#000;font-size:17px;cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0;}
-.qbtns{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:10px;}
-.qb{padding:5px 11px;background:var(--card2);border:1px solid var(--border);border-radius:20px;color:var(--text2);font-size:11px;font-weight:600;cursor:pointer;font-family:'Space Grotesk',sans-serif;transition:all 0.2s;}
-.qb:hover{border-color:var(--green);color:var(--green);}
-
-/* ======== ALERTS ======== */
-.alert-item{display:flex;gap:10px;padding:11px 0;border-bottom:1px solid var(--border);animation:slideIn 0.3s ease;}
-.alert-item:last-child{border:none;}
-@keyframes slideIn{from{opacity:0;transform:translateX(-8px)}to{opacity:1;transform:translateX(0)}}
-.al-icon{width:34px;height:34px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:15px;flex-shrink:0;}
+/* ALERT */
+.al-row{display:flex;gap:10px;padding:10px 0;border-bottom:1px solid var(--border);cursor:pointer;transition:all 0.15s;}
+.al-row:last-child{border:none;}
+.al-row:active{background:rgba(255,255,255,0.03);}
+.al-ic{width:34px;height:34px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:15px;flex-shrink:0;}
 .al-s{background:rgba(0,255,136,0.1);}
 .al-w{background:rgba(251,191,36,0.1);}
 .al-i{background:rgba(14,165,233,0.1);}
 .al-d{background:rgba(239,68,68,0.1);}
-.al-msg{font-size:13px;color:var(--text);line-height:1.4;}
-.al-time{font-size:10px;color:var(--text3);margin-top:2px;font-family:'JetBrains Mono',monospace;}
+.al-msg{font-size:12px;color:var(--text);line-height:1.4;}
+.al-time{font-size:9px;color:var(--text3);margin-top:2px;font-family:'JetBrains Mono',monospace;}
 
-/* ======== HEATMAP ======== */
-.heatmap{display:grid;grid-template-columns:repeat(5,1fr);gap:6px;}
-.hm-cell{border-radius:10px;padding:10px 6px;text-align:center;cursor:pointer;transition:transform 0.2s;}
-.hm-cell:hover{transform:scale(1.05);}
-.hm-asset{font-size:10px;color:rgba(255,255,255,0.6);margin-bottom:3px;}
-.hm-pct{font-size:13px;font-weight:800;}
+/* CAIO */
+.caio-box{background:linear-gradient(135deg,rgba(0,255,136,0.06),rgba(14,165,233,0.06));border:1px solid rgba(0,255,136,0.2);border-radius:16px;padding:14px;margin-bottom:10px;}
+.caio-hdr{display:flex;align-items:center;gap:12px;margin-bottom:12px;padding-bottom:12px;border-bottom:1px solid var(--border);}
+.caio-av{width:46px;height:46px;background:linear-gradient(135deg,var(--green),var(--blue),var(--purple));border-radius:14px;display:flex;align-items:center;justify-content:center;font-size:24px;box-shadow:0 0 16px rgba(0,255,136,0.3);flex-shrink:0;}
+.caio-nm{font-size:16px;font-weight:800;color:var(--green);}
+.caio-ttl{font-size:10px;color:var(--text2);}
+.caio-on{display:flex;align-items:center;gap:4px;font-size:10px;color:var(--green);margin-top:2px;}
+.on-dot{width:6px;height:6px;background:var(--green);border-radius:50%;animation:pulse 2s infinite;}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:0.4}}
+.chat-msgs{height:280px;overflow-y:auto;display:flex;flex-direction:column;gap:8px;padding-bottom:4px;scrollbar-width:none;}
+.chat-msgs::-webkit-scrollbar{display:none;}
+.msg{display:flex;gap:8px;}
+.msg.u{flex-direction:row-reverse;}
+.m-av{width:28px;height:28px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:12px;flex-shrink:0;}
+.c-av{background:linear-gradient(135deg,var(--green),var(--blue));}
+.u-av{background:var(--card2);}
+.bubble{max-width:80%;padding:8px 12px;border-radius:14px;font-size:12px;line-height:1.5;}
+.c-bub{background:var(--card2);border:1px solid var(--border);border-top-left-radius:3px;color:var(--text);}
+.u-bub{background:linear-gradient(135deg,var(--green),var(--blue));color:#000;font-weight:600;border-top-right-radius:3px;}
+.typing{display:flex;gap:3px;padding:8px 12px;background:var(--card2);border:1px solid var(--border);border-radius:14px;border-top-left-radius:3px;width:fit-content;}
+.td{width:5px;height:5px;background:var(--text2);border-radius:50%;animation:bounce 1.2s infinite;}
+.td:nth-child(2){animation-delay:0.2s}.td:nth-child(3){animation-delay:0.4s}
+@keyframes bounce{0%,60%,100%{transform:translateY(0)}30%{transform:translateY(-5px)}}
+.cin-w{display:flex;gap:6px;margin-top:10px;padding-top:10px;border-top:1px solid var(--border);}
+.cin{flex:1;background:var(--card2);border:1px solid var(--border);border-radius:11px;padding:10px 13px;color:var(--text);font-size:13px;font-family:'Space Grotesk',sans-serif;outline:none;}
+.cin:focus{border-color:var(--green);}
+.c-send{width:42px;height:42px;background:linear-gradient(135deg,var(--green),var(--blue));border:none;border-radius:11px;color:#000;font-size:16px;cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0;}
+.qbtns{display:flex;gap:5px;flex-wrap:wrap;margin-bottom:8px;}
+.qb{padding:5px 10px;background:var(--card2);border:1px solid var(--border);border-radius:20px;color:var(--text2);font-size:10px;font-weight:600;cursor:pointer;font-family:'Space Grotesk',sans-serif;transition:all 0.2s;}
+.qb:active{background:var(--green);color:#000;border-color:var(--green);}
 
-/* ======== ACHIEVEMENTS ======== */
-.ach-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;}
-.ach{background:var(--card2);border:1px solid var(--border);border-radius:14px;padding:14px 10px;text-align:center;transition:all 0.2s;}
-.ach.un{border-color:rgba(0,255,136,0.3);background:rgba(0,255,136,0.04);}
-.ach.un:hover{transform:translateY(-2px);}
-.ach-icon{font-size:28px;margin-bottom:6px;}
-.ach-name{font-size:10px;font-weight:700;color:var(--text2);}
-.ach-desc{font-size:9px;color:var(--text3);margin-top:2px;}
-.ach.locked{filter:grayscale(1);opacity:0.35;}
+/* HEATMAP */
+.hm{display:grid;grid-template-columns:repeat(5,1fr);gap:5px;margin-bottom:10px;}
+.hm-c{border-radius:10px;padding:8px 4px;text-align:center;cursor:pointer;transition:transform 0.2s;}
+.hm-c:active{transform:scale(0.95);}
+.hm-a{font-size:9px;color:rgba(255,255,255,0.6);margin-bottom:2px;}
+.hm-p{font-size:12px;font-weight:800;}
 
-/* ======== SETTINGS ======== */
-.set-item{display:flex;justify-content:space-between;align-items:center;padding:13px 0;border-bottom:1px solid var(--border);}
+/* SETTINGS */
+.set-item{display:flex;justify-content:space-between;align-items:center;padding:12px 0;border-bottom:1px solid var(--border);}
 .set-item:last-child{border:none;}
 .set-lbl{font-size:13px;font-weight:600;}
-.set-desc{font-size:11px;color:var(--text3);margin-top:2px;}
-.range-w{display:flex;align-items:center;gap:10px;}
-.rng{-webkit-appearance:none;width:110px;height:4px;background:var(--border);border-radius:4px;outline:none;}
-.rng::-webkit-slider-thumb{-webkit-appearance:none;width:15px;height:15px;background:var(--green);border-radius:50%;cursor:pointer;}
-.rng-v{font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--green);font-weight:700;min-width:36px;}
-.tog{width:40px;height:22px;background:var(--border);border-radius:11px;position:relative;cursor:pointer;transition:background 0.2s;flex-shrink:0;}
-.tog.on{background:var(--green);}
-.tog::after{content:'';position:absolute;top:3px;left:3px;width:16px;height:16px;background:white;border-radius:50%;transition:transform 0.2s;box-shadow:0 1px 3px rgba(0,0,0,0.3);}
-.tog.on::after{transform:translateX(18px);}
+.set-desc{font-size:10px;color:var(--text3);margin-top:2px;}
+.rng-w{display:flex;align-items:center;gap:8px;}
+.rng{-webkit-appearance:none;width:100px;height:4px;background:var(--border);border-radius:4px;outline:none;}
+.rng::-webkit-slider-thumb{-webkit-appearance:none;width:18px;height:18px;background:var(--green);border-radius:50%;cursor:pointer;}
+.rng-v{font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--green);font-weight:700;min-width:32px;}
+.tog2{width:42px;height:23px;background:var(--border);border-radius:12px;position:relative;cursor:pointer;transition:background 0.2s;flex-shrink:0;}
+.tog2.on{background:var(--green);}
+.tog2::after{content:'';position:absolute;top:3px;left:3px;width:17px;height:17px;background:white;border-radius:50%;transition:transform 0.2s;box-shadow:0 1px 3px rgba(0,0,0,0.3);}
+.tog2.on::after{transform:translateX(19px);}
 
-/* ======== LEVEL ======== */
-.level-card{
-  background:linear-gradient(135deg,rgba(168,85,247,0.08),rgba(14,165,233,0.08));
-  border:1px solid rgba(168,85,247,0.2);border-radius:18px;padding:18px;
-  display:flex;align-items:center;gap:16px;margin-bottom:16px;
-}
-.lv-badge{font-size:44px;}
-.lv-info{flex:1;}
-.lv-title{font-size:17px;font-weight:800;color:var(--purple);}
-.lv-sub{font-size:11px;color:var(--text2);margin-top:2px;}
-.lv-xp{font-size:12px;color:var(--text3);margin-top:8px;}
+/* CONFETTI */
+#conf{position:fixed;inset:0;pointer-events:none;z-index:600;display:none;}
+.cp{position:absolute;width:7px;height:7px;border-radius:2px;animation:fall 3s linear forwards;}
+@keyframes fall{0%{transform:translateY(-10px) rotate(0deg);opacity:1}100%{transform:translateY(100vh) rotate(720deg);opacity:0}}
+
+/* LEVEL CARD */
+.lv-card{background:linear-gradient(135deg,rgba(168,85,247,0.08),rgba(14,165,233,0.08));border:1px solid rgba(168,85,247,0.2);border-radius:16px;padding:14px;margin-bottom:10px;display:flex;align-items:center;gap:12px;}
+.lv-ic{font-size:36px;flex-shrink:0;}
+.lv-title{font-size:15px;font-weight:800;color:var(--purple);}
+.lv-sub{font-size:10px;color:var(--text2);margin-top:2px;}
+.lv-xp{font-size:10px;color:var(--text3);margin-top:6px;}
 .lv-xp span{color:var(--purple);font-weight:700;}
 
-/* ======== STREAK ======== */
-.streak{
-  background:linear-gradient(135deg,rgba(251,191,36,0.08),rgba(249,115,22,0.08));
-  border:1px solid rgba(251,191,36,0.2);border-radius:14px;padding:14px;
-  display:flex;align-items:center;gap:14px;margin-bottom:12px;
-}
-.str-fire{font-size:32px;}
-.str-cnt{font-size:26px;font-weight:800;color:var(--yellow);font-family:'JetBrains Mono',monospace;}
-.str-lbl{font-size:12px;color:var(--text2);}
+/* STREAK */
+.str-card{background:linear-gradient(135deg,rgba(251,191,36,0.08),rgba(249,115,22,0.08));border:1px solid rgba(251,191,36,0.2);border-radius:14px;padding:12px;display:flex;align-items:center;gap:12px;margin-bottom:10px;}
 
-/* ======== CONFETTI ======== */
-#confetti{position:fixed;inset:0;pointer-events:none;z-index:500;display:none;}
-.cp{position:absolute;width:8px;height:8px;border-radius:2px;animation:fall 3s linear forwards;}
-@keyframes fall{0%{transform:translateY(-20px) rotate(0deg);opacity:1}100%{transform:translateY(100vh) rotate(720deg);opacity:0}}
+/* ACH GRID */
+.ach-g{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;}
+.ach{background:var(--card2);border:1px solid var(--border);border-radius:12px;padding:12px 8px;text-align:center;cursor:pointer;transition:all 0.2s;}
+.ach.un{border-color:rgba(0,255,136,0.3);background:rgba(0,255,136,0.04);}
+.ach:active{transform:scale(0.96);}
+.ach-ic{font-size:24px;margin-bottom:4px;}
+.ach-nm{font-size:9px;font-weight:700;color:var(--text2);}
+.ach-ds{font-size:8px;color:var(--text3);margin-top:1px;}
+.ach.lk{filter:grayscale(1);opacity:0.3;}
 
-/* ======== MOBILE NAV ======== */
-.mobile-nav{
-  display:none;position:fixed;bottom:0;left:0;right:0;
-  background:rgba(13,18,32,0.97);backdrop-filter:blur(20px);
-  border-top:1px solid var(--border);
-  padding:8px 0 max(8px,env(safe-area-inset-bottom));
-  z-index:300;
-}
-.mn-items{display:flex;}
-.mn-item{
-  flex:1;display:flex;flex-direction:column;align-items:center;gap:2px;
-  cursor:pointer;padding:4px 2px;color:var(--text3);transition:color 0.2s;position:relative;
-}
-.mn-item.active{color:var(--green);}
-.mn-item.active::before{content:'';position:absolute;top:-8px;width:22px;height:2px;background:var(--green);border-radius:2px;box-shadow:0 0 6px var(--green);}
-.mn-ic{font-size:19px;line-height:1;}
-.mn-lbl{font-size:8px;font-weight:700;text-transform:uppercase;letter-spacing:0.3px;}
+/* PANIC BTN */
+.panic-btn{width:100%;padding:14px;background:rgba(239,68,68,0.1);border:2px solid rgba(239,68,68,0.4);border-radius:14px;color:var(--red);font-size:16px;font-weight:800;cursor:pointer;font-family:'Space Grotesk',sans-serif;display:flex;align-items:center;justify-content:center;gap:8px;margin-bottom:10px;transition:all 0.2s;}
+.panic-btn:active{background:rgba(239,68,68,0.2);transform:scale(0.98);}
 
-/* ======== RESPONSIVE ======== */
-@media(max-width:1023px){
-  .sidebar{transform:translateX(calc(-1 * var(--sidebar-w)));}
-  .sidebar.open{transform:translateX(0);}
-  .main{margin-left:0;padding-bottom:70px;}
-  .tb-menu{display:block;}
-  .mobile-nav{display:block;}
-  .g4{grid-template-columns:repeat(2,1fr);}
-  .g3{grid-template-columns:repeat(2,1fr);}
-  .g21,.g12{grid-template-columns:1fr;}
-  .heatmap{grid-template-columns:repeat(5,1fr);}
-  .ach-grid{grid-template-columns:repeat(3,1fr);}
-}
-@media(max-width:480px){
-  .page{padding:12px;}
-  .g4,.g3,.g2{grid-template-columns:1fr 1fr;}
-  .heatmap{grid-template-columns:repeat(5,1fr);}
-  .ach-grid{grid-template-columns:repeat(3,1fr);}
-}
+/* SECTION TITLE */
+.sec-title{font-size:10px;font-weight:800;color:var(--text3);text-transform:uppercase;letter-spacing:1px;margin:14px 0 8px;display:flex;align-items:center;gap:8px;}
+.sec-title::after{content:'';flex:1;height:1px;background:var(--border);}
 </style>
 </head>
 <body>
 
-<!-- CONFETTI -->
-<div id="confetti"></div>
+<div id="conf"></div>
 
 <!-- SPLASH -->
 <div id="splash">
   <div class="sp-logo">⚡ GenesisX™</div>
-  <div class="sp-sub">AI Trading System</div>
+  <div class="sp-sub">Mobile Trading App</div>
   <div class="sp-bar"><div class="sp-prog"></div></div>
-  <div class="sp-log">
-    <span>✓ Verbinding met systeem...</span>
-    <span>✓ Claude AI Brain geladen...</span>
-    <span>✓ 23 bots actief...</span>
-    <span>✓ GenesisX operationeel 🚀</span>
+  <div class="sp-txt">
+    <span>✓ Systeem verbinding...</span>
+    <span>✓ Claude AI Brain actief...</span>
+    <span>✓ 23 bots geladen...</span>
+    <span>✓ Klaar! 🚀</span>
   </div>
 </div>
 
 <!-- APP -->
 <div class="app">
 
-  <!-- SIDEBAR -->
-  <div class="sidebar" id="sidebar">
-    <div class="sb-logo">
-      <div class="sb-icon">⚡</div>
-      <div>
-        <div class="sb-name">Genesis<span>X</span>™</div>
-        <div class="sb-ver">Ultimate v2.0 • Fase 36</div>
+  <!-- HEADER -->
+  <div class="hdr">
+    <div class="hdr-row">
+      <div class="hdr-logo">
+        <div class="hdr-icon">⚡</div>
+        <div class="hdr-name">Genesis<span>X</span>™</div>
       </div>
-    </div>
-    <div class="sb-nav">
-      <div class="sb-sec">
-        <div class="sb-sec-title">Overzicht</div>
-        <div class="sb-item active" onclick="go('dashboard',this)"><span class="sb-ic">📊</span>Dashboard</div>
-        <div class="sb-item" onclick="go('analytics',this)"><span class="sb-ic">📈</span>Analytics</div>
-      </div>
-      <div class="sb-sec">
-        <div class="sb-sec-title">Trading</div>
-        <div class="sb-item" onclick="go('portfolio',this)"><span class="sb-ic">💰</span>Portfolio<span class="sb-badge bg-green">2</span></div>
-        <div class="sb-item" onclick="go('signals',this)"><span class="sb-ic">📡</span>Signalen<span class="sb-badge bg-yellow">3</span></div>
-        <div class="sb-item" onclick="go('arbitrage',this)"><span class="sb-ic">⚡</span>Arbitrage<span class="sb-badge bg-green">2</span></div>
-      </div>
-      <div class="sb-sec">
-        <div class="sb-sec-title">Systeem</div>
-        <div class="sb-item" onclick="go('bots',this)"><span class="sb-ic">🤖</span>Bot Army<span class="sb-badge bg-green">23</span></div>
-        <div class="sb-item" onclick="go('flows',this)"><span class="sb-ic">🔄</span>n8n Flows<span class="sb-badge bg-green">20</span></div>
-        <div class="sb-item" onclick="go('exchanges',this)"><span class="sb-ic">🌐</span>Exchanges<span class="sb-badge bg-green">10</span></div>
-      </div>
-      <div class="sb-sec">
-        <div class="sb-sec-title">AI</div>
-        <div class="sb-item" onclick="go('caio',this)"><span class="sb-ic">👑</span>CAIO Chat</div>
-        <div class="sb-item" onclick="go('csuite',this)"><span class="sb-ic">🏛️</span>C-Suite AI</div>
-      </div>
-      <div class="sb-sec">
-        <div class="sb-sec-title">Meer</div>
-        <div class="sb-item" onclick="go('achievements',this)"><span class="sb-ic">🏆</span>Prestaties</div>
-        <div class="sb-item" onclick="go('alerts',this)"><span class="sb-ic">🔔</span>Alerts<span class="sb-badge bg-red">3</span></div>
-        <div class="sb-item" onclick="go('settings',this)"><span class="sb-ic">⚙️</span>Instellingen</div>
-      </div>
-    </div>
-    <div class="sb-bottom">
-      <div class="sb-status">
-        <div class="sb-st-row"><span style="color:var(--text3);font-size:10px">Status</span><span class="badge b-g">● Operationeel</span></div>
-        <div class="sb-st-row" style="margin-top:6px"><span style="color:var(--text2)">Uptime</span><span style="color:var(--green);font-family:'JetBrains Mono',monospace;font-size:11px">99.9%</span></div>
-        <div class="sb-st-row"><span style="color:var(--text2)">Modus</span><span class="badge b-y">PAPER</span></div>
+      <div class="hdr-right">
+        <span class="hdr-badge">PAPER</span>
+        <div class="hdr-portfolio">
+          <div class="hdr-val">€3.171,73</div>
+          <div class="hdr-pnl">+€21,73 deze week ↑</div>
+        </div>
       </div>
     </div>
   </div>
 
-  <!-- MAIN -->
-  <div class="main">
-
-    <!-- TOPBAR -->
-    <div class="topbar">
-      <button class="tb-menu" onclick="toggleSB()" id="menuBtn">☰</button>
-      <div class="tb-info">
-        <div class="tb-title" id="pgTitle">Dashboard</div>
-        <div class="tb-sub" id="pgSub">Overzicht van GenesisX™ systeem</div>
-      </div>
-      <div class="tb-clock" id="clock">--:--:--</div>
-      <button class="btn btn-r" onclick="panic()">🚨 Panic</button>
-      <button class="btn btn-g" onclick="refresh()">↻ Refresh</button>
+  <!-- TICKER -->
+  <div class="ticker-wrap">
+    <div class="ticker">
+      <div class="ti"><span class="ti-s">BTC</span><span>€58.457</span><span class="up">+0.82%</span></div>
+      <div class="ti"><span class="ti-s">ETH</span><span>€1.785</span><span class="up">+0.90%</span></div>
+      <div class="ti"><span class="ti-s">SOL</span><span>€70.50</span><span class="up">+2.88%</span></div>
+      <div class="ti"><span class="ti-s">ADA</span><span>€1.18</span><span class="up">+4.12%</span></div>
+      <div class="ti"><span class="ti-s">XRP</span><span>€1.14</span><span class="up">+2.59%</span></div>
+      <div class="ti"><span class="ti-s">BNB</span><span>€512</span><span class="dn">-0.45%</span></div>
+      <div class="ti"><span class="ti-s">BTC</span><span>€58.457</span><span class="up">+0.82%</span></div>
+      <div class="ti"><span class="ti-s">ETH</span><span>€1.785</span><span class="up">+0.90%</span></div>
+      <div class="ti"><span class="ti-s">SOL</span><span>€70.50</span><span class="up">+2.88%</span></div>
+      <div class="ti"><span class="ti-s">ADA</span><span>€1.18</span><span class="up">+4.12%</span></div>
+      <div class="ti"><span class="ti-s">XRP</span><span>€1.14</span><span class="up">+2.59%</span></div>
+      <div class="ti"><span class="ti-s">BNB</span><span>€512</span><span class="dn">-0.45%</span></div>
     </div>
+  </div>
 
-    <!-- TICKER -->
-    <div class="ticker-wrap">
-      <div class="ticker" id="ticker">
-        <div class="ti"><span class="ti-sym">BTC</span><span>€58.457</span><span class="up">+0.82%</span></div>
-        <div class="ti"><span class="ti-sym">ETH</span><span>€1.785</span><span class="up">+0.90%</span></div>
-        <div class="ti"><span class="ti-sym">SOL</span><span>€70.50</span><span class="up">+2.88%</span></div>
-        <div class="ti"><span class="ti-sym">ADA</span><span>€1.18</span><span class="up">+4.12%</span></div>
-        <div class="ti"><span class="ti-sym">XRP</span><span>€1.14</span><span class="up">+2.59%</span></div>
-        <div class="ti"><span class="ti-sym">BNB</span><span>€512</span><span class="down">-0.45%</span></div>
-        <div class="ti"><span class="ti-sym">EUR/USD</span><span>1.0842</span><span class="down">-0.12%</span></div>
-        <!-- duplicate for loop -->
-        <div class="ti"><span class="ti-sym">BTC</span><span>€58.457</span><span class="up">+0.82%</span></div>
-        <div class="ti"><span class="ti-sym">ETH</span><span>€1.785</span><span class="up">+0.90%</span></div>
-        <div class="ti"><span class="ti-sym">SOL</span><span>€70.50</span><span class="up">+2.88%</span></div>
-        <div class="ti"><span class="ti-sym">ADA</span><span>€1.18</span><span class="up">+4.12%</span></div>
-        <div class="ti"><span class="ti-sym">XRP</span><span>€1.14</span><span class="up">+2.59%</span></div>
-        <div class="ti"><span class="ti-sym">BNB</span><span>€512</span><span class="down">-0.45%</span></div>
-        <div class="ti"><span class="ti-sym">EUR/USD</span><span>1.0842</span><span class="down">-0.12%</span></div>
-      </div>
-    </div>
+  <!-- TABS -->
+  <div class="tabs" id="tabs">
+    <div class="tab active" onclick="showTab('dashboard',this)">📊 Dashboard</div>
+    <div class="tab" onclick="showTab('portfolio',this)">💰 Portfolio</div>
+    <div class="tab" onclick="showTab('bots',this)">🤖 Bots</div>
+    <div class="tab" onclick="showTab('signals',this)">📡 Signalen</div>
+    <div class="tab" onclick="showTab('flows',this)">🔄 Flows</div>
+    <div class="tab" onclick="showTab('exchanges',this)">🌐 Exchanges</div>
+    <div class="tab" onclick="showTab('caio',this)">👑 CAIO</div>
+    <div class="tab" onclick="showTab('alerts',this)">🔔 Alerts</div>
+    <div class="tab" onclick="showTab('achievements',this)">🏆 Prestaties</div>
+    <div class="tab" onclick="showTab('settings',this)">⚙️ Instellingen</div>
+  </div>
 
-    <!-- ===== DASHBOARD ===== -->
+  <!-- PAGES -->
+  <div class="pages">
+
+    <!-- DASHBOARD -->
     <div id="pg-dashboard" class="page active">
-      <div class="level-card">
-        <div class="lv-badge">🥈</div>
-        <div class="lv-info">
+      <div class="lv-card">
+        <div class="lv-ic">🥈</div>
+        <div style="flex:1">
           <div class="lv-title">Paper Trader — Level 2</div>
-          <div class="lv-sub">Op weg naar Live Trader (Level 3)</div>
-          <div class="lv-xp">XP: <span>2.172 / 5.000</span> — nog €2.828 winst nodig</div>
-          <div class="prog" style="margin-top:8px"><div class="prog-f" style="width:43%;background:linear-gradient(90deg,var(--purple),var(--blue))"></div></div>
+          <div class="lv-sub">Nog €2.828 winst voor Level 3</div>
+          <div class="lv-xp">XP: <span>2.172 / 5.000</span></div>
+          <div class="prog" style="margin-top:6px"><div class="prog-f" style="width:43%;background:linear-gradient(90deg,var(--purple),var(--blue))"></div></div>
         </div>
         <div style="text-align:right">
-          <div style="font-size:28px;font-weight:800;color:var(--yellow)">🔥3</div>
-          <div style="font-size:11px;color:var(--text2)">dag streak</div>
+          <div style="font-size:24px;font-weight:800;color:var(--yellow)">🔥3</div>
+          <div style="font-size:9px;color:var(--text2)">streak</div>
         </div>
       </div>
 
-      <div class="g4">
-        <div class="sc"><div class="sc-icon">💰</div><div class="sc-label">Portfolio</div><div class="sc-val" style="color:var(--green)">€3.171</div><div class="sc-ch up">↑ +€21,73 week</div></div>
-        <div class="sc"><div class="sc-icon">📈</div><div class="sc-label">Week ROI</div><div class="sc-val" style="color:var(--blue)">+0.69%</div><div class="sc-ch up">↑ IMPROVING</div></div>
-        <div class="sc"><div class="sc-icon">🤖</div><div class="sc-label">Bots Actief</div><div class="sc-val" style="color:var(--purple)">23</div><div class="sc-ch up">↑ 99.9% uptime</div></div>
-        <div class="sc"><div class="sc-icon">⚡</div><div class="sc-label">Arbitrage</div><div class="sc-val" style="color:var(--yellow)">€2,36</div><div class="sc-ch up">↑ 2 kansen</div></div>
-      </div>
-
-      <div class="g21">
-        <div class="card">
-          <div class="ch"><div class="ct">📈 Portfolio Grafiek (7 Dagen)</div><div class="ca">Details →</div></div>
-          <svg width="100%" height="160" viewBox="0 0 500 160" preserveAspectRatio="none">
-            <defs>
-              <linearGradient id="cg" x1="0" y1="0" x2="0" y2="1">
-                <stop offset="0%" stop-color="#00ff88" stop-opacity="0.25"/>
-                <stop offset="100%" stop-color="#00ff88" stop-opacity="0"/>
-              </linearGradient>
-            </defs>
-            <line x1="0" y1="40" x2="500" y2="40" stroke="#1a2540" stroke-width="1" stroke-dasharray="4"/>
-            <line x1="0" y1="80" x2="500" y2="80" stroke="#1a2540" stroke-width="1" stroke-dasharray="4"/>
-            <line x1="0" y1="120" x2="500" y2="120" stroke="#1a2540" stroke-width="1" stroke-dasharray="4"/>
-            <path d="M0,130 L70,120 L140,125 L210,105 L280,90 L350,75 L420,60 L500,45 L500,160 L0,160 Z" fill="url(#cg)"/>
-            <path d="M0,130 L70,120 L140,125 L210,105 L280,90 L350,75 L420,60 L500,45" fill="none" stroke="#00ff88" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
-            <circle cx="500" cy="45" r="5" fill="#00ff88" filter="drop-shadow(0 0 5px #00ff88)"/>
-            <text x="4" y="37" fill="#475569" font-size="9">€3.250</text>
-            <text x="4" y="77" fill="#475569" font-size="9">€3.200</text>
-            <text x="4" y="117" fill="#475569" font-size="9">€3.150</text>
-          </svg>
-          <div style="display:flex;justify-content:space-between;font-size:9px;color:var(--text3);font-family:'JetBrains Mono',monospace;padding-top:6px;border-top:1px solid var(--border)">
-            <span>Ma</span><span>Di</span><span>Wo</span><span>Do</span><span>Vr</span><span>Za</span><span>Nu</span>
-          </div>
+      <div class="mg">
+        <div class="met" onclick="openModal('portfolio-modal')">
+          <div class="met-lbl">Portfolio</div>
+          <div class="met-val" style="color:var(--green)">€3.171</div>
+          <div class="met-sub">Tik voor details →</div>
         </div>
-        <div class="card">
-          <div class="ch"><div class="ct">🌡️ Fear & Greed</div></div>
-          <div style="text-align:center;padding:8px 0">
-            <div style="font-size:44px;font-weight:800;color:var(--yellow);font-family:'JetBrains Mono',monospace;line-height:1">72</div>
-            <div style="font-size:14px;color:var(--yellow);font-weight:700;margin:4px 0">Hebzucht</div>
-          </div>
-          <div class="sent-meter"><div class="sent-needle" style="left:72%"></div></div>
-          <div class="sent-labels"><span>Angst</span><span>Neutraal</span><span>Hebzucht</span></div>
-          <div style="margin-top:12px;display:grid;grid-template-columns:1fr 1fr;gap:6px">
-            <div style="background:var(--card2);border-radius:8px;padding:8px;text-align:center">
-              <div style="font-size:9px;color:var(--text3)">Sentiment</div>
-              <div style="font-size:12px;font-weight:700;color:var(--green)">BULLISH</div>
-            </div>
-            <div style="background:var(--card2);border-radius:8px;padding:8px;text-align:center">
-              <div style="font-size:9px;color:var(--text3)">Risico</div>
-              <div style="font-size:12px;font-weight:700;color:var(--green)">LAAG</div>
-            </div>
-          </div>
+        <div class="met" onclick="openModal('roi-modal')">
+          <div class="met-lbl">Week ROI</div>
+          <div class="met-val" style="color:var(--blue)">+0.69%</div>
+          <div class="met-sub">IMPROVING trend</div>
+        </div>
+        <div class="met" onclick="showTab('bots',null)">
+          <div class="met-lbl">Actieve Bots</div>
+          <div class="met-val" style="color:var(--purple)">23</div>
+          <div class="met-sub">Tik voor bots →</div>
+        </div>
+        <div class="met" onclick="openModal('arb-modal')">
+          <div class="met-lbl">Arbitrage</div>
+          <div class="met-val" style="color:var(--yellow)">€2,36</div>
+          <div class="met-sub">2 kansen actief</div>
         </div>
       </div>
 
-      <div class="card" style="margin-bottom:16px">
-        <div class="ch"><div class="ct">🌡️ Asset Heatmap</div></div>
-        <div class="heatmap">
-          <div class="hm-cell" style="background:rgba(0,255,136,0.22)"><div class="hm-asset">ADA</div><div class="hm-pct" style="color:#00ff88">+4.12%</div></div>
-          <div class="hm-cell" style="background:rgba(0,255,136,0.17)"><div class="hm-asset">SOL</div><div class="hm-pct" style="color:#00ff88">+2.88%</div></div>
-          <div class="hm-cell" style="background:rgba(0,255,136,0.14)"><div class="hm-asset">XRP</div><div class="hm-pct" style="color:#00ff88">+2.59%</div></div>
-          <div class="hm-cell" style="background:rgba(0,255,136,0.08)"><div class="hm-asset">ETH</div><div class="hm-pct" style="color:#00ff88">+0.90%</div></div>
-          <div class="hm-cell" style="background:rgba(0,255,136,0.06)"><div class="hm-asset">BTC</div><div class="hm-pct" style="color:#00ff88">+0.82%</div></div>
+      <!-- Chart -->
+      <div class="card">
+        <div class="card-title">📈 Portfolio Grafiek (7 dagen)<span style="color:var(--green);cursor:pointer" onclick="openModal('chart-modal')">Uitbreiden →</span></div>
+        <svg width="100%" height="100" viewBox="0 0 300 100" preserveAspectRatio="none">
+          <defs><linearGradient id="cg" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#00ff88" stop-opacity="0.3"/><stop offset="100%" stop-color="#00ff88" stop-opacity="0"/></linearGradient></defs>
+          <path d="M0,80 L40,72 L80,76 L120,62 L160,52 L200,42 L240,34 L300,24 L300,100 L0,100Z" fill="url(#cg)"/>
+          <path d="M0,80 L40,72 L80,76 L120,62 L160,52 L200,42 L240,34 L300,24" fill="none" stroke="#00ff88" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+          <circle cx="300" cy="24" r="4" fill="#00ff88" filter="drop-shadow(0 0 4px #00ff88)"/>
+        </svg>
+        <div style="display:flex;justify-content:space-between;font-size:9px;color:var(--text3);font-family:'JetBrains Mono',monospace;padding-top:5px;border-top:1px solid var(--border)">
+          <span>Ma</span><span>Di</span><span>Wo</span><span>Do</span><span>Vr</span><span>Za</span><span>Nu</span>
         </div>
       </div>
 
-      <div class="g2">
-        <div class="card">
-          <div class="ch"><div class="ct">💼 Open Posities</div><div class="ca" onclick="go('portfolio',null)">Alle →</div></div>
-          <div class="pos-card">
-            <div class="pos-h">
-              <div style="display:flex;align-items:center;gap:10px">
-                <div class="pos-av">A</div>
-                <div><div class="pos-name">Cardano</div><div class="pos-ex">Bitvavo • ADA-EUR</div></div>
-              </div>
-              <div style="text-align:right"><div class="pos-pnl">+€13,48</div><div class="pos-pct">+3.51%</div></div>
-            </div>
-            <div class="sl-wrap">
-              <span style="color:var(--red);font-weight:700;font-size:9px">SL €1.14</span>
-              <div class="sl-bar"><div class="sl-cur" style="left:60%"></div></div>
-              <span style="color:var(--green);font-weight:700;font-size:9px">TP €1.23</span>
-            </div>
-          </div>
-          <div class="pos-card">
-            <div class="pos-h">
-              <div style="display:flex;align-items:center;gap:10px">
-                <div class="pos-av" style="background:linear-gradient(135deg,#9945ff,#14f195)">S</div>
-                <div><div class="pos-name">Solana</div><div class="pos-ex">Bybit EU • SOL-EUR</div></div>
-              </div>
-              <div style="text-align:right"><div class="pos-pnl">+€8,64</div><div class="pos-pct">+2.37%</div></div>
-            </div>
-            <div class="sl-wrap">
-              <span style="color:var(--red);font-weight:700;font-size:9px">SL €68.87</span>
-              <div class="sl-bar"><div class="sl-cur" style="left:45%"></div></div>
-              <span style="color:var(--green);font-weight:700;font-size:9px">TP €74.38</span>
-            </div>
-          </div>
+      <!-- Heatmap -->
+      <div class="card">
+        <div class="card-title">🌡️ Asset Heatmap<span style="color:var(--text3);font-size:9px">Tik voor details</span></div>
+        <div class="hm">
+          <div class="hm-c" style="background:rgba(0,255,136,0.22)" onclick="openModal('ada-modal')"><div class="hm-a">ADA</div><div class="hm-p" style="color:#00ff88">+4.12%</div></div>
+          <div class="hm-c" style="background:rgba(0,255,136,0.17)" onclick="openModal('sol-modal')"><div class="hm-a">SOL</div><div class="hm-p" style="color:#00ff88">+2.88%</div></div>
+          <div class="hm-c" style="background:rgba(0,255,136,0.13)" onclick="openModal('xrp-modal')"><div class="hm-a">XRP</div><div class="hm-p" style="color:#00ff88">+2.59%</div></div>
+          <div class="hm-c" style="background:rgba(0,255,136,0.08)" onclick="openModal('eth-modal')"><div class="hm-a">ETH</div><div class="hm-p" style="color:#00ff88">+0.90%</div></div>
+          <div class="hm-c" style="background:rgba(0,255,136,0.06)" onclick="openModal('btc-modal')"><div class="hm-a">BTC</div><div class="hm-p" style="color:#00ff88">+0.82%</div></div>
         </div>
-        <div class="card">
-          <div class="ch"><div class="ct">🏆 Top Bots</div><div class="ca" onclick="go('bots',null)">Alle →</div></div>
-          <table class="tbl">
-            <tr><th>Bot</th><th>Score</th><th>WR</th><th>Status</th></tr>
-            <tr><td><strong>🐋 WhaleX</strong></td><td style="color:var(--green);font-weight:700">91</td><td style="color:var(--green)">100%</td><td><span class="badge b-g">ACTIEF</span></td></tr>
-            <tr><td><strong>🎯 SnipeX</strong></td><td style="color:var(--green);font-weight:700">88</td><td style="color:var(--green)">100%</td><td><span class="badge b-y">LIVE READY</span></td></tr>
-            <tr><td><strong>🌙 NightX</strong></td><td style="color:var(--green);font-weight:700">85</td><td style="color:var(--green)">83%</td><td><span class="badge b-y">LIVE READY</span></td></tr>
-            <tr><td><strong>⚡ ScalpX</strong></td><td style="color:var(--blue);font-weight:700">82</td><td style="color:var(--blue)">75%</td><td><span class="badge b-g">ACTIEF</span></td></tr>
-          </table>
-        </div>
+      </div>
+
+      <!-- Quick Actions -->
+      <div class="sec-title">Snelle Acties</div>
+      <div class="act-grid">
+        <div class="act-btn act-primary" onclick="openModal('trade-modal')">💰 Trade Uitvoeren</div>
+        <div class="act-btn act-secondary" onclick="showTab('caio',null)">👑 Vraag CAIO</div>
+        <div class="act-btn act-yellow" onclick="openModal('arb-modal')">⚡ Arbitrage</div>
+        <div class="act-btn act-secondary" onclick="openModal('report-modal')">📊 Weekrapport</div>
       </div>
     </div>
 
-    <!-- ===== PORTFOLIO ===== -->
+    <!-- PORTFOLIO -->
     <div id="pg-portfolio" class="page">
-      <div class="g3">
-        <div class="sc"><div class="sc-label">Totaal</div><div class="sc-val" style="color:var(--green)">€3.171,73</div></div>
-        <div class="sc"><div class="sc-label">Gedeployeerd</div><div class="sc-val" style="color:var(--blue)">€749,70</div><div class="prog"><div class="prog-f" style="width:23.8%"></div></div></div>
-        <div class="sc"><div class="sc-label">Beschikbaar</div><div class="sc-val" style="color:var(--text)">€2.400,30</div></div>
+      <div class="mg">
+        <div class="met"><div class="met-lbl">Totaal</div><div class="met-val" style="color:var(--green);font-size:18px">€3.171,73</div></div>
+        <div class="met"><div class="met-lbl">Deployed</div><div class="met-val" style="color:var(--blue)">23.8%</div><div class="prog"><div class="prog-f" style="width:23.8%"></div></div></div>
+        <div class="met"><div class="met-lbl">Cash</div><div class="met-val" style="font-size:18px">€2.400,30</div></div>
+        <div class="met"><div class="met-lbl">Week PnL</div><div class="met-val" style="color:var(--green)">+€21,73</div></div>
       </div>
-      <div class="card">
-        <div class="ch"><div class="ct">💼 Open Posities</div></div>
-        <div class="pos-card">
-          <div class="pos-h">
-            <div style="display:flex;align-items:center;gap:10px">
-              <div class="pos-av">A</div>
-              <div><div class="pos-name">Cardano (ADA)</div><div class="pos-ex">Bitvavo • ADA-EUR</div></div>
-            </div>
-            <div style="text-align:right"><div class="pos-pnl">+€13,48</div><div class="pos-pct">+3.51%</div></div>
+
+      <div class="sec-title">Open Posities — Tik voor details</div>
+
+      <div class="pos-card" onclick="openModal('ada-pos-modal')">
+        <div class="pos-h">
+          <div style="display:flex;align-items:center;gap:8px">
+            <div class="pos-av">A</div>
+            <div><div class="pos-name">Cardano (ADA)</div><div class="pos-ex">Bitvavo • ADA-EUR</div></div>
           </div>
-          <div class="pos-dg">
-            <div class="pos-d"><div class="pos-dl">Hoeveelheid</div><div class="pos-dv">337.1 ADA</div></div>
-            <div class="pos-d"><div class="pos-dl">Instap</div><div class="pos-dv">€1.14</div></div>
-            <div class="pos-d"><div class="pos-dl">Nu</div><div class="pos-dv" style="color:var(--green)">€1.18</div></div>
-            <div class="pos-d"><div class="pos-dl">Waarde</div><div class="pos-dv" style="color:var(--green)">€397,78</div></div>
-          </div>
-          <div class="sl-wrap">
-            <span style="color:var(--red);font-weight:700;font-size:10px">SL €1.14</span>
-            <div class="sl-bar"><div class="sl-cur" style="left:60%"></div></div>
-            <span style="color:var(--green);font-weight:700;font-size:10px">TP €1.23</span>
-          </div>
+          <div style="text-align:right"><div class="pos-pnl">+€13,48</div><div class="pos-pct">+3.51%</div></div>
         </div>
-        <div class="pos-card">
-          <div class="pos-h">
-            <div style="display:flex;align-items:center;gap:10px">
-              <div class="pos-av" style="background:linear-gradient(135deg,#9945ff,#14f195)">S</div>
-              <div><div class="pos-name">Solana (SOL)</div><div class="pos-ex">Bybit EU • SOL-EUR</div></div>
-            </div>
-            <div style="text-align:right"><div class="pos-pnl">+€8,64</div><div class="pos-pct">+2.37%</div></div>
-          </div>
-          <div class="pos-dg">
-            <div class="pos-d"><div class="pos-dl">Hoeveelheid</div><div class="pos-dv">5.3 SOL</div></div>
-            <div class="pos-d"><div class="pos-dl">Instap</div><div class="pos-dv">€68.87</div></div>
-            <div class="pos-d"><div class="pos-dl">Nu</div><div class="pos-dv" style="color:var(--green)">€70.50</div></div>
-            <div class="pos-d"><div class="pos-dl">Waarde</div><div class="pos-dv" style="color:var(--green)">€373,65</div></div>
-          </div>
-          <div class="sl-wrap">
-            <span style="color:var(--red);font-weight:700;font-size:10px">SL €68.87</span>
-            <div class="sl-bar"><div class="sl-cur" style="left:45%"></div></div>
-            <span style="color:var(--green);font-weight:700;font-size:10px">TP €74.38</span>
-          </div>
+        <div class="pos-dg">
+          <div class="pos-d"><div class="pos-dl">Units</div><div class="pos-dv">337.1</div></div>
+          <div class="pos-d"><div class="pos-dl">Instap</div><div class="pos-dv">€1.14</div></div>
+          <div class="pos-d"><div class="pos-dl">Nu</div><div class="pos-dv" style="color:var(--green)">€1.18</div></div>
+          <div class="pos-d"><div class="pos-dl">Waarde</div><div class="pos-dv" style="color:var(--green)">€397</div></div>
         </div>
+        <div class="sl-w">
+          <span style="color:var(--red);font-weight:700;font-size:9px">SL €1.14</span>
+          <div class="sl-bar"><div class="sl-cur" style="left:60%"></div></div>
+          <span style="color:var(--green);font-weight:700;font-size:9px">TP €1.23</span>
+        </div>
+      </div>
+
+      <div class="pos-card" onclick="openModal('sol-pos-modal')">
+        <div class="pos-h">
+          <div style="display:flex;align-items:center;gap:8px">
+            <div class="pos-av" style="background:linear-gradient(135deg,#9945ff,#14f195)">S</div>
+            <div><div class="pos-name">Solana (SOL)</div><div class="pos-ex">Bybit EU • SOL-EUR</div></div>
+          </div>
+          <div style="text-align:right"><div class="pos-pnl">+€8,64</div><div class="pos-pct">+2.37%</div></div>
+        </div>
+        <div class="pos-dg">
+          <div class="pos-d"><div class="pos-dl">Units</div><div class="pos-dv">5.3</div></div>
+          <div class="pos-d"><div class="pos-dl">Instap</div><div class="pos-dv">€68.87</div></div>
+          <div class="pos-d"><div class="pos-dl">Nu</div><div class="pos-dv" style="color:var(--green)">€70.50</div></div>
+          <div class="pos-d"><div class="pos-dl">Waarde</div><div class="pos-dv" style="color:var(--green)">€374</div></div>
+        </div>
+        <div class="sl-w">
+          <span style="color:var(--red);font-weight:700;font-size:9px">SL €68.87</span>
+          <div class="sl-bar"><div class="sl-cur" style="left:45%"></div></div>
+          <span style="color:var(--green);font-weight:700;font-size:9px">TP €74.38</span>
+        </div>
+      </div>
+
+      <div class="act-grid" style="margin-top:12px">
+        <div class="act-btn act-primary act-full" onclick="openModal('trade-modal')">+ Nieuwe Trade Openen</div>
+        <div class="act-btn act-danger" onclick="if(confirm('Alle posities sluiten?'))alert('Posities gesloten!')">🔴 Alles Sluiten</div>
+        <div class="act-btn act-secondary" onclick="openModal('rebalance-modal')">⚖️ Rebalancen</div>
       </div>
     </div>
 
-    <!-- ===== BOTS ===== -->
+    <!-- BOTS -->
     <div id="pg-bots" class="page">
-      <div class="g4">
-        <div class="sc"><div class="sc-label">Totaal</div><div class="sc-val" style="color:var(--purple)">23</div></div>
-        <div class="sc"><div class="sc-label">Live Ready</div><div class="sc-val" style="color:var(--yellow)">2</div></div>
-        <div class="sc"><div class="sc-label">Gepauzeerd</div><div class="sc-val" style="color:var(--red)">3</div></div>
-        <div class="sc"><div class="sc-label">Gem. Score</div><div class="sc-val" style="color:var(--green)">71</div></div>
+      <div class="mg">
+        <div class="met"><div class="met-lbl">Totaal</div><div class="met-val" style="color:var(--purple)">23</div></div>
+        <div class="met"><div class="met-lbl">Live Ready</div><div class="met-val" style="color:var(--yellow)">2</div></div>
+        <div class="met"><div class="met-lbl">Gepauzeerd</div><div class="met-val" style="color:var(--red)">3</div></div>
+        <div class="met"><div class="met-lbl">Gem. Score</div><div class="met-val" style="color:var(--green)">71</div></div>
       </div>
-      <div class="card"><div class="ch"><div class="ct">🤖 Bot Army</div></div><div id="bot-list"></div></div>
+      <div class="sec-title">Bot Army — Tik voor acties</div>
+      <div id="bot-list"></div>
     </div>
 
-    <!-- ===== SIGNALEN ===== -->
+    <!-- SIGNALS -->
     <div id="pg-signals" class="page">
-      <div class="g2">
-        <div class="card">
-          <div class="ch"><div class="ct">📡 AI Brain Signalen</div></div>
-          <div class="sig-item"><span class="sig-asset">ADA</span><div class="sig-bar"><div class="sig-fill" style="width:82%;background:var(--green)"></div></div><span class="sig-lbl up">🟢 BUY</span><span class="sig-conf">82%</span></div>
-          <div class="sig-item"><span class="sig-asset">SOL</span><div class="sig-bar"><div class="sig-fill" style="width:78%;background:var(--green)"></div></div><span class="sig-lbl up">🟢 BUY</span><span class="sig-conf">78%</span></div>
-          <div class="sig-item"><span class="sig-asset">BTC</span><div class="sig-bar"><div class="sig-fill" style="width:55%;background:var(--yellow)"></div></div><span class="sig-lbl" style="color:var(--yellow)">➡️ HOLD</span><span class="sig-conf">55%</span></div>
-          <div class="sig-item"><span class="sig-asset">ETH</span><div class="sig-bar"><div class="sig-fill" style="width:50%;background:var(--yellow)"></div></div><span class="sig-lbl" style="color:var(--yellow)">➡️ HOLD</span><span class="sig-conf">50%</span></div>
-          <div class="sig-item"><span class="sig-asset">XRP</span><div class="sig-bar"><div class="sig-fill" style="width:47%;background:var(--text3)"></div></div><span class="sig-lbl" style="color:var(--text2)">➡️ HOLD</span><span class="sig-conf">47%</span></div>
+      <div class="card">
+        <div class="card-title">🌡️ Fear & Greed Index</div>
+        <div style="text-align:center;padding:8px 0">
+          <div style="font-size:44px;font-weight:800;color:var(--yellow);font-family:'JetBrains Mono',monospace">72</div>
+          <div style="font-size:14px;color:var(--yellow);font-weight:700">Hebzucht</div>
         </div>
-        <div class="card">
-          <div class="ch"><div class="ct">⚡ Arbitrage Kansen</div></div>
-          <div class="ex-item">
-            <div class="ex-dot ex-g"></div>
-            <div><div class="ex-name">XRP — Bitvavo vs Bybit</div><div class="ex-type">€1.14 → €1.147 | Spread: 0.614%</div></div>
-            <div style="text-align:right"><div class="ex-bal" style="color:var(--green)">+€1.32</div><div class="ex-st">Netto winst</div></div>
+        <div style="height:8px;background:linear-gradient(90deg,var(--red),var(--yellow),var(--green));border-radius:8px;position:relative;margin:10px 0">
+          <div style="position:absolute;top:-5px;left:72%;width:18px;height:18px;background:white;border-radius:50%;border:2px solid var(--bg);box-shadow:0 2px 6px rgba(0,0,0,0.5);transform:translateX(-50%)"></div>
+        </div>
+        <div style="display:flex;justify-content:space-between;font-size:9px;color:var(--text3)"><span>Angst</span><span>Neutraal</span><span>Hebzucht</span></div>
+      </div>
+
+      <div class="card">
+        <div class="card-title">📡 AI Brain Signalen — Tik voor details</div>
+        <div class="sig-row" onclick="openModal('ada-sig-modal')">
+          <span class="sig-asset">ADA</span>
+          <div class="sig-bar"><div class="sig-fill" style="width:82%;background:var(--green)"></div></div>
+          <span class="sig-lbl up">🟢 BUY</span>
+          <span class="sig-conf">82%</span>
+          <span class="row-arrow">›</span>
+        </div>
+        <div class="sig-row" onclick="openModal('sol-sig-modal')">
+          <span class="sig-asset">SOL</span>
+          <div class="sig-bar"><div class="sig-fill" style="width:78%;background:var(--green)"></div></div>
+          <span class="sig-lbl up">🟢 BUY</span>
+          <span class="sig-conf">78%</span>
+          <span class="row-arrow">›</span>
+        </div>
+        <div class="sig-row" onclick="openModal('btc-sig-modal')">
+          <span class="sig-asset">BTC</span>
+          <div class="sig-bar"><div class="sig-fill" style="width:55%;background:var(--yellow)"></div></div>
+          <span class="sig-lbl" style="color:var(--yellow)">➡️ HOLD</span>
+          <span class="sig-conf">55%</span>
+          <span class="row-arrow">›</span>
+        </div>
+        <div class="sig-row" onclick="openModal('eth-sig-modal')">
+          <span class="sig-asset">ETH</span>
+          <div class="sig-bar"><div class="sig-fill" style="width:50%;background:var(--yellow)"></div></div>
+          <span class="sig-lbl" style="color:var(--yellow)">➡️ HOLD</span>
+          <span class="sig-conf">50%</span>
+          <span class="row-arrow">›</span>
+        </div>
+        <div class="sig-row" onclick="openModal('xrp-sig-modal')">
+          <span class="sig-asset">XRP</span>
+          <div class="sig-bar"><div class="sig-fill" style="width:47%;background:var(--text3)"></div></div>
+          <span class="sig-lbl" style="color:var(--text2)">➡️ HOLD</span>
+          <span class="sig-conf">47%</span>
+          <span class="row-arrow">›</span>
+        </div>
+      </div>
+
+      <div class="card" style="border-color:rgba(251,191,36,0.3)">
+        <div class="card-title">⚡ Arbitrage Kansen — Tik om te benutten</div>
+        <div class="row" onclick="openModal('arb-xrp-modal')">
+          <div style="width:8px;height:8px;border-radius:50%;background:var(--green);box-shadow:0 0 5px var(--green);flex-shrink:0"></div>
+          <div style="flex:1">
+            <div style="font-size:13px;font-weight:700">XRP — Bitvavo vs Bybit</div>
+            <div style="font-size:10px;color:var(--text2)">Spread: 0.614% | Netto: 0.264%</div>
           </div>
-          <div class="ex-item">
-            <div class="ex-dot ex-g"></div>
-            <div><div class="ex-name">ADA — Bitvavo vs Bybit</div><div class="ex-type">€1.14 → €1.147 | Spread: 0.559%</div></div>
-            <div style="text-align:right"><div class="ex-bal" style="color:var(--green)">+€1.04</div><div class="ex-st">Netto winst</div></div>
+          <div style="color:var(--green);font-weight:800;font-family:'JetBrains Mono',monospace">+€1.32</div>
+          <span class="row-arrow">›</span>
+        </div>
+        <div class="row" onclick="openModal('arb-ada-modal')">
+          <div style="width:8px;height:8px;border-radius:50%;background:var(--green);box-shadow:0 0 5px var(--green);flex-shrink:0"></div>
+          <div style="flex:1">
+            <div style="font-size:13px;font-weight:700">ADA — Bitvavo vs Bybit</div>
+            <div style="font-size:10px;color:var(--text2)">Spread: 0.559% | Netto: 0.209%</div>
           </div>
+          <div style="color:var(--green);font-weight:800;font-family:'JetBrains Mono',monospace">+€1.04</div>
+          <span class="row-arrow">›</span>
         </div>
       </div>
     </div>
 
-    <!-- ===== FLOWS ===== -->
+    <!-- FLOWS -->
     <div id="pg-flows" class="page">
-      <div class="card">
-        <div class="ch"><div class="ct">🔄 n8n Flow Status</div><button class="btn btn-s" style="font-size:11px;padding:5px 10px" onclick="window.open('http://localhost:5678','_blank')">Open n8n →</button></div>
-        <div id="flow-list"></div>
+      <div class="mg">
+        <div class="met"><div class="met-lbl">Actief</div><div class="met-val" style="color:var(--green)">20</div></div>
+        <div class="met"><div class="met-lbl">Runs Vandaag</div><div class="met-val" style="color:var(--blue)">1.843</div></div>
       </div>
+      <div class="act-grid">
+        <div class="act-btn act-secondary" onclick="window.open('http://localhost:5678','_blank')">🔗 Open n8n</div>
+        <div class="act-btn act-danger" onclick="if(confirm('Alle flows pauzeren?'))alert('Flows gepauzeerd!')">⏸️ Alles Pauzeren</div>
+      </div>
+      <div class="sec-title">Flows — Tik voor details, toggle aan/uit</div>
+      <div class="card"><div id="flow-list"></div></div>
     </div>
 
-    <!-- ===== EXCHANGES ===== -->
+    <!-- EXCHANGES -->
     <div id="pg-exchanges" class="page">
-      <div class="card">
-        <div class="ch"><div class="ct">🌐 Exchange Overzicht</div></div>
-        <table class="tbl">
-          <tr><th>Exchange</th><th>Type</th><th>Regulatie</th><th>Balans</th><th>Status</th></tr>
-          <tr><td><strong>Bitvavo</strong></td><td>CEX</td><td><span class="badge b-g">DNB+MiCA</span></td><td class="mono" style="color:var(--green)">€2.400,30</td><td><span class="badge b-g">● CONNECTED</span></td></tr>
-          <tr><td><strong>Bybit EU</strong></td><td>CEX</td><td><span class="badge b-g">MiCA</span></td><td class="mono" style="color:var(--green)">€373,65</td><td><span class="badge b-g">● CONNECTED</span></td></tr>
-          <tr><td><strong>OKX</strong></td><td>CEX</td><td><span class="badge b-b">DNB</span></td><td class="mono">€0,00</td><td><span class="badge b-g">● CONNECTED</span></td></tr>
-          <tr><td><strong>Kraken</strong></td><td>CEX</td><td><span class="badge b-b">FCA</span></td><td class="mono">€0,00</td><td><span class="badge b-g">● CONNECTED</span></td></tr>
-          <tr><td><strong>MEXC</strong></td><td>CEX</td><td><span class="badge b-p">INT</span></td><td class="mono">€0,00</td><td><span class="badge b-g">● CONNECTED</span></td></tr>
-          <tr><td><strong>Coinbase</strong></td><td>CEX</td><td><span class="badge b-b">EU</span></td><td class="mono">€0,00</td><td><span class="badge b-g">● CONNECTED</span></td></tr>
-          <tr><td><strong>IC Markets EU</strong></td><td>Forex/MT5</td><td><span class="badge b-b">CySEC</span></td><td class="mono" style="color:var(--green)">€185,33</td><td><span class="badge b-g">● CONNECTED</span></td></tr>
-          <tr><td><strong>Pepperstone</strong></td><td>Forex/MT5</td><td><span class="badge b-b">FCA</span></td><td class="mono">€0,00</td><td><span class="badge b-y">● KYC PENDING</span></td></tr>
-          <tr><td><strong>Capital.com</strong></td><td>CFD</td><td><span class="badge b-b">FCA</span></td><td class="mono">€0,00</td><td><span class="badge b-g">● CONNECTED</span></td></tr>
-          <tr><td><strong>MetaMask</strong></td><td>Web3</td><td><span class="badge b-p">DEX</span></td><td class="mono">€0,00</td><td><span class="badge b-g">● CONNECTED</span></td></tr>
-        </table>
+      <div class="mg">
+        <div class="met"><div class="met-lbl">Verbonden</div><div class="met-val" style="color:var(--green)">10/10</div></div>
+        <div class="met"><div class="met-lbl">Totaal Balans</div><div class="met-val" style="color:var(--blue);font-size:18px">€2.985</div></div>
       </div>
+      <div class="sec-title">Exchanges — Tik voor details & acties</div>
+      <div class="card" id="ex-list"></div>
     </div>
 
-    <!-- ===== CAIO ===== -->
+    <!-- CAIO -->
     <div id="pg-caio" class="page">
-      <div class="g12">
-        <div class="card">
-          <div style="text-align:center;padding:16px 0">
-            <div style="width:70px;height:70px;background:linear-gradient(135deg,var(--green),var(--blue),var(--purple));border-radius:22px;display:flex;align-items:center;justify-content:center;font-size:36px;margin:0 auto 12px;box-shadow:0 0 30px rgba(0,255,136,0.4)">👑</div>
-            <div style="font-size:18px;font-weight:800;color:var(--green)">CAIO</div>
-            <div style="font-size:11px;color:var(--text2);margin:3px 0">Chief AI Officer</div>
-            <span class="badge b-g">● Online</span>
+      <div class="caio-box">
+        <div class="caio-hdr">
+          <div class="caio-av">👑</div>
+          <div>
+            <div class="caio-nm">CAIO</div>
+            <div class="caio-ttl">Chief AI Officer • GenesisX™</div>
+            <div class="caio-on"><div class="on-dot"></div>Online — reageert direct</div>
           </div>
-          <div style="margin-top:14px">
-            <div style="font-size:10px;color:var(--text3);margin-bottom:5px">Score</div>
-            <div style="font-size:28px;font-weight:800;color:var(--green);text-align:center">78/100</div>
-            <div class="prog"><div class="prog-f" style="width:78%"></div></div>
-          </div>
-          <div style="margin-top:14px">
-            <div class="qbtns">
-              <button class="qb" onclick="caioSend('Hoe gaat het?')">📊 Status</button>
-              <button class="qb" onclick="caioSend('Moet ik nu BTC kopen?')">🤔 BTC?</button>
-              <button class="qb" onclick="caioSend('Beste bot deze week?')">🤖 Bots</button>
-              <button class="qb" onclick="caioSend('Geef markt update')">📈 Markt</button>
-              <button class="qb" onclick="caioSend('Verhoog deployment advies')">💰 Deploy</button>
-            </div>
+          <div style="margin-left:auto;text-align:right">
+            <div style="font-size:22px;font-weight:800;color:var(--green)">78</div>
+            <div style="font-size:9px;color:var(--text3)">Score/100</div>
           </div>
         </div>
-        <div class="caio-box">
-          <div class="caio-hdr">
-            <div class="caio-av">👑</div>
-            <div>
-              <div class="caio-name">CAIO — GenesisX™</div>
-              <div class="caio-title">Chief AI Officer • Fase 33</div>
-              <div class="caio-online"><div class="online-dot"></div>Online • Reageert direct</div>
-            </div>
+
+        <div class="qbtns">
+          <button class="qb" onclick="caioSend('Hoe gaat het met GenesisX vandaag?')">📊 Status</button>
+          <button class="qb" onclick="caioSend('Moet ik nu BTC kopen?')">🤔 BTC kopen?</button>
+          <button class="qb" onclick="caioSend('Wat is mijn beste bot deze week?')">🤖 Beste bot</button>
+          <button class="qb" onclick="caioSend('Geef me een volledige markt analyse')">📈 Markt analyse</button>
+          <button class="qb" onclick="caioSend('Hoe kan ik mijn winst verhogen?')">💰 Meer winst</button>
+          <button class="qb" onclick="caioSend('Adviseer me over deployment verhoging')">⚡ Deployment</button>
+          <button class="qb" onclick="caioSend('Wat zijn de risicos van live trading?')">🛡️ Risicos</button>
+          <button class="qb" onclick="caioSend('Analyseer mijn portfolio en geef feedback')">🔍 Portfolio check</button>
+        </div>
+
+        <div class="chat-msgs" id="caioMsgs">
+          <div class="msg">
+            <div class="m-av c-av">👑</div>
+            <div class="bubble c-bub">Goedemorgen Rafik! 🌅 CAIO hier. GenesisX draait perfect — portfolio op €3.171,73 met +€21,73 deze week. ADA en SOL beide in de plus. Wat kan ik voor je betekenen?</div>
           </div>
-          <div class="chat-msgs" id="caioMsgs">
-            <div class="msg">
-              <div class="msg-av cav">👑</div>
-              <div class="bubble cb">Welkom Rafik! 🌐 GenesisX Web Interface actief. Portfolio €3.171,73 (+€21,73 week). Alle 23 bots operationeel. BULLISH markt. Wat kan ik voor je doen?</div>
-            </div>
-          </div>
-          <div class="chat-inp-wrap">
-            <input type="text" class="chat-inp" id="caioInp" placeholder="Stel CAIO een vraag..." onkeypress="if(event.key==='Enter')caioSend()">
-            <button class="chat-send" onclick="caioSend()">➤</button>
-          </div>
+        </div>
+
+        <div class="cin-w">
+          <input type="text" class="cin" id="caioInp" placeholder="Stel CAIO een vraag..." onkeypress="if(event.key==='Enter')caioSend()">
+          <button class="c-send" onclick="caioSend()">➤</button>
         </div>
       </div>
     </div>
 
-    <!-- ===== ACHIEVEMENTS ===== -->
-    <div id="pg-achievements" class="page">
-      <div class="streak">
-        <div class="str-fire">🔥</div>
-        <div><div class="str-cnt">3</div><div class="str-lbl">Dagen winstgevend op rij</div></div>
-        <div style="margin-left:auto;text-align:right"><div style="font-size:11px;color:var(--text2)">Record</div><div style="font-size:20px;font-weight:800;color:var(--yellow)">3 🏅</div></div>
+    <!-- ALERTS -->
+    <div id="pg-alerts" class="page">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px">
+        <div style="font-size:13px;font-weight:700">🔔 Systeem Alerts</div>
+        <button style="background:none;border:1px solid var(--border);border-radius:8px;padding:5px 10px;color:var(--text2);font-size:11px;cursor:pointer" onclick="alert('Alle alerts gemarkeerd als gelezen!')">Alles gelezen</button>
       </div>
-      <div class="card" style="margin-bottom:14px">
-        <div class="ch"><div class="ct">🎯 Doelen</div></div>
-        <div style="margin-bottom:12px">
-          <div style="display:flex;justify-content:space-between;font-size:12px;margin-bottom:5px"><span>€100 winst bereiken</span><span style="color:var(--green)">€21,73 / €100</span></div>
+      <div class="card" id="alert-list"></div>
+    </div>
+
+    <!-- ACHIEVEMENTS -->
+    <div id="pg-achievements" class="page">
+      <div class="str-card">
+        <div style="font-size:30px">🔥</div>
+        <div><div style="font-size:24px;font-weight:800;color:var(--yellow);font-family:'JetBrains Mono',monospace">3</div><div style="font-size:11px;color:var(--text2)">Dagen winstgevend op rij</div></div>
+        <div style="margin-left:auto;text-align:right"><div style="font-size:10px;color:var(--text2)">Record</div><div style="font-size:18px;font-weight:800;color:var(--yellow)">3 🏅</div></div>
+      </div>
+
+      <div class="card" style="margin-bottom:10px">
+        <div class="card-title">🎯 Doelen</div>
+        <div style="margin-bottom:10px">
+          <div style="display:flex;justify-content:space-between;font-size:12px;margin-bottom:4px"><span>€100 winst</span><span style="color:var(--green)">€21,73 / €100</span></div>
           <div class="prog"><div class="prog-f" style="width:21.73%"></div></div>
         </div>
-        <div style="margin-bottom:12px">
-          <div style="display:flex;justify-content:space-between;font-size:12px;margin-bottom:5px"><span>37 fases compleet</span><span style="color:var(--purple)">36 / 37</span></div>
+        <div style="margin-bottom:10px">
+          <div style="display:flex;justify-content:space-between;font-size:12px;margin-bottom:4px"><span>37 fases compleet</span><span style="color:var(--purple)">36 / 37</span></div>
           <div class="prog"><div class="prog-f" style="width:97%;background:linear-gradient(90deg,var(--purple),var(--blue))"></div></div>
         </div>
         <div>
-          <div style="display:flex;justify-content:space-between;font-size:12px;margin-bottom:5px"><span>10 dagen streak</span><span style="color:var(--yellow)">3 / 10</span></div>
+          <div style="display:flex;justify-content:space-between;font-size:12px;margin-bottom:4px"><span>10 dagen streak</span><span style="color:var(--yellow)">3 / 10</span></div>
           <div class="prog"><div class="prog-f" style="width:30%;background:linear-gradient(90deg,var(--yellow),var(--orange))"></div></div>
         </div>
       </div>
+
       <div class="card">
-        <div class="ch"><div class="ct">🏆 Achievements</div></div>
-        <div class="ach-grid">
-          <div class="ach un"><div class="ach-icon">🚀</div><div class="ach-name">Builder</div><div class="ach-desc">36 fases</div></div>
-          <div class="ach un"><div class="ach-icon">🧠</div><div class="ach-name">AI Pionier</div><div class="ach-desc">Claude AI</div></div>
-          <div class="ach un"><div class="ach-icon">🌐</div><div class="ach-name">Exchange King</div><div class="ach-desc">10 platforms</div></div>
-          <div class="ach un"><div class="ach-icon">👑</div><div class="ach-name">CAIO</div><div class="ach-desc">AI CEO</div></div>
-          <div class="ach un"><div class="ach-icon">🤖</div><div class="ach-name">Bot Army</div><div class="ach-desc">23 bots</div></div>
-          <div class="ach un"><div class="ach-icon">📈</div><div class="ach-name">First Green</div><div class="ach-desc">Eerste winst</div></div>
-          <div class="ach locked"><div class="ach-icon">💰</div><div class="ach-name">€100 Winst</div><div class="ach-desc">Nog €78 te gaan</div></div>
-          <div class="ach locked"><div class="ach-icon">🔴</div><div class="ach-name">Live Trader</div><div class="ach-desc">Ga live</div></div>
-          <div class="ach locked"><div class="ach-icon">💎</div><div class="ach-name">Diamond</div><div class="ach-desc">€1000 winst</div></div>
+        <div class="card-title">🏆 Achievements — Tik voor details</div>
+        <div class="ach-g">
+          <div class="ach un" onclick="openModal('ach-modal','🚀 Builder','Je hebt 36 fases van GenesisX gebouwd! Een uniek prestatie.')"><div class="ach-ic">🚀</div><div class="ach-nm">Builder</div><div class="ach-ds">36 fases</div></div>
+          <div class="ach un" onclick="openModal('ach-modal','🧠 AI Pionier','Claude AI succesvol gekoppeld als trading brain!')"><div class="ach-ic">🧠</div><div class="ach-nm">AI Pionier</div><div class="ach-ds">Claude AI</div></div>
+          <div class="ach un" onclick="openModal('ach-modal','🌐 Exchange King','10 exchanges gekoppeld — indrukwekkend!')"><div class="ach-ic">🌐</div><div class="ach-nm">Exchange King</div><div class="ach-ds">10 exchanges</div></div>
+          <div class="ach un" onclick="openModal('ach-modal','👑 CAIO','Je persoonlijke AI CEO is actief!')"><div class="ach-ic">👑</div><div class="ach-nm">CAIO</div><div class="ach-ds">AI CEO</div></div>
+          <div class="ach un" onclick="openModal('ach-modal','🤖 Bot Army','23 gespecialiseerde trading bots actief!')"><div class="ach-ic">🤖</div><div class="ach-nm">Bot Army</div><div class="ach-ds">23 bots</div></div>
+          <div class="ach un" onclick="openModal('ach-modal','📈 First Green','Je eerste winst is behaald!')"><div class="ach-ic">📈</div><div class="ach-nm">First Green</div><div class="ach-ds">Eerste winst</div></div>
+          <div class="ach lk" onclick="openModal('ach-modal','💰 €100 Winst','Nog €78,27 te gaan!')"><div class="ach-ic">💰</div><div class="ach-nm">€100 Winst</div><div class="ach-ds">Nog €78 te gaan</div></div>
+          <div class="ach lk" onclick="openModal('ach-modal','🔴 Live Trader','Ga live en unlock dit achievement!')"><div class="ach-ic">🔴</div><div class="ach-nm">Live Trader</div><div class="ach-ds">Ga live</div></div>
+          <div class="ach lk" onclick="openModal('ach-modal','💎 Diamond','Behaal €1000 winst!')"><div class="ach-ic">💎</div><div class="ach-nm">Diamond</div><div class="ach-ds">€1000 winst</div></div>
         </div>
       </div>
     </div>
 
-    <!-- ===== ALERTS ===== -->
-    <div id="pg-alerts" class="page">
-      <div class="card">
-        <div class="ch"><div class="ct">🔔 Systeem Alerts</div><button class="btn btn-s" style="font-size:11px;padding:5px 10px">Alles gelezen</button></div>
-        <div class="alert-item"><div class="al-icon al-s">✅</div><div><div class="al-msg">ADA stop-loss bijgewerkt naar break-even €1.14 (+3.51% winst)</div><div class="al-time">05-04-2026 02:15</div></div></div>
-        <div class="alert-item"><div class="al-icon al-i">⚡</div><div><div class="al-msg">Arbitrage kans: XRP Bitvavo vs Bybit — €1.32 netto winst</div><div class="al-time">05-04-2026 01:45</div></div></div>
-        <div class="alert-item"><div class="al-icon al-i">🧠</div><div><div class="al-msg">AI Brain analyse: BULLISH | Fear&Greed 72 | ADA top pick</div><div class="al-time">05-04-2026 01:30</div></div></div>
-        <div class="alert-item"><div class="al-icon al-s">🚀</div><div><div class="al-msg">CHRO: SnipeX en NightX klaar voor promotie naar live trading!</div><div class="al-time">05-04-2026 00:44</div></div></div>
-        <div class="alert-item"><div class="al-icon al-w">⚠️</div><div><div class="al-msg">CFO: Portfolio 75.7% cash — te conservatief voor bullish markt</div><div class="al-time">04-04-2026 18:12</div></div></div>
-      </div>
-    </div>
-
-    <!-- ===== SETTINGS ===== -->
+    <!-- SETTINGS -->
     <div id="pg-settings" class="page">
-      <div class="g2">
-        <div class="card">
-          <div style="font-size:13px;font-weight:700;margin-bottom:14px">⚙️ Trading</div>
-          <div class="set-item"><div><div class="set-lbl">Paper Trading</div><div class="set-desc">Simuleer trades zonder echt geld</div></div><div class="tog on" onclick="this.classList.toggle('on')"></div></div>
-          <div class="set-item"><div><div class="set-lbl">Auto Stop-Loss</div><div class="set-desc">Automatisch SL aanpassen bij winst</div></div><div class="tog on" onclick="this.classList.toggle('on')"></div></div>
-          <div class="set-item"><div><div class="set-lbl">Arbitrage Engine</div><div class="set-desc">Automatisch kansen benutten</div></div><div class="tog on" onclick="this.classList.toggle('on')"></div></div>
-          <div class="set-item">
-            <div><div class="set-lbl">Confidence Drempel</div><div class="set-desc">Min. AI confidence voor trades</div></div>
-            <div class="range-w"><input type="range" class="rng" min="50" max="95" value="65" oninput="this.nextElementSibling.textContent=this.value+'%'"><span class="rng-v">65%</span></div>
-          </div>
-          <div class="set-item">
-            <div><div class="set-lbl">Max Positie</div><div class="set-desc">Maximum % per trade</div></div>
-            <div class="range-w"><input type="range" class="rng" min="5" max="40" value="20" oninput="this.nextElementSibling.textContent=this.value+'%'"><span class="rng-v">20%</span></div>
-          </div>
-        </div>
-        <div class="card">
-          <div style="font-size:13px;font-weight:700;margin-bottom:14px">🔔 Notificaties</div>
-          <div class="set-item"><div><div class="set-lbl">Telegram Alerts</div><div class="set-desc">Berichten via Telegram bot</div></div><div class="tog on" onclick="this.classList.toggle('on')"></div></div>
-          <div class="set-item"><div><div class="set-lbl">CAIO Ochtend Briefing</div><div class="set-desc">Dagelijks rapport om 08:00</div></div><div class="tog on" onclick="this.classList.toggle('on')"></div></div>
-          <div class="set-item"><div><div class="set-lbl">Weekrapport</div><div class="set-desc">Maandags automatisch rapport</div></div><div class="tog on" onclick="this.classList.toggle('on')"></div></div>
-          <div style="font-size:13px;font-weight:700;margin:14px 0">🛡️ Beveiliging</div>
-          <div class="set-item"><div><div class="set-lbl">Failsafe Actief</div><div class="set-desc">Panic stop bij 15% drawdown</div></div><div class="tog on" onclick="this.classList.toggle('on')"></div></div>
-          <div class="set-item">
-            <div><div class="set-lbl">Max Drawdown</div><div class="set-desc">Automatisch stoppen bij verlies</div></div>
-            <div class="range-w"><input type="range" class="rng" min="5" max="30" value="15" oninput="this.nextElementSibling.textContent=this.value+'%'"><span class="rng-v">15%</span></div>
-          </div>
-        </div>
-      </div>
+      <div class="panic-btn" onclick="if(confirm('PANIC SHUTDOWN?\n\nAlle trading stoppen!'))alert('🚨 PANIC SHUTDOWN GEACTIVEERD')">🚨 PANIC SHUTDOWN</div>
+
       <div class="card">
-        <div style="font-size:13px;font-weight:700;margin-bottom:14px;color:var(--red)">🚨 Gevaarlijke Acties</div>
-        <div style="display:flex;gap:10px;flex-wrap:wrap">
-          <button class="btn btn-r" onclick="if(confirm('Alle posities sluiten?'))alert('Posities gesloten!')">🔴 Posities Sluiten</button>
-          <button class="btn btn-r" onclick="panic()">🚨 Panic Shutdown</button>
-          <button class="btn btn-s" onclick="alert('Systeem herstart...')">🔄 Herstarten</button>
+        <div class="card-title">⚙️ Trading Instellingen</div>
+        <div class="set-item">
+          <div><div class="set-lbl">Paper Trading</div><div class="set-desc">Simuleer trades zonder echt geld</div></div>
+          <div class="tog2 on" onclick="this.classList.toggle('on')"></div>
+        </div>
+        <div class="set-item">
+          <div><div class="set-lbl">Auto Stop-Loss</div><div class="set-desc">SL aanpassen bij winst</div></div>
+          <div class="tog2 on" onclick="this.classList.toggle('on')"></div>
+        </div>
+        <div class="set-item">
+          <div><div class="set-lbl">Arbitrage Engine</div><div class="set-desc">Automatisch kansen benutten</div></div>
+          <div class="tog2 on" onclick="this.classList.toggle('on')"></div>
+        </div>
+        <div class="set-item">
+          <div><div class="set-lbl">Confidence Drempel</div><div class="set-desc">Min. AI vertrouwen voor trades</div></div>
+          <div class="rng-w"><input type="range" class="rng" min="50" max="95" value="65" oninput="this.nextElementSibling.textContent=this.value+'%'"><span class="rng-v">65%</span></div>
+        </div>
+        <div class="set-item">
+          <div><div class="set-lbl">Max Positie</div><div class="set-desc">Maximum % kapitaal per trade</div></div>
+          <div class="rng-w"><input type="range" class="rng" min="5" max="40" value="20" oninput="this.nextElementSibling.textContent=this.value+'%'"><span class="rng-v">20%</span></div>
+        </div>
+        <div class="set-item">
+          <div><div class="set-lbl">Max Drawdown</div><div class="set-desc">Stop bij verlies percentage</div></div>
+          <div class="rng-w"><input type="range" class="rng" min="5" max="30" value="15" oninput="this.nextElementSibling.textContent=this.value+'%'"><span class="rng-v">15%</span></div>
         </div>
       </div>
-    </div>
 
-    <!-- ===== ANALYTICS / CSUITE / ARBITRAGE ===== -->
-    <div id="pg-analytics" class="page">
-      <div class="card"><div class="ch"><div class="ct">📈 Analytics</div></div><div style="color:var(--text2);text-align:center;padding:40px">Analytics module — wordt gevuld met live data uit n8n flows</div></div>
-    </div>
-    <div id="pg-csuite" class="page">
-      <div class="card"><div class="ch"><div class="ct">🏛️ C-Suite AI Rapporten</div></div>
-        <table class="tbl">
-          <tr><th>Bot</th><th>Score</th><th>Status</th><th>Laatste Advies</th></tr>
-          <tr><td>💰 CFO</td><td style="color:var(--orange)">45/100</td><td><span class="badge b-y">MATIG</span></td><td style="font-size:12px;color:var(--text2)">Verhoog deployment naar 35-40%</td></tr>
-          <tr><td>⚙️ COO</td><td style="color:var(--green)">85/100</td><td><span class="badge b-g">GOED</span></td><td style="font-size:12px;color:var(--text2)">Optimaliseer bot entry parameters</td></tr>
-          <tr><td>📊 CMO</td><td style="color:var(--blue)">78/100</td><td><span class="badge b-b">GOED</span></td><td style="font-size:12px;color:var(--text2)">Focus op ADA momentum trades</td></tr>
-          <tr><td>💻 CTO</td><td style="color:var(--green)">88/100</td><td><span class="badge b-g">OPTIMAL</span></td><td style="font-size:12px;color:var(--text2)">Systeem optimaal — geen acties</td></tr>
-          <tr><td>👥 CHRO</td><td style="color:var(--red)">35/100</td><td><span class="badge b-r">ZWAK</span></td><td style="font-size:12px;color:var(--text2)">Bots te passief — optimaliseer</td></tr>
-          <tr><td>🧠 CIO</td><td style="color:var(--blue)">72/100</td><td><span class="badge b-b">GOED</span></td><td style="font-size:12px;color:var(--text2)">Bullish momentum verwacht 24u</td></tr>
-        </table>
+      <div class="card">
+        <div class="card-title">🔔 Notificaties</div>
+        <div class="set-item">
+          <div><div class="set-lbl">Telegram Alerts</div><div class="set-desc">Berichten via bot</div></div>
+          <div class="tog2 on" onclick="this.classList.toggle('on')"></div>
+        </div>
+        <div class="set-item">
+          <div><div class="set-lbl">CAIO Ochtend Briefing</div><div class="set-desc">Dagelijks 08:00</div></div>
+          <div class="tog2 on" onclick="this.classList.toggle('on')"></div>
+        </div>
+        <div class="set-item">
+          <div><div class="set-lbl">Weekrapport</div><div class="set-desc">Elke maandag</div></div>
+          <div class="tog2 on" onclick="this.classList.toggle('on')"></div>
+        </div>
       </div>
-    </div>
-    <div id="pg-arbitrage" class="page">
-      <div class="card"><div class="ch"><div class="ct">⚡ Arbitrage Engine</div><span class="badge b-g">2 kansen actief</span></div>
-        <table class="tbl">
-          <tr><th>Asset</th><th>Bitvavo</th><th>Bybit</th><th>Spread</th><th>Netto</th><th>Winst</th></tr>
-          <tr><td><strong>XRP</strong></td><td class="mono">€1.140</td><td class="mono">€1.147</td><td style="color:var(--green)">0.614%</td><td style="color:var(--green)">0.264%</td><td style="color:var(--green);font-weight:700">+€1.32</td></tr>
-          <tr><td><strong>ADA</strong></td><td class="mono">€0.2147</td><td class="mono">€0.2159</td><td style="color:var(--green)">0.559%</td><td style="color:var(--green)">0.209%</td><td style="color:var(--green);font-weight:700">+€1.04</td></tr>
-          <tr><td>BTC</td><td class="mono">€58.406</td><td class="mono">€58.590</td><td style="color:var(--text3)">0.316%</td><td style="color:var(--red)">-0.034%</td><td style="color:var(--red)">-€0.17</td></tr>
-          <tr><td>ETH</td><td class="mono">€1.784</td><td class="mono">€1.788</td><td style="color:var(--text3)">0.240%</td><td style="color:var(--red)">-0.110%</td><td style="color:var(--red)">-€0.55</td></tr>
-        </table>
+
+      <div style="margin-top:10px;text-align:center;color:var(--text3);font-size:11px;padding-bottom:20px">
+        GenesisX™ v2.0 • Fase 36 • Gebouwd door Rafik Bourziz<br>Powered by Claude AI
       </div>
     </div>
 
-  </div><!-- end main -->
-</div><!-- end app -->
+  </div><!-- pages -->
 
-<!-- MOBILE NAV -->
-<nav class="mobile-nav">
-  <div class="mn-items">
-    <div class="mn-item active" id="mn-dashboard" onclick="go('dashboard',null);setMN('dashboard')"><div class="mn-ic">📊</div><div class="mn-lbl">Dashboard</div></div>
-    <div class="mn-item" id="mn-portfolio" onclick="go('portfolio',null);setMN('portfolio')"><div class="mn-ic">💰</div><div class="mn-lbl">Portfolio</div></div>
-    <div class="mn-item" id="mn-bots" onclick="go('bots',null);setMN('bots')"><div class="mn-ic">🤖</div><div class="mn-lbl">Bots</div></div>
-    <div class="mn-item" id="mn-caio" onclick="go('caio',null);setMN('caio')"><div class="mn-ic">👑</div><div class="mn-lbl">CAIO</div></div>
-    <div class="mn-item" id="mn-alerts" onclick="go('alerts',null);setMN('alerts')"><div class="mn-ic">🔔</div><div class="mn-lbl">Alerts</div></div>
+  <!-- BOTTOM NAV -->
+  <nav class="bnav">
+    <div class="bn-item active" id="bn-dashboard" onclick="showTab('dashboard',null);setBN('dashboard')"><div class="bn-ic">📊</div><div class="bn-lbl">Dashboard</div></div>
+    <div class="bn-item" id="bn-portfolio" onclick="showTab('portfolio',null);setBN('portfolio')"><div class="bn-ic">💰</div><div class="bn-lbl">Portfolio</div></div>
+    <div class="bn-item" id="bn-bots" onclick="showTab('bots',null);setBN('bots')"><div class="bn-ic">🤖</div><div class="bn-lbl">Bots</div></div>
+    <div class="bn-item" id="bn-caio" onclick="showTab('caio',null);setBN('caio')"><div class="bn-ic">👑</div><div class="bn-lbl">CAIO</div></div>
+    <div class="bn-item" id="bn-settings" onclick="showTab('settings',null);setBN('settings')"><div class="bn-ic">⚙️</div><div class="bn-lbl">Meer</div></div>
+  </nav>
+
+</div><!-- app -->
+
+<!-- MODALS -->
+<div class="modal-overlay" id="modal-overlay" onclick="if(event.target===this)closeModal()">
+  <div class="modal" id="modal-content"></div>
+</div>
+
+<!-- ACHIEVEMENT MODAL (reusable) -->
+<div class="modal-overlay" id="ach-overlay" onclick="if(event.target===this)this.classList.remove('open')">
+  <div class="modal">
+    <div class="modal-handle"></div>
+    <div class="modal-title" id="ach-title"></div>
+    <div id="ach-body" style="color:var(--text2);font-size:14px;line-height:1.6"></div>
+    <div class="act-grid" style="margin-top:16px">
+      <div class="act-btn act-primary act-full" onclick="document.getElementById('ach-overlay').classList.remove('open')">Begrepen 👊</div>
+    </div>
   </div>
-</nav>
+</div>
 
 <script>
-// ===== BOTS =====
+// ===== DATA =====
 const bots=[
-  {name:'WhaleX',score:91,wr:100,trades:1,status:'ACTIVE',emoji:'🐋',pers:'Majestueuze oceaan koning — spreekt weinig maar elke actie heeft enorme impact'},
-  {name:'SnipeX',score:88,wr:100,trades:2,status:'LIVE_READY',emoji:'🎯',pers:'Elite precision shooter — koud, calculerend, elke trade een statement'},
-  {name:'NightX',score:85,wr:83,trades:12,status:'LIVE_READY',emoji:'🌙',pers:'Cool night warrior — kalm, mysterieus, laat resultaten spreken'},
-  {name:'ScalpX',score:82,wr:75,trades:8,status:'ACTIVE',emoji:'⚡',pers:'Agressieve scalper — snel, hongerig, nooit stil'},
-  {name:'ArbiX',score:79,wr:80,trades:15,status:'ACTIVE',emoji:'🔄',pers:'Snelle arbitrage jager — ziet kansen voor anderen ze zien'},
-  {name:'MomentX',score:65,wr:60,trades:5,status:'ACTIVE',emoji:'🏄',pers:'Momentum surfer — rijdt golven, leert elke dag'},
-  {name:'BurnerX',score:58,wr:55,trades:20,status:'PAPER',emoji:'🔥',pers:'High frequency trader — veel actie, verfijning nodig'},
-  {name:'GuardX',score:50,wr:0,trades:0,status:'PAUSED',emoji:'🛡️',pers:'Risico bewaker — wacht op perfecte omstandigheden'},
-  {name:'DeltaX',score:35,wr:0,trades:1,status:'PAUSED',emoji:'📉',pers:'Delta hedger — underperformt, wordt geoptimaliseerd'}
+  {name:'WhaleX',score:91,wr:100,trades:1,status:'ACTIVE',emoji:'🐋',pers:'Majestueuze oceaan koning',color:'linear-gradient(135deg,#00ff88,#00b4d8)'},
+  {name:'SnipeX',score:88,wr:100,trades:2,status:'LIVE_READY',emoji:'🎯',pers:'Elite precision shooter',color:'linear-gradient(135deg,#00ff88,#00b4d8)'},
+  {name:'NightX',score:85,wr:83,trades:12,status:'LIVE_READY',emoji:'🌙',pers:'Cool night warrior',color:'linear-gradient(135deg,#00ff88,#00b4d8)'},
+  {name:'ScalpX',score:82,wr:75,trades:8,status:'ACTIVE',emoji:'⚡',pers:'Agressieve scalper',color:'linear-gradient(135deg,#0ea5e9,#a855f7)'},
+  {name:'ArbiX',score:79,wr:80,trades:15,status:'ACTIVE',emoji:'🔄',pers:'Snelle arbitrage jager',color:'linear-gradient(135deg,#0ea5e9,#a855f7)'},
+  {name:'MomentX',score:65,wr:60,trades:5,status:'ACTIVE',emoji:'🏄',pers:'Momentum surfer',color:'linear-gradient(135deg,#f59e0b,#ef4444)'},
+  {name:'BurnerX',score:58,wr:55,trades:20,status:'PAPER',emoji:'🔥',pers:'High frequency trader',color:'linear-gradient(135deg,#f59e0b,#ef4444)'},
+  {name:'GuardX',score:50,wr:0,trades:0,status:'PAUSED',emoji:'🛡️',pers:'Risico bewaker',color:'#475569'},
+  {name:'DeltaX',score:35,wr:0,trades:1,status:'PAUSED',emoji:'📉',pers:'Delta hedger — wordt geoptimaliseerd',color:'#475569'}
 ];
 
-function gc(s){return s>=85?'linear-gradient(135deg,#00ff88,#00b4d8)':s>=70?'linear-gradient(135deg,#0ea5e9,#a855f7)':s>=50?'linear-gradient(135deg,#f59e0b,#ef4444)':'#475569';}
-function gsc(s){return s>=85?'linear-gradient(90deg,#00ff88,#00b4d8)':s>=70?'linear-gradient(90deg,#0ea5e9,#a855f7)':s>=50?'linear-gradient(90deg,#f59e0b,#ef4444)':'#475569';}
-function gss(s){const m={ACTIVE:'b-g',LIVE_READY:'b-y',PAUSED:'b-r',PAPER:'b-b'};return m[s]||'b-b';}
-function gsl(s){const m={ACTIVE:'ACTIEF',LIVE_READY:'LIVE READY',PAUSED:'GEPAUZEERD',PAPER:'PAPER'};return m[s]||s;}
+const flows=[
+  {name:'AI Brain',trigger:'Elke 30 min',runs:48,on:true},
+  {name:'Sentiment Analyse',trigger:'Elke 30 min',runs:48,on:true},
+  {name:'Trading Engine',trigger:'Elke 15 min',runs:96,on:true},
+  {name:'Stop-Loss Manager',trigger:'Elke 5 min',runs:288,on:true},
+  {name:'Arbitrage Engine',trigger:'Elke 2 min',runs:720,on:true},
+  {name:'Learning & Memory',trigger:'Elke 6 uur',runs:4,on:true},
+  {name:'C-Suite AI',trigger:'Elke 4 uur',runs:6,on:true},
+  {name:'Portfolio Rebalancer',trigger:'Maandag 09:00',runs:1,on:true},
+  {name:'Weekrapport',trigger:'Maandag 08:00',runs:1,on:true},
+  {name:'CAIO Briefing',trigger:'Dagelijks 08:00',runs:5,on:true},
+  {name:'Exchange Mesh',trigger:'Elke 4 uur',runs:6,on:true},
+  {name:'Failsafe',trigger:'Elke 5 min',runs:288,on:true},
+  {name:'SubBot Army',trigger:'Elke 30 min',runs:48,on:true},
+  {name:'Governance',trigger:'Elke uur',runs:24,on:true},
+  {name:'Market Data',trigger:'Elke 15 min',runs:96,on:true},
+  {name:'PumpDump Detector',trigger:'Elke 5 min',runs:288,on:true},
+  {name:'Telegram Control',trigger:'Webhook',runs:12,on:true},
+  {name:'AI Autonomie',trigger:'Elke 6 uur',runs:4,on:true},
+  {name:'Dashboard',trigger:'Elke 2 uur',runs:12,on:true},
+  {name:'Cashflow Engine',trigger:'Dagelijks',runs:5,on:true}
+];
 
+const exchanges=[
+  {name:'Bitvavo',type:'CEX',reg:'DNB+MiCA',bal:2400.30,status:'CONNECTED',dot:'ex-g'},
+  {name:'Bybit EU',type:'CEX',reg:'MiCA',bal:373.65,status:'CONNECTED',dot:'ex-g'},
+  {name:'OKX',type:'CEX',reg:'DNB',bal:0,status:'CONNECTED',dot:'ex-g'},
+  {name:'Kraken',type:'CEX',reg:'FCA',bal:0,status:'CONNECTED',dot:'ex-g'},
+  {name:'MEXC',type:'CEX',reg:'INT',bal:0,status:'CONNECTED',dot:'ex-g'},
+  {name:'Coinbase',type:'CEX',reg:'EU',bal:0,status:'CONNECTED',dot:'ex-g'},
+  {name:'IC Markets EU',type:'Forex/MT5',reg:'CySEC',bal:185.33,status:'CONNECTED',dot:'ex-g'},
+  {name:'Pepperstone',type:'Forex/MT5',reg:'FCA',bal:0,status:'KYC PENDING',dot:'ex-y'},
+  {name:'Capital.com',type:'CFD',reg:'FCA',bal:0,status:'CONNECTED',dot:'ex-g'},
+  {name:'MetaMask',type:'Web3',reg:'DEX',bal:0,status:'CONNECTED',dot:'ex-g'}
+];
+
+const alerts=[
+  {type:'s',ic:'✅',msg:'ADA stop-loss bijgewerkt naar break-even €1.14 (+3.51%)',time:'05-04 02:15'},
+  {type:'i',ic:'⚡',msg:'Arbitrage kans: XRP Bitvavo vs Bybit — €1.32 netto winst',time:'05-04 01:45'},
+  {type:'i',ic:'🧠',msg:'AI Brain: BULLISH sentiment | Fear&Greed 72 | ADA top pick',time:'05-04 01:30'},
+  {type:'s',ic:'🚀',msg:'CHRO: SnipeX en NightX klaar voor live trading!',time:'05-04 00:44'},
+  {type:'w',ic:'⚠️',msg:'CFO: 75.7% cash — te conservatief voor bullish markt',time:'04-04 18:12'},
+  {type:'i',ic:'📊',msg:'Weekrapport: Score 72/100 — IMPROVING trend',time:'04-04 08:00'}
+];
+
+// ===== RENDER =====
 function renderBots(){
   const l=document.getElementById('bot-list');
   if(!l)return;
   l.innerHTML=bots.map((b,i)=>`
-    <div class="bot-card">
-      <div class="bot-rank">#${i+1}</div>
-      <div class="bot-av" style="background:${gc(b.score)}">${b.emoji}</div>
-      <div class="bot-info">
-        <div class="bot-name">${b.name}<span class="badge ${gss(b.status)}">${gsl(b.status)}</span></div>
-        <div class="bot-pers">${b.pers}</div>
-        <div class="bot-sc-row">
-          <div class="bot-sc-bar"><div class="bot-sc-f" style="width:${b.score}%;background:${gsc(b.score)}"></div></div>
-          <div class="bot-sc-n">${b.score}</div>
+    <div class="bot-card" onclick="openBotModal('${b.name}')">
+      <div class="bot-rnk">#${i+1}</div>
+      <div class="bot-av" style="background:${b.color}">${b.emoji}</div>
+      <div class="bot-inf">
+        <div class="bot-nm">${b.name}<span class="badge ${b.status==='ACTIVE'?'bg':b.status==='LIVE_READY'?'by':b.status==='PAUSED'?'br':'bb'}">${b.status==='ACTIVE'?'ACTIEF':b.status==='LIVE_READY'?'LIVE READY':b.status==='PAUSED'?'GEPAUZEERD':'PAPER'}</span></div>
+        <div class="bot-pr">${b.pers}</div>
+        <div class="bot-sb">
+          <div class="bot-bar"><div class="bot-bf" style="width:${b.score}%;background:${b.score>=80?'linear-gradient(90deg,var(--green),var(--blue))':b.score>=60?'linear-gradient(90deg,var(--blue),var(--purple))':'linear-gradient(90deg,var(--yellow),var(--red))'}"></div></div>
+          <div class="bot-sc">${b.score}</div>
         </div>
-        <div class="bot-stats">
-          <div class="bot-stat">Trades: <b>${b.trades}</b></div>
-          <div class="bot-stat">WR: <b style="color:${b.wr>=70?'var(--green)':b.wr>=50?'var(--yellow)':'var(--red)'}">${b.wr}%</b></div>
-        </div>
+        <div class="bot-sts"><div class="bot-st">Trades: <b>${b.trades}</b></div><div class="bot-st">WR: <b style="color:${b.wr>=70?'var(--green)':b.wr>=50?'var(--yellow)':'var(--red)'}">${b.wr}%</b></div></div>
       </div>
+      <span class="row-arrow">›</span>
     </div>
   `).join('');
 }
 
-// ===== FLOWS =====
-const flows=[
-  {name:'AI Brain',trigger:'Elke 30 min',runs:48},{name:'Sentiment Analyse',trigger:'Elke 30 min',runs:48},
-  {name:'Trading Engine',trigger:'Elke 15 min',runs:96},{name:'Stop-Loss Manager',trigger:'Elke 5 min',runs:288},
-  {name:'Arbitrage Engine',trigger:'Elke 2 min',runs:720},{name:'Learning & Memory',trigger:'Elke 6 uur',runs:4},
-  {name:'C-Suite AI',trigger:'Elke 4 uur',runs:6},{name:'Portfolio Rebalancer',trigger:'Maandag 09:00',runs:1},
-  {name:'Weekrapport',trigger:'Maandag 08:00',runs:1},{name:'CAIO Briefing',trigger:'Dagelijks 08:00',runs:5},
-  {name:'Exchange Mesh',trigger:'Elke 4 uur',runs:6},{name:'Failsafe',trigger:'Elke 5 min',runs:288},
-  {name:'Dashboard',trigger:'Elke 2 uur',runs:12},{name:'Cashflow Engine',trigger:'Dagelijks',runs:5},
-  {name:'SubBot Army',trigger:'Elke 30 min',runs:48},{name:'Governance Monitor',trigger:'Elke uur',runs:24},
-  {name:'Market Data',trigger:'Elke 15 min',runs:96},{name:'PumpDump Detector',trigger:'Elke 5 min',runs:288},
-  {name:'Telegram Control',trigger:'Webhook',runs:12},{name:'AI Autonomie',trigger:'Elke 6 uur',runs:4}
-];
-
 function renderFlows(){
   const l=document.getElementById('flow-list');
   if(!l)return;
-  l.innerHTML=flows.map(f=>`
-    <div class="flow-item">
-      <div class="flow-dot" style="background:var(--green);box-shadow:0 0 5px var(--green)"></div>
-      <div class="flow-name">${f.name}</div>
-      <div class="flow-trigger">${f.trigger}</div>
-      <div class="flow-runs">${f.runs}x vandaag</div>
-      <div class="toggle on" onclick="this.classList.toggle('on')"></div>
+  l.innerHTML=flows.map((f,i)=>`
+    <div class="flow-row" onclick="openFlowModal(${i})">
+      <div class="flow-dot" style="background:${f.on?'var(--green)':'var(--red)'};${f.on?'box-shadow:0 0 5px var(--green)':''}"></div>
+      <div style="flex:1">
+        <div class="flow-nm">${f.name}</div>
+        <div class="flow-tr">${f.trigger} • ${f.runs}x vandaag</div>
+      </div>
+      <div class="tog ${f.on?'on':''}" id="tog-${i}" onclick="event.stopPropagation();toggleFlow(${i},this)"></div>
+    </div>
+  `).join('');
+}
+
+function renderExchanges(){
+  const l=document.getElementById('ex-list');
+  if(!l)return;
+  l.innerHTML=exchanges.map(ex=>`
+    <div class="ex-row" onclick="openExModal('${ex.name}')">
+      <div class="ex-dot ${ex.dot}"></div>
+      <div style="flex:1">
+        <div class="ex-nm">${ex.name}</div>
+        <div class="ex-tp">${ex.type} • ${ex.reg}</div>
+      </div>
+      <div style="text-align:right">
+        <div class="ex-bal" style="color:${ex.bal>0?'var(--green)':'var(--text)'}">${ex.bal>0?'€'+ex.bal.toFixed(2):'€0,00'}</div>
+        <div class="ex-st">${ex.status}</div>
+      </div>
+      <span class="row-arrow">›</span>
+    </div>
+  `).join('');
+}
+
+function renderAlerts(){
+  const l=document.getElementById('alert-list');
+  if(!l)return;
+  l.innerHTML=alerts.map(a=>`
+    <div class="al-row" onclick="openModal('al-detail','${a.ic} Alert',\`${a.msg}\nTijd: ${a.time}\`)">
+      <div class="al-ic al-${a.type}">${a.ic}</div>
+      <div style="flex:1">
+        <div class="al-msg">${a.msg}</div>
+        <div class="al-time">${a.time}</div>
+      </div>
+      <span class="row-arrow">›</span>
     </div>
   `).join('');
 }
 
 // ===== NAVIGATION =====
-const titles={
-  dashboard:['Dashboard','Overzicht van GenesisX™ systeem'],
-  analytics:['Analytics','Diepgaande analyse en statistieken'],
-  portfolio:['Portfolio','Open posities en kapitaal verdeling'],
-  signals:['Signalen','AI Brain trading signalen'],
-  arbitrage:['Arbitrage','Live arbitrage kansen'],
-  bots:['Bot Army','23 gespecialiseerde trading bots'],
-  flows:['n8n Flows','20 actieve automation flows'],
-  exchanges:['Exchanges','10 gekoppelde trading platforms'],
-  caio:['CAIO Chat','Chat met je persoonlijke AI CEO'],
-  csuite:['C-Suite AI','AI management team rapporten'],
-  achievements:['Prestaties','Achievements, doelen en streak'],
-  alerts:['Alerts','Systeem notificaties'],
-  settings:['Instellingen','GenesisX configuratie en beheer']
-};
-
-function go(id,navEl){
+function showTab(id,tabEl){
   document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
-  document.querySelectorAll('.sb-item').forEach(n=>n.classList.remove('active'));
+  document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));
   const pg=document.getElementById('pg-'+id);
-  if(pg)pg.classList.add('active');
-  if(navEl)navEl.classList.add('active');
-  if(titles[id]){document.getElementById('pgTitle').textContent=titles[id][0];document.getElementById('pgSub').textContent=titles[id][1];}
-  if(id==='flows')renderFlows();
+  if(pg){pg.classList.add('active');pg.scrollTop=0;}
+  if(tabEl)tabEl.classList.add('active');
+  // scroll tab into view
+  if(tabEl){tabEl.scrollIntoView({behavior:'smooth',block:'nearest',inline:'center'});}
+  // render
   if(id==='bots')renderBots();
-  // close sidebar on mobile
-  if(window.innerWidth<1024)document.getElementById('sidebar').classList.remove('open');
+  if(id==='flows')renderFlows();
+  if(id==='exchanges')renderExchanges();
+  if(id==='alerts')renderAlerts();
 }
 
-function setMN(id){
-  document.querySelectorAll('.mn-item').forEach(n=>n.classList.remove('active'));
-  const el=document.getElementById('mn-'+id);
+function setBN(id){
+  document.querySelectorAll('.bn-item').forEach(n=>n.classList.remove('active'));
+  const el=document.getElementById('bn-'+id);
   if(el)el.classList.add('active');
 }
 
-function toggleSB(){document.getElementById('sidebar').classList.toggle('open');}
+// ===== MODAL SYSTEM =====
+function openModal(id,title,body){
+  const overlay=document.getElementById('modal-overlay');
+  const content=document.getElementById('modal-content');
+  let html='<div class="modal-handle"></div>';
 
-// ===== CLOCK =====
-setInterval(()=>{document.getElementById('clock').textContent=new Date().toLocaleTimeString('nl-NL');},1000);
+  if(id==='bot-modal-content'){
+    html+=content.innerHTML;
+  } else if(id==='portfolio-modal'){
+    html+=`<div class="modal-title">💰 Portfolio Details<button class="modal-close" onclick="closeModal()">✕</button></div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px">
+      <div style="background:var(--card2);border-radius:12px;padding:12px;text-align:center"><div style="font-size:10px;color:var(--text3)">Totaal</div><div style="font-size:20px;font-weight:800;color:var(--green)">€3.171,73</div></div>
+      <div style="background:var(--card2);border-radius:12px;padding:12px;text-align:center"><div style="font-size:10px;color:var(--text3)">Week PnL</div><div style="font-size:20px;font-weight:800;color:var(--green)">+€21,73</div></div>
+      <div style="background:var(--card2);border-radius:12px;padding:12px;text-align:center"><div style="font-size:10px;color:var(--text3)">Deployed</div><div style="font-size:20px;font-weight:800;color:var(--blue)">23.8%</div></div>
+      <div style="background:var(--card2);border-radius:12px;padding:12px;text-align:center"><div style="font-size:10px;color:var(--text3)">Cash</div><div style="font-size:20px;font-weight:800">€2.400</div></div>
+    </div>
+    <div style="margin-top:14px;padding:12px;background:rgba(0,255,136,0.05);border:1px solid rgba(0,255,136,0.2);border-radius:12px;font-size:13px;color:var(--text2)">
+      💡 <strong style="color:var(--green)">CAIO Advies:</strong> CFO adviseert deployment te verhogen naar 35-40% om meer te profiteren van het huidige BULLISH markt sentiment.
+    </div>
+    <div class="act-grid" style="margin-top:14px">
+      <div class="act-btn act-primary" onclick="closeModal();openModal('trade-modal')">💰 Trade Openen</div>
+      <div class="act-btn act-secondary" onclick="closeModal()">✕ Sluiten</div>
+    </div>`;
+  } else if(id==='trade-modal'){
+    html+=`<div class="modal-title">💰 Trade Uitvoeren<button class="modal-close" onclick="closeModal()">✕</button></div>
+    <div style="margin-bottom:12px">
+      <div style="font-size:11px;color:var(--text3);margin-bottom:6px">Asset</div>
+      <select style="width:100%;background:var(--card2);border:1px solid var(--border);border-radius:10px;padding:12px;color:var(--text);font-size:14px;font-family:'Space Grotesk',sans-serif;outline:none">
+        <option>ADA — €1.18 (+4.12%) 🟢 BUY signaal</option>
+        <option>SOL — €70.50 (+2.88%) 🟢 BUY signaal</option>
+        <option>BTC — €58.457 (+0.82%) ➡️ HOLD</option>
+        <option>ETH — €1.785 (+0.90%) ➡️ HOLD</option>
+        <option>XRP — €1.14 (+2.59%) ➡️ HOLD</option>
+      </select>
+    </div>
+    <div style="margin-bottom:12px">
+      <div style="font-size:11px;color:var(--text3);margin-bottom:6px">Bedrag (EUR)</div>
+      <input type="number" placeholder="€100" style="width:100%;background:var(--card2);border:1px solid var(--border);border-radius:10px;padding:12px;color:var(--text);font-size:14px;font-family:'Space Grotesk',sans-serif;outline:none">
+    </div>
+    <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:6px;margin-bottom:12px">
+      <div style="background:var(--card2);border:1px solid var(--border);border-radius:8px;padding:8px;text-align:center;cursor:pointer;font-size:12px;font-weight:700" onclick="this.parentNode.querySelectorAll('div').forEach(d=>d.style.borderColor='var(--border)');this.style.borderColor='var(--green)'">€50</div>
+      <div style="background:var(--card2);border:1px solid var(--border);border-radius:8px;padding:8px;text-align:center;cursor:pointer;font-size:12px;font-weight:700" onclick="this.parentNode.querySelectorAll('div').forEach(d=>d.style.borderColor='var(--border)');this.style.borderColor='var(--green)'">€100</div>
+      <div style="background:var(--card2);border:1px solid var(--border);border-radius:8px;padding:8px;text-align:center;cursor:pointer;font-size:12px;font-weight:700" onclick="this.parentNode.querySelectorAll('div').forEach(d=>d.style.borderColor='var(--border)');this.style.borderColor='var(--green)'">€250</div>
+    </div>
+    <div style="padding:10px;background:rgba(251,191,36,0.05);border:1px solid rgba(251,191,36,0.2);border-radius:10px;font-size:11px;color:var(--yellow);margin-bottom:12px">
+      ⚠️ PAPER TRADING modus actief — geen echt geld gebruikt
+    </div>
+    <div class="act-grid">
+      <div class="act-btn act-primary" onclick="closeModal();alert('✅ PAPER TRADE uitgevoerd!\n\nADA gekocht voor €100\nPrijs: €1.18\nUnits: 84.7 ADA\nSL: €1.13 | TP: €1.27')">🟢 Paper BUY</div>
+      <div class="act-btn act-danger" onclick="closeModal();alert('✅ PAPER SELL uitgevoerd!')">🔴 Paper SELL</div>
+    </div>`;
+  } else if(id==='arb-modal'||id==='arb-xrp-modal'||id==='arb-ada-modal'){
+    const asset=id==='arb-ada-modal'?'ADA':'XRP';
+    const profit=id==='arb-ada-modal'?'€1.04':'€1.32';
+    html+=`<div class="modal-title">⚡ Arbitrage — ${asset}<button class="modal-close" onclick="closeModal()">✕</button></div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:14px">
+      <div style="background:var(--card2);border-radius:12px;padding:12px">
+        <div style="font-size:10px;color:var(--text3)">Bitvavo Prijs</div>
+        <div style="font-size:18px;font-weight:800;font-family:'JetBrains Mono',monospace">€1.14</div>
+      </div>
+      <div style="background:var(--card2);border-radius:12px;padding:12px">
+        <div style="font-size:10px;color:var(--text3)">Bybit Prijs</div>
+        <div style="font-size:18px;font-weight:800;font-family:'JetBrains Mono',monospace">€1.147</div>
+      </div>
+      <div style="background:rgba(0,255,136,0.08);border:1px solid rgba(0,255,136,0.2);border-radius:12px;padding:12px">
+        <div style="font-size:10px;color:var(--text3)">Netto Winst</div>
+        <div style="font-size:22px;font-weight:800;color:var(--green)">${profit}</div>
+      </div>
+      <div style="background:var(--card2);border-radius:12px;padding:12px">
+        <div style="font-size:10px;color:var(--text3)">Strategie</div>
+        <div style="font-size:12px;font-weight:700">Koop Bitvavo<br>Verkoop Bybit</div>
+      </div>
+    </div>
+    <div class="act-grid">
+      <div class="act-btn act-primary" onclick="closeModal();alert('⚡ PAPER ARBITRAGE uitgevoerd!\\n\\n${asset}: Bitvavo → Bybit\\nNetto winst: ${profit}')">⚡ Paper Arbitrage</div>
+      <div class="act-btn act-secondary" onclick="closeModal()">✕ Sluiten</div>
+    </div>`;
+  } else if(id==='rebalance-modal'){
+    html+=`<div class="modal-title">⚖️ Portfolio Rebalancen<button class="modal-close" onclick="closeModal()">✕</button></div>
+    <div style="font-size:13px;color:var(--text2);margin-bottom:14px">Doel allocatie vs huidige positie:</div>
+    <div style="display:flex;flex-direction:column;gap:8px;margin-bottom:14px">
+      <div style="display:flex;justify-content:space-between;align-items:center;padding:10px;background:var(--card2);border-radius:10px">
+        <span style="font-weight:700">BTC</span><span style="color:var(--text2)">Nu: 0% → Doel: 30%</span><span style="color:var(--green);font-weight:700">Koop €945</span>
+      </div>
+      <div style="display:flex;justify-content:space-between;align-items:center;padding:10px;background:var(--card2);border-radius:10px">
+        <span style="font-weight:700">ETH</span><span style="color:var(--text2)">Nu: 0% → Doel: 20%</span><span style="color:var(--green);font-weight:700">Koop €630</span>
+      </div>
+      <div style="display:flex;justify-content:space-between;align-items:center;padding:10px;background:var(--card2);border-radius:10px">
+        <span style="font-weight:700">ADA</span><span style="color:var(--text2)">Nu: 12.5% → Doel: 10%</span><span style="color:var(--red);font-weight:700">Verkoop €79</span>
+      </div>
+    </div>
+    <div class="act-grid">
+      <div class="act-btn act-primary" onclick="closeModal();alert('✅ PAPER Rebalance uitgevoerd!')">⚖️ Paper Rebalance</div>
+      <div class="act-btn act-secondary" onclick="closeModal()">✕ Annuleren</div>
+    </div>`;
+  } else if(id==='report-modal'){
+    html+=`<div class="modal-title">📊 Weekrapport<button class="modal-close" onclick="closeModal()">✕</button></div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:14px">
+      <div style="background:var(--card2);border-radius:12px;padding:12px;text-align:center"><div style="font-size:10px;color:var(--text3)">Week Score</div><div style="font-size:26px;font-weight:800;color:var(--green)">72</div><div style="font-size:10px;color:var(--yellow)">IMPROVING</div></div>
+      <div style="background:var(--card2);border-radius:12px;padding:12px;text-align:center"><div style="font-size:10px;color:var(--text3)">Week PnL</div><div style="font-size:26px;font-weight:800;color:var(--green)">+€21,73</div><div style="font-size:10px;color:var(--green)">+0.69%</div></div>
+    </div>
+    <div style="padding:12px;background:var(--card2);border-radius:12px;font-size:13px;line-height:1.6;color:var(--text2);margin-bottom:14px">
+      <strong style="color:var(--text)">Executive Summary:</strong><br>GenesisX behaalde een solide week met €21,73 winst bij perfecte systeemstabiliteit. ADA toonde zich als sterkste performer. AI systeem verhoogde zelfstandig de confidence drempel.
+    </div>
+    <div class="act-btn act-secondary act-full" onclick="closeModal()">✕ Sluiten</div>`;
+  } else if(id==='al-detail'||id==='ach-modal'){
+    // handled separately
+    return;
+  } else {
+    // Generic signal modals
+    const sigData={
+      'ada-sig-modal':{asset:'ADA',signal:'BUY',conf:82,reasoning:'ADA is dagkoploper met +4.12% en toont early-stage momentum. Bij huidige bullish markt profiteren mid-caps disproportioneel.',action:'Overweeg positie vergroten. Budget: max €200 extra.'},
+      'sol-sig-modal':{asset:'SOL',signal:'BUY',conf:78,reasoning:'SOL toont sterk relatief momentum (+2.88%). DEX volume en ecosystem activiteit ondersteunen de vraagzijde.',action:'Positie houden of licht uitbreiden tot €400 totaal.'},
+      'btc-sig-modal':{asset:'BTC',signal:'HOLD',conf:55,reasoning:'BTC toont minimale 24h beweging (+0.82%). Geen duidelijke breakout. Wacht op decisieve move boven €59k.',action:'Houd cash beschikbaar voor BTC bij correctie naar €55k.'},
+      'eth-sig-modal':{asset:'ETH',signal:'HOLD',conf:50,reasoning:'ETH beweegt vlak (+0.90%). ETH/BTC ratio blijft zwak. Zonder katalysator is risico/rendement onvoldoende.',action:'Afwachten. Geen positie openen.'},
+      'xrp-sig-modal':{asset:'XRP',signal:'HOLD',conf:47,reasoning:'XRP stijgt +2.59% maar volume profiel onduidelijk. Juridische risicos blijven.',action:'Gebruik XRP alleen voor arbitrage, niet voor directe positie.'},
+      'ada-modal':{asset:'ADA',signal:'BUY',conf:82,reasoning:'Sterke momentum +4.12% today.',action:'Topkeuze voor positie uitbreiding.'},
+      'sol-modal':{asset:'SOL',signal:'BUY',conf:78,reasoning:'Sterk ecosystem momentum.',action:'Goede hold positie.'},
+      'btc-modal':{asset:'BTC',signal:'HOLD',conf:55,reasoning:'Consolidatie fase.',action:'Afwachten.'},
+      'eth-modal':{asset:'ETH',signal:'HOLD',conf:50,reasoning:'Vlakke beweging.',action:'Afwachten.'},
+      'xrp-modal':{asset:'XRP',signal:'HOLD',conf:47,reasoning:'Onduidelijk volume.',action:'Alleen arbitrage.'}
+    };
+    const s=sigData[id];
+    if(s){
+      const color=s.signal==='BUY'?'var(--green)':s.signal==='SELL'?'var(--red)':'var(--yellow)';
+      html+=`<div class="modal-title">${s.asset} Analyse<button class="modal-close" onclick="closeModal()">✕</button></div>
+      <div style="text-align:center;padding:14px;background:rgba(0,255,136,0.05);border-radius:12px;margin-bottom:14px">
+        <div style="font-size:28px;font-weight:800;color:${color}">${s.signal}</div>
+        <div style="font-size:14px;color:var(--text2)">Confidence: <strong style="color:${color}">${s.conf}%</strong></div>
+      </div>
+      <div style="padding:12px;background:var(--card2);border-radius:12px;margin-bottom:10px">
+        <div style="font-size:10px;color:var(--text3);margin-bottom:5px">AI ANALYSE</div>
+        <div style="font-size:13px;color:var(--text);line-height:1.5">${s.reasoning}</div>
+      </div>
+      <div style="padding:12px;background:rgba(0,255,136,0.05);border:1px solid rgba(0,255,136,0.2);border-radius:12px;margin-bottom:14px">
+        <div style="font-size:10px;color:var(--text3);margin-bottom:5px">AANBEVOLEN ACTIE</div>
+        <div style="font-size:13px;color:var(--green);font-weight:600">${s.action}</div>
+      </div>
+      <div class="act-grid">
+        ${s.signal==='BUY'?`<div class="act-btn act-primary" onclick="closeModal();openModal('trade-modal')">💰 Trade Openen</div>`:''}
+        <div class="act-btn act-secondary" onclick="closeModal()">✕ Sluiten</div>
+      </div>`;
+    } else {
+      html+=`<div class="modal-title">${title||'Details'}<button class="modal-close" onclick="closeModal()">✕</button></div>
+      <div style="color:var(--text2);font-size:14px;line-height:1.6">${body||'Geen details beschikbaar.'}</div>
+      <div class="act-btn act-secondary act-full" style="margin-top:14px" onclick="closeModal()">✕ Sluiten</div>`;
+    }
+  }
 
-// ===== CAIO =====
-const caioR={
-  default:'Goeie vraag Rafik! 👑 Portfolio €3.171,73 (+0.69%). ADA +3.51% en SOL +2.37% in de plus. 23 bots actief, 99.9% uptime. BULLISH markt sentiment. Hoe kan ik verder helpen?',
-  btc:'BTC staat op €58.457 (+0.82%) Rafik. 📊 Fear&Greed is 72 — al hoog. CMO adviseert focus op ADA momentum i.p.v. BTC nu. Wacht op correctie voor betere entry!',
-  status:'GenesisX draait perfect! 🚀 Portfolio: €3.171,73 | ADA +3.51% | SOL +2.37% | 23 bots actief | 99.9% uptime | BULLISH. Alles operationeel!',
-  markt:'Live markt! 📈 BTC €58.457 | ETH €1.785 | SOL €70.50 | ADA €1.18 | F&G: 72 BULLISH. Arbitrage kansen bij XRP (+€1.32) en ADA (+€1.04)!',
-  deploy:'CFO adviseert deployment verhogen van 23.8% naar 35-40% Rafik. 💰 Dat is €350-500 extra. Focus op ADA momentum en activeer XRP/ADA arbitrage!',
-  bots:'Beste bot deze week: WhaleX 91/100 met 100% win rate! 🐋 SnipeX (88) en NightX (85) zijn klaar voor live trading. CHRO adviseert deze 3 te activeren!'
+  content.innerHTML=html;
+  overlay.classList.add('open');
+}
+
+function closeModal(){document.getElementById('modal-overlay').classList.remove('open');}
+
+function openBotModal(name){
+  const b=bots.find(x=>x.name===name);
+  if(!b)return;
+  const content=document.getElementById('modal-content');
+  const overlay=document.getElementById('modal-overlay');
+  const statusLabel=b.status==='ACTIVE'?'ACTIEF':b.status==='LIVE_READY'?'LIVE READY':b.status==='PAUSED'?'GEPAUZEERD':'PAPER';
+  const statusClass=b.status==='ACTIVE'?'bg':b.status==='LIVE_READY'?'by':b.status==='PAUSED'?'br':'bb';
+
+  content.innerHTML=`
+    <div class="modal-handle"></div>
+    <div class="modal-title">
+      <div style="width:44px;height:44px;border-radius:13px;background:${b.color};display:flex;align-items:center;justify-content:center;font-size:22px">${b.emoji}</div>
+      <div>
+        <div>${b.name}</div>
+        <div style="font-size:12px;font-weight:400;color:var(--text2)">${b.pers}</div>
+      </div>
+      <button class="modal-close" onclick="closeModal()">✕</button>
+    </div>
+
+    <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-bottom:14px">
+      <div style="background:var(--card2);border-radius:10px;padding:10px;text-align:center">
+        <div style="font-size:9px;color:var(--text3)">Score</div>
+        <div style="font-size:22px;font-weight:800;color:var(--green)">${b.score}</div>
+      </div>
+      <div style="background:var(--card2);border-radius:10px;padding:10px;text-align:center">
+        <div style="font-size:9px;color:var(--text3)">Win Rate</div>
+        <div style="font-size:22px;font-weight:800;color:${b.wr>=70?'var(--green)':b.wr>=50?'var(--yellow)':'var(--red)'}">${b.wr}%</div>
+      </div>
+      <div style="background:var(--card2);border-radius:10px;padding:10px;text-align:center">
+        <div style="font-size:9px;color:var(--text3)">Trades</div>
+        <div style="font-size:22px;font-weight:800">${b.trades}</div>
+      </div>
+    </div>
+
+    <div style="padding:12px;background:var(--card2);border-radius:12px;margin-bottom:14px">
+      <div style="font-size:10px;color:var(--text3);margin-bottom:4px">STATUS</div>
+      <span class="badge ${statusClass}">${statusLabel}</span>
+      ${b.status==='LIVE_READY'?'<div style="font-size:12px;color:var(--yellow);margin-top:6px">⭐ Deze bot is klaar voor live trading!</div>':''}
+    </div>
+
+    <div class="act-grid">
+      ${b.status==='LIVE_READY'?`<div class="act-btn act-primary" onclick="closeModal();alert('🚀 ${b.name} gepromoveerd naar LIVE trading!\\n\\nLet op: Dit gebruikt echt geld!')">🚀 Naar Live</div>`:''}
+      ${b.status==='ACTIVE'||b.status==='LIVE_READY'?`<div class="act-btn act-yellow" onclick="closeModal();alert('⏸️ ${b.name} gepauzeerd')">⏸️ Pauzeer</div>`:''}
+      ${b.status==='PAUSED'?`<div class="act-btn act-primary" onclick="closeModal();alert('▶️ ${b.name} hervat')">▶️ Hervat</div>`:''}
+      <div class="act-btn act-secondary" onclick="closeModal()">✕ Sluiten</div>
+    </div>
+  `;
+  overlay.classList.add('open');
+}
+
+function openFlowModal(i){
+  const f=flows[i];
+  const content=document.getElementById('modal-content');
+  const overlay=document.getElementById('modal-overlay');
+  content.innerHTML=`
+    <div class="modal-handle"></div>
+    <div class="modal-title">${f.name}<button class="modal-close" onclick="closeModal()">✕</button></div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:14px">
+      <div style="background:var(--card2);border-radius:10px;padding:10px;text-align:center"><div style="font-size:9px;color:var(--text3)">Trigger</div><div style="font-size:13px;font-weight:700">${f.trigger}</div></div>
+      <div style="background:var(--card2);border-radius:10px;padding:10px;text-align:center"><div style="font-size:9px;color:var(--text3)">Vandaag</div><div style="font-size:22px;font-weight:800;color:var(--green)">${f.runs}x</div></div>
+    </div>
+    <div style="padding:12px;background:${f.on?'rgba(0,255,136,0.05)':'rgba(239,68,68,0.05)'};border:1px solid ${f.on?'rgba(0,255,136,0.2)':'rgba(239,68,68,0.2)'};border-radius:12px;margin-bottom:14px">
+      <div style="font-size:13px;font-weight:700;color:${f.on?'var(--green)':'var(--red)'}">Status: ${f.on?'● ACTIEF':'● GESTOPT'}</div>
+    </div>
+    <div class="act-grid">
+      <div class="act-btn ${f.on?'act-danger':'act-primary'}" onclick="toggleFlow(${i});closeModal();">${f.on?'⏸️ Pauzeer':'▶️ Activeer'}</div>
+      <div class="act-btn act-secondary" onclick="window.open('http://localhost:5678','_blank')">🔗 Open n8n</div>
+      <div class="act-btn act-secondary act-full" onclick="closeModal()">✕ Sluiten</div>
+    </div>
+  `;
+  overlay.classList.add('open');
+}
+
+function openExModal(name){
+  const ex=exchanges.find(e=>e.name===name);
+  if(!ex)return;
+  const content=document.getElementById('modal-content');
+  const overlay=document.getElementById('modal-overlay');
+  content.innerHTML=`
+    <div class="modal-handle"></div>
+    <div class="modal-title">🌐 ${ex.name}<button class="modal-close" onclick="closeModal()">✕</button></div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:14px">
+      <div style="background:var(--card2);border-radius:10px;padding:10px;text-align:center"><div style="font-size:9px;color:var(--text3)">Type</div><div style="font-size:14px;font-weight:700">${ex.type}</div></div>
+      <div style="background:var(--card2);border-radius:10px;padding:10px;text-align:center"><div style="font-size:9px;color:var(--text3)">Regulatie</div><div style="font-size:14px;font-weight:700">${ex.reg}</div></div>
+      <div style="background:${ex.bal>0?'rgba(0,255,136,0.05)':'var(--card2)'};border:1px solid ${ex.bal>0?'rgba(0,255,136,0.2)':'var(--border)'};border-radius:10px;padding:10px;text-align:center">
+        <div style="font-size:9px;color:var(--text3)">Balans</div>
+        <div style="font-size:18px;font-weight:800;color:${ex.bal>0?'var(--green)':'var(--text)'}">€${ex.bal.toFixed(2)}</div>
+      </div>
+      <div style="background:var(--card2);border-radius:10px;padding:10px;text-align:center">
+        <div style="font-size:9px;color:var(--text3)">Status</div>
+        <div style="font-size:12px;font-weight:700;color:${ex.status==='CONNECTED'?'var(--green)':'var(--yellow)'}">● ${ex.status}</div>
+      </div>
+    </div>
+    <div class="act-grid">
+      <div class="act-btn act-primary" onclick="closeModal();alert('💰 Storten op ${ex.name}\\n\\nDit opent de ${ex.name} website.')">💰 Storten</div>
+      <div class="act-btn act-secondary" onclick="closeModal();alert('📊 ${ex.name} API Status\\n\\nConnected: ✅\\nLatency: <50ms\\nRate Limit: OK')">📊 API Status</div>
+      <div class="act-btn act-secondary act-full" onclick="closeModal()">✕ Sluiten</div>
+    </div>
+  `;
+  overlay.classList.add('open');
+}
+
+function toggleFlow(i,togEl){
+  flows[i].on=!flows[i].on;
+  if(togEl){togEl.classList.toggle('on');}
+  const dot=document.querySelectorAll('.flow-dot')[i];
+  if(dot){dot.style.background=flows[i].on?'var(--green)':'var(--red)';dot.style.boxShadow=flows[i].on?'0 0 5px var(--green)':'none';}
+}
+
+// Achievement modal
+function openModal(id,title,body){
+  if(id==='ach-modal'){
+    document.getElementById('ach-title').innerHTML=title;
+    document.getElementById('ach-body').textContent=body;
+    document.getElementById('ach-overlay').classList.add('open');
+    return;
+  }
+  // Call the real openModal
+  _openModal(id,title,body);
+}
+const _openModal=window.openModal||function(){};
+
+// ===== CAIO CHAT =====
+const caioData={
+  default:'Goeie vraag Rafik! 👑 GenesisX draait perfect. Portfolio €3.171,73 (+€21,73 week). ADA +3.51% en SOL +2.37% presteren sterk. 23 bots actief met 99.9% uptime. BULLISH markt sentiment. Wat is je specifieke vraag?',
+  btc:'Op basis van live data adviseer ik je BTC nu NIET te kopen Rafik. 📊 Fear&Greed staat op 72 — al hoog. CMO ziet betere kansen bij ADA momentum. Wacht op een BTC correctie naar €54-56k voor een betere entry. Bewaar je cash!',
+  sol:'SOL ziet er sterk uit Rafik! 🟢 +2.88% vandaag met gezond DEX volume. Je huidige positie van 5.3 SOL (+€8,64) presteert goed. Je stop-loss staat veilig op break-even. Ik adviseer te holden en eventueel bij te kopen bij een pullback naar €67.',
+  ada:'ADA is je beste performer vandaag Rafik! 🚀 +4.12% — sterkste in je portfolio. Je 337 ADA positie staat op +€13,48. Stop-loss is bijgewerkt naar break-even €1.14. CMO adviseert focus op ADA momentum. Take-profit bij €1.23.',
+  markt:'Live markt update Rafik! 📈\n• BTC: €58.457 (+0.82%)\n• ETH: €1.785 (+0.90%)\n• SOL: €70.50 (+2.88%)\n• ADA: €1.18 (+4.12%)\n• XRP: €1.14 (+2.59%)\nFear&Greed: 72 — BULLISH. Arbitrage kansen bij XRP (€1.32) en ADA (€1.04)!',
+  winst:'Om meer winst te maken Rafik 💰:\n1. Verhoog deployment van 23.8% naar 35-40%\n2. Activeer SnipeX en NightX voor live trading\n3. Benut XRP/ADA arbitrage kansen\n4. Focus extra bots op ADA momentum\nPotentieel: +€50-100 extra per week!',
+  deployment:'CFO en CIO zijn het eens Rafik: verhoog deployment naar 35-40%. 💰 Dat betekent €350-500 extra inzetten. Mijn advies: €200 naar ADA, €150 naar SOL bijkopen, €150 voor XRP arbitrage. Totaal: €500 extra deployed voor optimaal rendement.',
+  risico:'Risico analyse voor live trading Rafik 🛡️:\n• Huidige paper trading prestaties zijn goed\n• Win rate moet hoger dan 60% zijn (nu 0% — te weinig data)\n• Minimaal 30 trades paper voor statistisch betrouwbaar\n• Start live met max 5% van kapitaal (€157)\n• SnipeX en NightX hebben sterkste papieren',
+  portfolio:'Portfolio analyse Rafik 🔍:\n• €3.171,73 totaal | +€21,73 week winst ✅\n• 23.8% deployed — CFO zegt: te conservatief ⚠️\n• ADA +3.51% | SOL +2.37% — beide groen ✅\n• 75.7% cash beschikbaar — goed voor kansen ✅\n• Doel: verhoog naar 35-40% deployment'
 };
 
 function caioSend(preset){
@@ -1065,82 +1248,70 @@ function caioSend(preset){
   const msg=preset||inp.value.trim();
   if(!msg)return;
   const msgs=document.getElementById('caioMsgs');
+
+  // User msg
   const uMsg=document.createElement('div');
   uMsg.className='msg u';
-  uMsg.innerHTML=`<div class="msg-av uav">👤</div><div class="bubble ub">${msg}</div>`;
+  uMsg.innerHTML=`<div class="m-av u-av">👤</div><div class="bubble u-bub">${msg}</div>`;
   msgs.appendChild(uMsg);
+
+  // Typing
   const typing=document.createElement('div');
   typing.className='msg';
-  typing.innerHTML=`<div class="msg-av cav">👑</div><div class="typing-ind"><div class="td"></div><div class="td"></div><div class="td"></div></div>`;
+  typing.innerHTML=`<div class="m-av c-av">👑</div><div class="typing"><div class="td"></div><div class="td"></div><div class="td"></div></div>`;
   msgs.appendChild(typing);
   msgs.scrollTop=msgs.scrollHeight;
   inp.value='';
+
   setTimeout(()=>{
     typing.remove();
     const ml=msg.toLowerCase();
-    let r=caioR.default;
-    if(ml.includes('btc')||ml.includes('bitcoin'))r=caioR.btc;
-    else if(ml.includes('status')||ml.includes('gaat'))r=caioR.status;
-    else if(ml.includes('markt'))r=caioR.markt;
-    else if(ml.includes('deploy')||ml.includes('verhoog'))r=caioR.deploy;
-    else if(ml.includes('bot')||ml.includes('beste'))r=caioR.bots;
+    let r=caioData.default;
+    if(ml.includes('btc')||ml.includes('bitcoin'))r=caioData.btc;
+    else if(ml.includes('sol')&&!ml.includes('portfolio'))r=caioData.sol;
+    else if(ml.includes('ada')&&!ml.includes('portfolio'))r=caioData.ada;
+    else if(ml.includes('markt')||ml.includes('market')||ml.includes('analyse'))r=caioData.markt;
+    else if(ml.includes('winst')||ml.includes('meer geld'))r=caioData.winst;
+    else if(ml.includes('deploy'))r=caioData.deployment;
+    else if(ml.includes('risico'))r=caioData.risico;
+    else if(ml.includes('portfolio')||ml.includes('check'))r=caioData.portfolio;
+    else if(ml.includes('bot'))r='Je beste bot deze week is WhaleX 🐋 met een perfecte score van 91/100 en 100% win rate! SnipeX (88) en NightX (85) zijn klaar voor promotie naar live trading. CHRO adviseert deze 3 te activeren. Wil je een van hen naar live promoveren?';
+    else if(ml.includes('hoe gaat')||ml.includes('status'))r='GenesisX draait perfect Rafik! 🚀 Portfolio: €3.171,73 (+€21,73 week). ADA +3.51% | SOL +2.37%. 23 bots actief. 99.9% uptime. BULLISH markt. 2 arbitrage kansen actief. Alles groen!';
+
     const cMsg=document.createElement('div');
     cMsg.className='msg';
-    cMsg.innerHTML=`<div class="msg-av cav">👑</div><div class="bubble cb">${r}</div>`;
+    cMsg.innerHTML=`<div class="m-av c-av">👑</div><div class="bubble c-bub">${r.replace(/\n/g,'<br>')}</div>`;
     msgs.appendChild(cMsg);
     msgs.scrollTop=msgs.scrollHeight;
-    if(ml.includes('winst')||ml.includes('geld'))confetti();
-  },1400);
+
+    if(ml.includes('winst')||ml.includes('profit'))confetti();
+  },1200);
 }
 
 // ===== CONFETTI =====
 function confetti(){
-  const c=document.getElementById('confetti');
-  c.style.display='block';
+  const c=document.getElementById('conf');c.style.display='block';
   const cols=['#00ff88','#0ea5e9','#a855f7','#fbbf24','#ef4444'];
-  for(let i=0;i<50;i++){
-    const p=document.createElement('div');
-    p.className='cp';
-    p.style.cssText=`left:${Math.random()*100}%;background:${cols[Math.floor(Math.random()*cols.length)]};animation-delay:${Math.random()*2}s;animation-duration:${2+Math.random()*2}s;transform:rotate(${Math.random()*360}deg)`;
+  for(let i=0;i<40;i++){
+    const p=document.createElement('div');p.className='cp';
+    p.style.cssText=`left:${Math.random()*100}%;background:${cols[Math.floor(Math.random()*cols.length)]};animation-delay:${Math.random()*2}s;animation-duration:${2+Math.random()*2}s;`;
     c.appendChild(p);
   }
   setTimeout(()=>{c.style.display='none';c.innerHTML='';},4000);
 }
 
-// ===== PANIC =====
-function panic(){
-  if(confirm('⚠️ PANIC SHUTDOWN\n\nAlle trading stoppen?\n\nDit stopt alle n8n flows!')){
-    alert('🚨 PANIC SHUTDOWN GEACTIVEERD\n\nAlle flows gestopt.\nGenesisX in veilige modus.');
-  }
-}
-
-function refresh(){
-  const b=event.target;
-  b.textContent='↻ Laden...';
-  setTimeout(()=>{b.textContent='↻ Refresh';},1000);
-}
+// Fix openModal to work properly
+window.openModal=openModal;
 
 // ===== INIT =====
 window.addEventListener('load',()=>{
-  renderBots();
-  renderFlows();
-  // Show main after splash
+  renderBots();renderFlows();renderExchanges();renderAlerts();
   setTimeout(()=>{
     document.getElementById('splash').classList.add('out');
-    setTimeout(()=>document.getElementById('splash').remove(),600);
-  },2300);
-  // Auto refresh 5 min
+    setTimeout(()=>document.getElementById('splash').remove(),500);
+  },2200);
   setTimeout(()=>location.reload(),5*60*1000);
-  // Clock
-  document.getElementById('clock').textContent=new Date().toLocaleTimeString('nl-NL');
-  // Menu button op mobile
-  if(window.innerWidth<1024)document.getElementById('menuBtn').style.display='block';
-  window.addEventListener('resize',()=>{
-    const btn=document.getElementById('menuBtn');
-    if(btn)btn.style.display=window.innerWidth<1024?'block':'none';
-  });
 });
 </script>
-
 </body>
 </html>
