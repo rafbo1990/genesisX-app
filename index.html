@@ -1,0 +1,774 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<meta name="theme-color" content="#00ff88">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="GenesisX">
+<meta name="description" content="GenesisX™ AI Trading Control App">
+<title>GenesisX™ Control App</title>
+<link rel="manifest" href="/genesisX/manifest.json">
+<link rel="apple-touch-icon" href="/genesisX/icons/icon-192.png">
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<!-- CONFETTI -->
+<div class="confetti-container" id="confetti"></div>
+
+<!-- SPLASH SCREEN -->
+<div id="splash">
+  <div class="splash-logo">⚡ GenesisX™</div>
+  <div class="splash-sub">AI Trading System</div>
+  <div class="splash-loader">
+    <div class="splash-progress"></div>
+  </div>
+  <div class="splash-items">
+    <div class="splash-item">✓ Verbinding met n8n...</div>
+    <div class="splash-item">✓ Claude AI Brain geladen...</div>
+    <div class="splash-item">✓ 23 bots actief...</div>
+    <div class="splash-item">✓ GenesisX operationeel</div>
+  </div>
+</div>
+
+<!-- HEADER -->
+<div class="header">
+  <div class="header-row1">
+    <div class="logo-wrap">
+      <div class="logo-icon">⚡</div>
+      <div class="logo-text">Genesis<span>X</span>™</div>
+    </div>
+    <div class="header-badges">
+      <span class="badge badge-paper">Paper</span>
+      <span class="badge badge-version">v2.0</span>
+    </div>
+  </div>
+  <div class="header-row2">
+    <div class="status-dot"></div>
+    <span>Alle systemen operationeel</span>
+    <div class="header-portfolio" style="margin-left:auto">
+      <div class="portfolio-value">€3.171,73</div>
+      <div class="portfolio-pnl">+€21,73 deze week</div>
+    </div>
+    <button class="refresh-btn" onclick="location.reload()" style="margin-left:8px">↻</button>
+  </div>
+</div>
+
+<!-- TICKER -->
+<div class="ticker-wrap">
+  <div class="ticker" id="ticker">
+    <div class="ticker-item"><span class="ticker-symbol">BTC</span><span class="ticker-price">€58.457</span><span class="ticker-change up">+0.82%</span></div>
+    <div class="ticker-item"><span class="ticker-symbol">ETH</span><span class="ticker-price">€1.785</span><span class="ticker-change up">+0.90%</span></div>
+    <div class="ticker-item"><span class="ticker-symbol">SOL</span><span class="ticker-price">€70.50</span><span class="ticker-change up">+2.88%</span></div>
+    <div class="ticker-item"><span class="ticker-symbol">ADA</span><span class="ticker-price">€1.18</span><span class="ticker-change up">+4.12%</span></div>
+    <div class="ticker-item"><span class="ticker-symbol">XRP</span><span class="ticker-price">€1.14</span><span class="ticker-change up">+2.59%</span></div>
+    <div class="ticker-item"><span class="ticker-symbol">BNB</span><span class="ticker-price">€512</span><span class="ticker-change down">-0.45%</span></div>
+    <div class="ticker-item"><span class="ticker-symbol">EUR/USD</span><span class="ticker-price">1.0842</span><span class="ticker-change down">-0.12%</span></div>
+    <!-- Duplicaat voor seamless loop -->
+    <div class="ticker-item"><span class="ticker-symbol">BTC</span><span class="ticker-price">€58.457</span><span class="ticker-change up">+0.82%</span></div>
+    <div class="ticker-item"><span class="ticker-symbol">ETH</span><span class="ticker-price">€1.785</span><span class="ticker-change up">+0.90%</span></div>
+    <div class="ticker-item"><span class="ticker-symbol">SOL</span><span class="ticker-price">€70.50</span><span class="ticker-change up">+2.88%</span></div>
+    <div class="ticker-item"><span class="ticker-symbol">ADA</span><span class="ticker-price">€1.18</span><span class="ticker-change up">+4.12%</span></div>
+    <div class="ticker-item"><span class="ticker-symbol">XRP</span><span class="ticker-price">€1.14</span><span class="ticker-change up">+2.59%</span></div>
+    <div class="ticker-item"><span class="ticker-symbol">BNB</span><span class="ticker-price">€512</span><span class="ticker-change down">-0.45%</span></div>
+    <div class="ticker-item"><span class="ticker-symbol">EUR/USD</span><span class="ticker-price">1.0842</span><span class="ticker-change down">-0.12%</span></div>
+  </div>
+</div>
+
+<!-- TABS -->
+<div class="tabs">
+  <div class="tab active" onclick="showTab('dashboard',this)"><span class="tab-icon">📊</span>Dashboard</div>
+  <div class="tab" onclick="showTab('portfolio',this)"><span class="tab-icon">💰</span>Portfolio</div>
+  <div class="tab" onclick="showTab('bots',this)"><span class="tab-icon">🤖</span>Bots</div>
+  <div class="tab" onclick="showTab('signals',this)"><span class="tab-icon">📡</span>Signalen</div>
+  <div class="tab" onclick="showTab('caio',this)"><span class="tab-icon">👑</span>CAIO</div>
+  <div class="tab" onclick="showTab('exchanges',this)"><span class="tab-icon">🌐</span>Exchanges</div>
+  <div class="tab" onclick="showTab('achievements',this)"><span class="tab-icon">🏆</span>Prestaties</div>
+  <div class="tab" onclick="showTab('alerts',this)"><span class="tab-icon">🔔</span>Alerts</div>
+</div>
+
+<!-- ===== DASHBOARD ===== -->
+<div id="tab-dashboard" class="content active">
+
+  <!-- Level Card -->
+  <div class="level-card">
+    <div class="level-badge">🥈</div>
+    <div class="level-title">Paper Trader</div>
+    <div class="level-sub">Level 2 — Op weg naar Live Trader</div>
+    <div class="level-xp">XP: <span>2.171 / 5.000</span> — nog €2.829 winst voor Level 3</div>
+    <div class="progress-wrap" style="margin-top:10px">
+      <div class="progress-bar" style="width:43%;background:linear-gradient(90deg,#a855f7,#0ea5e9)"></div>
+    </div>
+  </div>
+
+  <!-- Metric Grid -->
+  <div class="metric-grid">
+    <div class="metric">
+      <div class="metric-icon">💰</div>
+      <div class="metric-label">Portfolio</div>
+      <div class="metric-value" style="color:var(--green);font-size:20px">€3.171,73</div>
+      <div class="metric-sub">+€21,73 deze week</div>
+    </div>
+    <div class="metric">
+      <div class="metric-icon">📈</div>
+      <div class="metric-label">Week ROI</div>
+      <div class="metric-value" style="color:var(--green)">+0.69%</div>
+      <div class="metric-sub">IMPROVING trend</div>
+    </div>
+    <div class="metric">
+      <div class="metric-icon">⚡</div>
+      <div class="metric-label">Deployed</div>
+      <div class="metric-value" style="color:var(--blue)">23.8%</div>
+      <div class="progress-wrap"><div class="progress-bar" style="width:23.8%"></div></div>
+    </div>
+    <div class="metric">
+      <div class="metric-icon">🤖</div>
+      <div class="metric-label">Actieve Bots</div>
+      <div class="metric-value" style="color:var(--purple)">23</div>
+      <div class="metric-sub">99.9% uptime</div>
+    </div>
+  </div>
+
+  <!-- Portfolio Chart SVG -->
+  <div class="card">
+    <div class="card-title">📈 Portfolio Waarde (7 Dagen)</div>
+    <svg width="100%" height="100" viewBox="0 0 300 100" preserveAspectRatio="none">
+      <defs>
+        <linearGradient id="chartGrad" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0%" stop-color="#00ff88" stop-opacity="0.4"/>
+          <stop offset="100%" stop-color="#00ff88" stop-opacity="0"/>
+        </linearGradient>
+      </defs>
+      <path d="M0,80 L30,75 L60,78 L90,70 L120,65 L150,60 L180,55 L210,50 L240,45 L270,40 L300,35 L300,100 L0,100 Z" fill="url(#chartGrad)"/>
+      <path d="M0,80 L30,75 L60,78 L90,70 L120,65 L150,60 L180,55 L210,50 L240,45 L270,40 L300,35" fill="none" stroke="#00ff88" stroke-width="2.5" stroke-linecap="round"/>
+      <circle cx="300" cy="35" r="4" fill="#00ff88" filter="url(#glow)"/>
+    </svg>
+    <div style="display:flex;justify-content:space-between;font-size:10px;color:var(--text3);font-family:'JetBrains Mono',monospace;margin-top:4px">
+      <span>Ma</span><span>Di</span><span>Wo</span><span>Do</span><span>Vr</span><span>Za</span><span>Nu</span>
+    </div>
+  </div>
+
+  <!-- Heatmap -->
+  <div class="card">
+    <div class="card-title">🌡️ Asset Heatmap</div>
+    <div class="heatmap">
+      <div class="heatmap-cell" style="background:rgba(0,255,136,0.25)">
+        <div class="heatmap-asset">ADA</div>
+        <div class="heatmap-pct" style="color:#00ff88">+4.12%</div>
+      </div>
+      <div class="heatmap-cell" style="background:rgba(0,255,136,0.2)">
+        <div class="heatmap-asset">SOL</div>
+        <div class="heatmap-pct" style="color:#00ff88">+2.88%</div>
+      </div>
+      <div class="heatmap-cell" style="background:rgba(0,255,136,0.15)">
+        <div class="heatmap-asset">XRP</div>
+        <div class="heatmap-pct" style="color:#00ff88">+2.59%</div>
+      </div>
+      <div class="heatmap-cell" style="background:rgba(0,255,136,0.1)">
+        <div class="heatmap-asset">ETH</div>
+        <div class="heatmap-pct" style="color:#00ff88">+0.90%</div>
+      </div>
+      <div class="heatmap-cell" style="background:rgba(0,255,136,0.08)">
+        <div class="heatmap-asset">BTC</div>
+        <div class="heatmap-pct" style="color:#00ff88">+0.82%</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Stats Row -->
+  <div class="stats-row">
+    <div class="stat-pill">
+      <div class="stat-pill-label">Trades</div>
+      <div class="stat-pill-value" style="color:var(--text)">2</div>
+    </div>
+    <div class="stat-pill">
+      <div class="stat-pill-label">Win Rate</div>
+      <div class="stat-pill-value" style="color:var(--green)">100%</div>
+    </div>
+    <div class="stat-pill">
+      <div class="stat-pill-label">Fees</div>
+      <div class="stat-pill-value" style="color:var(--text2)">€1.92</div>
+    </div>
+    <div class="stat-pill">
+      <div class="stat-pill-label">Fases</div>
+      <div class="stat-pill-value" style="color:var(--purple)">35/37</div>
+    </div>
+    <div class="stat-pill">
+      <div class="stat-pill-label">Flows</div>
+      <div class="stat-pill-value" style="color:var(--blue)">20</div>
+    </div>
+    <div class="stat-pill">
+      <div class="stat-pill-label">Arbitrage</div>
+      <div class="stat-pill-value" style="color:var(--yellow)">€2.36</div>
+    </div>
+  </div>
+
+  <!-- Streak -->
+  <div class="streak-card">
+    <div class="streak-fire">🔥</div>
+    <div class="streak-info">
+      <div class="streak-count">3</div>
+      <div class="streak-label">Dagen winstgevend op rij</div>
+    </div>
+    <div style="text-align:right">
+      <div style="font-size:12px;color:var(--text2)">Record</div>
+      <div style="font-size:20px;font-weight:800;color:var(--yellow)">3 🏅</div>
+    </div>
+  </div>
+
+</div>
+
+<!-- ===== PORTFOLIO ===== -->
+<div id="tab-portfolio" class="content">
+
+  <!-- Donut -->
+  <div class="card">
+    <div class="card-title">💼 Kapitaal Verdeling</div>
+    <div class="donut-wrap">
+      <svg width="100" height="100" viewBox="0 0 100 100">
+        <circle cx="50" cy="50" r="40" fill="none" stroke="#1a2540" stroke-width="16"/>
+        <circle cx="50" cy="50" r="40" fill="none" stroke="#00ff88" stroke-width="16"
+          stroke-dasharray="60 192" stroke-dashoffset="0" transform="rotate(-90 50 50)"/>
+        <circle cx="50" cy="50" r="40" fill="none" stroke="#0ea5e9" stroke-width="16"
+          stroke-dasharray="40 212" stroke-dashoffset="-60" transform="rotate(-90 50 50)"/>
+        <circle cx="50" cy="50" r="40" fill="none" stroke="#a855f7" stroke-width="16"
+          stroke-dasharray="16 236" stroke-dashoffset="-100" transform="rotate(-90 50 50)"/>
+        <text x="50" y="46" text-anchor="middle" fill="#e2e8f0" font-size="10" font-weight="700">€3.171</text>
+        <text x="50" y="58" text-anchor="middle" fill="#94a3b8" font-size="7">totaal</text>
+      </svg>
+      <div class="donut-legend">
+        <div class="donut-legend-item">
+          <div class="donut-dot" style="background:var(--green)"></div>
+          <span>Cash <strong style="color:var(--text)">€2.400 (75.7%)</strong></span>
+        </div>
+        <div class="donut-legend-item">
+          <div class="donut-dot" style="background:var(--blue)"></div>
+          <span>ADA <strong style="color:var(--text)">€398 (12.5%)</strong></span>
+        </div>
+        <div class="donut-legend-item">
+          <div class="donut-dot" style="background:var(--purple)"></div>
+          <span>SOL <strong style="color:var(--text)">€374 (11.8%)</strong></span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Positions -->
+  <div class="section-divider">Open Posities</div>
+
+  <div class="position-card">
+    <div class="pos-header">
+      <div class="pos-asset-wrap">
+        <div class="pos-avatar">A</div>
+        <div>
+          <div class="pos-name">Cardano</div>
+          <div class="pos-exchange">Bitvavo • ADA-EUR</div>
+        </div>
+      </div>
+      <div class="pos-pnl">
+        <div class="pos-pnl-value">+€13,48</div>
+        <div class="pos-pnl-pct">+3.51%</div>
+      </div>
+    </div>
+    <div class="pos-details">
+      <div class="pos-detail">
+        <div class="pos-detail-label">Hoeveelheid</div>
+        <div class="pos-detail-value">337.1 ADA</div>
+      </div>
+      <div class="pos-detail">
+        <div class="pos-detail-label">Instap</div>
+        <div class="pos-detail-value">€1.14</div>
+      </div>
+      <div class="pos-detail">
+        <div class="pos-detail-label">Nu</div>
+        <div class="pos-detail-value" style="color:var(--green)">€1.18</div>
+      </div>
+      <div class="pos-detail">
+        <div class="pos-detail-label">Waarde</div>
+        <div class="pos-detail-value" style="color:var(--green)">€397,78</div>
+      </div>
+    </div>
+    <div class="sl-indicator">
+      <span class="sl-label">SL €1.14</span>
+      <div class="sl-bar">
+        <div class="sl-current" style="left:60%"></div>
+      </div>
+      <span class="tp-label">TP €1.23</span>
+    </div>
+  </div>
+
+  <div class="position-card" style="--pos-color:var(--blue)">
+    <div class="pos-header">
+      <div class="pos-asset-wrap">
+        <div class="pos-avatar" style="background:linear-gradient(135deg,#9945ff,#14f195)">S</div>
+        <div>
+          <div class="pos-name">Solana</div>
+          <div class="pos-exchange">Bybit EU • SOL-EUR</div>
+        </div>
+      </div>
+      <div class="pos-pnl">
+        <div class="pos-pnl-value">+€8,64</div>
+        <div class="pos-pnl-pct">+2.37%</div>
+      </div>
+    </div>
+    <div class="pos-details">
+      <div class="pos-detail">
+        <div class="pos-detail-label">Hoeveelheid</div>
+        <div class="pos-detail-value">5.3 SOL</div>
+      </div>
+      <div class="pos-detail">
+        <div class="pos-detail-label">Instap</div>
+        <div class="pos-detail-value">€68.87</div>
+      </div>
+      <div class="pos-detail">
+        <div class="pos-detail-label">Nu</div>
+        <div class="pos-detail-value" style="color:var(--green)">€70.50</div>
+      </div>
+      <div class="pos-detail">
+        <div class="pos-detail-label">Waarde</div>
+        <div class="pos-detail-value" style="color:var(--green)">€373,65</div>
+      </div>
+    </div>
+    <div class="sl-indicator">
+      <span class="sl-label">SL €68.87</span>
+      <div class="sl-bar">
+        <div class="sl-current" style="left:45%"></div>
+      </div>
+      <span class="tp-label">TP €74.38</span>
+    </div>
+  </div>
+
+</div>
+
+<!-- ===== BOTS ===== -->
+<div id="tab-bots" class="content">
+
+  <div class="metric-grid">
+    <div class="metric">
+      <div class="metric-label">Totaal Bots</div>
+      <div class="metric-value" style="color:var(--purple)">23</div>
+      <div class="metric-sub">Alle actief</div>
+    </div>
+    <div class="metric">
+      <div class="metric-label">Gem. Score</div>
+      <div class="metric-value" style="color:var(--green)">71</div>
+      <div class="metric-sub">+8 vs vorige week</div>
+    </div>
+  </div>
+
+  <div class="section-divider">Bot Ranking</div>
+
+  <div id="bot-list"></div>
+
+</div>
+
+<!-- ===== SIGNALEN ===== -->
+<div id="tab-signals" class="content">
+
+  <!-- Sentiment Meter -->
+  <div class="card">
+    <div class="card-title">🌡️ Fear & Greed Index</div>
+    <div style="text-align:center;margin-bottom:8px">
+      <span style="font-size:36px;font-weight:800;color:var(--yellow);font-family:'JetBrains Mono',monospace">72</span>
+      <span style="font-size:16px;color:var(--yellow);margin-left:8px">Hebzucht</span>
+    </div>
+    <div class="sentiment-meter">
+      <div class="sentiment-needle" style="left:72%"></div>
+    </div>
+    <div class="sentiment-labels">
+      <span>Extreme Angst</span>
+      <span>Neutraal</span>
+      <span>Extreme Hebzucht</span>
+    </div>
+  </div>
+
+  <!-- Asset Signals -->
+  <div class="card">
+    <div class="card-title">📡 AI Brain Signalen</div>
+    <div class="signal-item">
+      <span class="signal-asset">ADA</span>
+      <div class="signal-bar-wrap">
+        <div class="signal-bar">
+          <div class="signal-fill" style="width:82%;background:linear-gradient(90deg,var(--green),var(--green))"></div>
+        </div>
+      </div>
+      <span class="signal-label up">🟢 BUY</span>
+      <span class="signal-conf">82%</span>
+    </div>
+    <div class="signal-item">
+      <span class="signal-asset">SOL</span>
+      <div class="signal-bar-wrap">
+        <div class="signal-bar">
+          <div class="signal-fill" style="width:78%;background:var(--green)"></div>
+        </div>
+      </div>
+      <span class="signal-label up">🟢 BUY</span>
+      <span class="signal-conf">78%</span>
+    </div>
+    <div class="signal-item">
+      <span class="signal-asset">BTC</span>
+      <div class="signal-bar-wrap">
+        <div class="signal-bar">
+          <div class="signal-fill" style="width:55%;background:var(--yellow)"></div>
+        </div>
+      </div>
+      <span class="signal-label" style="color:var(--yellow)">➡️ HOLD</span>
+      <span class="signal-conf">55%</span>
+    </div>
+    <div class="signal-item">
+      <span class="signal-asset">ETH</span>
+      <div class="signal-bar-wrap">
+        <div class="signal-bar">
+          <div class="signal-fill" style="width:50%;background:var(--yellow)"></div>
+        </div>
+      </div>
+      <span class="signal-label" style="color:var(--yellow)">➡️ HOLD</span>
+      <span class="signal-conf">50%</span>
+    </div>
+    <div class="signal-item">
+      <span class="signal-asset">XRP</span>
+      <div class="signal-bar-wrap">
+        <div class="signal-bar">
+          <div class="signal-fill" style="width:47%;background:var(--text3)"></div>
+        </div>
+      </div>
+      <span class="signal-label" style="color:var(--text2)">➡️ HOLD</span>
+      <span class="signal-conf">47%</span>
+    </div>
+  </div>
+
+  <!-- Arbitrage -->
+  <div class="card" style="border-color:rgba(251,191,36,0.4)">
+    <div class="card-title" style="color:var(--yellow)">⚡ Arbitrage Kansen</div>
+    <div class="exchange-item">
+      <div class="ex-dot ex-dot-green"></div>
+      <div style="flex:1">
+        <div style="font-size:14px;font-weight:700">XRP — Bitvavo vs Bybit</div>
+        <div style="font-size:11px;color:var(--text2)">€1.14 → €1.147 | Spread: 0.614%</div>
+      </div>
+      <div style="text-align:right">
+        <div style="font-size:16px;font-weight:800;color:var(--green)">+€1.32</div>
+        <div style="font-size:10px;color:var(--text2)">Netto winst</div>
+      </div>
+    </div>
+    <div class="exchange-item">
+      <div class="ex-dot ex-dot-green"></div>
+      <div style="flex:1">
+        <div style="font-size:14px;font-weight:700">ADA — Bitvavo vs Bybit</div>
+        <div style="font-size:11px;color:var(--text2)">€1.14 → €1.147 | Spread: 0.559%</div>
+      </div>
+      <div style="text-align:right">
+        <div style="font-size:16px;font-weight:800;color:var(--green)">+€1.04</div>
+        <div style="font-size:10px;color:var(--text2)">Netto winst</div>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<!-- ===== CAIO ===== -->
+<div id="tab-caio" class="content">
+
+  <div class="caio-header-card">
+    <div class="caio-profile">
+      <div class="caio-avatar-wrap">
+        <div class="caio-avatar">👑</div>
+        <div class="caio-online"></div>
+      </div>
+      <div>
+        <div class="caio-name">CAIO</div>
+        <div class="caio-title">Chief AI Officer • GenesisX™</div>
+        <div class="caio-score">Score: <span>78/100</span> • Fase 33</div>
+      </div>
+    </div>
+    <div class="caio-last-advice">
+      💡 Verhoog deployment van 23.8% naar 35-40% om te profiteren van het huidige bullish momentum. ADA en XRP arbitrage kansen zijn gedetecteerd — acteer snel!
+    </div>
+  </div>
+
+  <!-- Quick Buttons -->
+  <div class="quick-btns">
+    <button class="quick-btn" onclick="sendMsg('Hoe gaat het met GenesisX?')">📊 Status</button>
+    <button class="quick-btn" onclick="sendMsg('Moet ik nu BTC kopen?')">🤔 BTC kopen?</button>
+    <button class="quick-btn" onclick="sendMsg('Wat is mijn beste bot?')">🤖 Beste bot</button>
+    <button class="quick-btn" onclick="sendMsg('Geef me een markt update')">📈 Markt update</button>
+    <button class="quick-btn" onclick="sendMsg('Hoe verhoog ik mijn winst?')">💰 Meer winst</button>
+  </div>
+
+  <!-- Chat -->
+  <div class="card">
+    <div class="card-title">💬 Chat met CAIO</div>
+    <div class="chat-messages" id="chatMessages">
+      <div class="chat-msg">
+        <div class="chat-msg-avatar caio-msg-avatar">👑</div>
+        <div class="caio-bubble chat-bubble">
+          Goedemorgen Rafik! 🌅 GenesisX draait perfect. Je portfolio staat op €3.171,73 met +0.69% week ROI. ADA en SOL posities presteren sterk. Hoe kan ik je helpen?
+        </div>
+      </div>
+    </div>
+    <div class="chat-input-wrap">
+      <input type="text" class="chat-input" id="chatInput" placeholder="Stel CAIO een vraag..." onkeypress="if(event.key==='Enter')sendMsg()">
+      <button class="chat-send" onclick="sendMsg()">➤</button>
+    </div>
+  </div>
+
+</div>
+
+<!-- ===== EXCHANGES ===== -->
+<div id="tab-exchanges" class="content">
+
+  <div class="metric-grid">
+    <div class="metric">
+      <div class="metric-label">Verbonden</div>
+      <div class="metric-value" style="color:var(--green)">10</div>
+      <div class="metric-sub">Alle exchanges</div>
+    </div>
+    <div class="metric">
+      <div class="metric-label">API Status</div>
+      <div class="metric-value" style="color:var(--green)">OK</div>
+      <div class="metric-sub">Geen fouten</div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">🌐 CEX Exchanges</div>
+    <div class="exchange-item">
+      <div class="ex-dot ex-dot-green"></div>
+      <div style="flex:1"><div class="ex-name">Bitvavo</div><div class="ex-type">CEX • NL • DNB+MiCA</div></div>
+      <div style="text-align:right"><div class="ex-balance">€2.400</div><div class="ex-status-text">CONNECTED</div></div>
+    </div>
+    <div class="exchange-item">
+      <div class="ex-dot ex-dot-green"></div>
+      <div style="flex:1"><div class="ex-name">Bybit EU</div><div class="ex-type">CEX • EU • MiCA</div></div>
+      <div style="text-align:right"><div class="ex-balance">€374</div><div class="ex-status-text">CONNECTED</div></div>
+    </div>
+    <div class="exchange-item">
+      <div class="ex-dot ex-dot-green"></div>
+      <div style="flex:1"><div class="ex-name">OKX</div><div class="ex-type">CEX • EU • DNB</div></div>
+      <div style="text-align:right"><div class="ex-balance">€0</div><div class="ex-status-text">CONNECTED</div></div>
+    </div>
+    <div class="exchange-item">
+      <div class="ex-dot ex-dot-green"></div>
+      <div style="flex:1"><div class="ex-name">Kraken</div><div class="ex-type">CEX • EU • FCA</div></div>
+      <div style="text-align:right"><div class="ex-balance">€0</div><div class="ex-status-text">CONNECTED</div></div>
+    </div>
+    <div class="exchange-item">
+      <div class="ex-dot ex-dot-green"></div>
+      <div style="flex:1"><div class="ex-name">MEXC</div><div class="ex-type">CEX • INT</div></div>
+      <div style="text-align:right"><div class="ex-balance">€0</div><div class="ex-status-text">CONNECTED</div></div>
+    </div>
+    <div class="exchange-item">
+      <div class="ex-dot ex-dot-green"></div>
+      <div style="flex:1"><div class="ex-name">Coinbase</div><div class="ex-type">CEX • EU</div></div>
+      <div style="text-align:right"><div class="ex-balance">€0</div><div class="ex-status-text">CONNECTED</div></div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">📈 Forex Brokers</div>
+    <div class="exchange-item">
+      <div class="ex-dot ex-dot-green"></div>
+      <div style="flex:1"><div class="ex-name">IC Markets EU</div><div class="ex-type">Forex • MT5 • CySEC</div></div>
+      <div style="text-align:right"><div class="ex-balance">€185</div><div class="ex-status-text">CONNECTED</div></div>
+    </div>
+    <div class="exchange-item">
+      <div class="ex-dot ex-dot-yellow"></div>
+      <div style="flex:1"><div class="ex-name">Pepperstone</div><div class="ex-type">Forex • MT5 • FCA</div></div>
+      <div style="text-align:right"><div class="ex-balance">€0</div><div class="ex-status-text">KYC PENDING</div></div>
+    </div>
+    <div class="exchange-item">
+      <div class="ex-dot ex-dot-green"></div>
+      <div style="flex:1"><div class="ex-name">Capital.com</div><div class="ex-type">CFD • EU • FCA</div></div>
+      <div style="text-align:right"><div class="ex-balance">€0</div><div class="ex-status-text">CONNECTED</div></div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">🔗 Web3 & DEX</div>
+    <div class="exchange-item">
+      <div class="ex-dot ex-dot-green"></div>
+      <div style="flex:1"><div class="ex-name">MetaMask</div><div class="ex-type">Web3 • ETH • Polygon</div></div>
+      <div style="text-align:right"><div class="ex-balance">€0</div><div class="ex-status-text">CONNECTED</div></div>
+    </div>
+  </div>
+
+</div>
+
+<!-- ===== ACHIEVEMENTS ===== -->
+<div id="tab-achievements" class="content">
+
+  <div class="streak-card">
+    <div class="streak-fire">🔥</div>
+    <div class="streak-info">
+      <div class="streak-count">3</div>
+      <div class="streak-label">Huidige winst streak</div>
+    </div>
+  </div>
+
+  <div class="section-divider">Behaalde Prestaties</div>
+
+  <div class="achievement-grid">
+    <div class="achievement unlocked">
+      <div class="achievement-icon">🚀</div>
+      <div class="achievement-name">Builder</div>
+      <div class="achievement-desc">35 fases gebouwd</div>
+    </div>
+    <div class="achievement unlocked">
+      <div class="achievement-icon">🧠</div>
+      <div class="achievement-name">AI Pionier</div>
+      <div class="achievement-desc">Claude AI gekoppeld</div>
+    </div>
+    <div class="achievement unlocked">
+      <div class="achievement-icon">🌐</div>
+      <div class="achievement-name">Exchange King</div>
+      <div class="achievement-desc">10 exchanges</div>
+    </div>
+    <div class="achievement unlocked">
+      <div class="achievement-icon">👑</div>
+      <div class="achievement-name">CAIO</div>
+      <div class="achievement-desc">AI CEO geactiveerd</div>
+    </div>
+    <div class="achievement unlocked">
+      <div class="achievement-icon">🤖</div>
+      <div class="achievement-name">Bot Army</div>
+      <div class="achievement-desc">23 bots actief</div>
+    </div>
+    <div class="achievement unlocked">
+      <div class="achievement-icon">📈</div>
+      <div class="achievement-name">First Green</div>
+      <div class="achievement-desc">Eerste winst</div>
+    </div>
+    <div class="achievement achievement-locked">
+      <div class="achievement-icon">💰</div>
+      <div class="achievement-name">€100 Winst</div>
+      <div class="achievement-desc">Nog €78 te gaan</div>
+    </div>
+    <div class="achievement achievement-locked">
+      <div class="achievement-icon">🔴</div>
+      <div class="achievement-name">Live Trader</div>
+      <div class="achievement-desc">Ga live</div>
+    </div>
+    <div class="achievement achievement-locked">
+      <div class="achievement-icon">💎</div>
+      <div class="achievement-name">Diamond</div>
+      <div class="achievement-desc">€1000 winst</div>
+    </div>
+  </div>
+
+  <div class="section-divider">Volgende Mijlpalen</div>
+
+  <div class="card">
+    <div class="card-title">🎯 Doelen</div>
+    <div style="margin-bottom:12px">
+      <div style="display:flex;justify-content:space-between;font-size:13px;margin-bottom:6px">
+        <span>€100 winst bereiken</span>
+        <span style="color:var(--green);font-family:'JetBrains Mono',monospace">€21,73 / €100</span>
+      </div>
+      <div class="progress-wrap"><div class="progress-bar" style="width:21.73%"></div></div>
+    </div>
+    <div style="margin-bottom:12px">
+      <div style="display:flex;justify-content:space-between;font-size:13px;margin-bottom:6px">
+        <span>37 fases compleet</span>
+        <span style="color:var(--purple);font-family:'JetBrains Mono',monospace">35 / 37</span>
+      </div>
+      <div class="progress-wrap"><div class="progress-bar" style="width:94.6%;background:linear-gradient(90deg,var(--purple),var(--blue))"></div></div>
+    </div>
+    <div>
+      <div style="display:flex;justify-content:space-between;font-size:13px;margin-bottom:6px">
+        <span>10 dagen streak</span>
+        <span style="color:var(--yellow);font-family:'JetBrains Mono',monospace">3 / 10</span>
+      </div>
+      <div class="progress-wrap"><div class="progress-bar" style="width:30%;background:linear-gradient(90deg,var(--yellow),var(--orange))"></div></div>
+    </div>
+  </div>
+
+</div>
+
+<!-- ===== ALERTS ===== -->
+<div id="tab-alerts" class="content">
+
+  <div class="card">
+    <div class="card-title">🔔 Live Alerts</div>
+
+    <div class="alert-item">
+      <div class="alert-icon alert-success">✅</div>
+      <div class="alert-content">
+        <div class="alert-msg">ADA stop-loss bijgewerkt naar break-even €1.14 (+3.51% winst)</div>
+        <div class="alert-time">05-04-2026 02:15</div>
+      </div>
+    </div>
+
+    <div class="alert-item">
+      <div class="alert-icon alert-success">⚡</div>
+      <div class="alert-content">
+        <div class="alert-msg">Arbitrage kans gedetecteerd: XRP Bitvavo vs Bybit — €1.32 netto winst</div>
+        <div class="alert-time">05-04-2026 01:45</div>
+      </div>
+    </div>
+
+    <div class="alert-item">
+      <div class="alert-icon alert-info">🧠</div>
+      <div class="alert-content">
+        <div class="alert-msg">AI Brain analyse: BULLISH sentiment | Fear&Greed 72 | ADA top pick</div>
+        <div class="alert-time">05-04-2026 01:30</div>
+      </div>
+    </div>
+
+    <div class="alert-item">
+      <div class="alert-icon alert-success">🚀</div>
+      <div class="alert-content">
+        <div class="alert-msg">CHRO: SnipeX en NightX klaar voor promotie naar live trading!</div>
+        <div class="alert-time">05-04-2026 00:44</div>
+      </div>
+    </div>
+
+    <div class="alert-item">
+      <div class="alert-icon alert-warning">⚠️</div>
+      <div class="alert-content">
+        <div class="alert-msg">CFO: Portfolio 75.7% cash — te conservatief voor bullish markt</div>
+        <div class="alert-time">04-04-2026 18:12</div>
+      </div>
+    </div>
+
+    <div class="alert-item">
+      <div class="alert-icon alert-info">📊</div>
+      <div class="alert-content">
+        <div class="alert-msg">Weekrapport gegenereerd: Score 72/100 IMPROVING trend</div>
+        <div class="alert-time">04-04-2026 08:00</div>
+      </div>
+    </div>
+
+  </div>
+
+</div>
+
+<!-- NAV -->
+<nav class="nav">
+  <div class="nav-item active" id="nav-dashboard" onclick="showTab('dashboard',null);setNav('dashboard')">
+    <div class="nav-icon">📊</div>
+    <div class="nav-label">Dashboard</div>
+  </div>
+  <div class="nav-item" id="nav-portfolio" onclick="showTab('portfolio',null);setNav('portfolio')">
+    <div class="nav-icon">💰</div>
+    <div class="nav-label">Portfolio</div>
+  </div>
+  <div class="nav-item" id="nav-bots" onclick="showTab('bots',null);setNav('bots')">
+    <div class="nav-icon">🤖</div>
+    <div class="nav-label">Bots</div>
+  </div>
+  <div class="nav-item" id="nav-caio" onclick="showTab('caio',null);setNav('caio')">
+    <div class="nav-icon">👑</div>
+    <div class="nav-label">CAIO</div>
+  </div>
+  <div class="nav-item" id="nav-alerts" onclick="showTab('alerts',null);setNav('alerts')">
+    <div class="nav-icon">🔔</div>
+    <div class="nav-label">Alerts</div>
+  </div>
+</nav>
+
+<script src="app.js"></script>
+</body>
+</html>

@@ -1,0 +1,56 @@
+{
+  "name": "GenesisX™ Control App",
+  "short_name": "GenesisX",
+  "description": "GenesisX AI Trading Control App — CAIO, bots, portfolio en live signalen",
+  "start_url": "/genesisX/",
+  "display": "standalone",
+  "background_color": "#060810",
+  "theme_color": "#00ff88",
+  "orientation": "portrait-primary",
+  "lang": "nl",
+  "categories": [
+    "finance",
+    "productivity"
+  ],
+  "icons": [
+    {
+      "src": "icons/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "icons/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ],
+  "shortcuts": [
+    {
+      "name": "Portfolio",
+      "short_name": "Portfolio",
+      "description": "Open portfolio overzicht",
+      "url": "/genesisX/#portfolio",
+      "icons": [
+        {
+          "src": "icons/icon-192.png",
+          "sizes": "192x192"
+        }
+      ]
+    },
+    {
+      "name": "AI Brain",
+      "short_name": "AI Brain",
+      "description": "Open Claude AI analyse",
+      "url": "/genesisX/#ai",
+      "icons": [
+        {
+          "src": "icons/icon-192.png",
+          "sizes": "192x192"
+        }
+      ]
+    }
+  ],
+  "scope": "/genesisX/"
+}
