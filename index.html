@@ -307,6 +307,34 @@ body{background:var(--bg);color:var(--text);font-family:'Space Grotesk',sans-ser
 /* SECTION TITLE */
 .sec-title{font-size:10px;font-weight:800;color:var(--text3);text-transform:uppercase;letter-spacing:1px;margin:14px 0 8px;display:flex;align-items:center;gap:8px;}
 .sec-title::after{content:'';flex:1;height:1px;background:var(--border);}
+
+/* LIGHT MODE */
+body.light{--bg:#f0f4ff;--bg2:#e4eaf7;--card:#ffffff;--card2:#f0f4ff;--border:#d0daf0;--text:#0f172a;--text2:#475569;--text3:#94a3b8;}
+body.light .hdr{background:rgba(240,244,255,0.97);}
+body.light .bnav{background:rgba(228,234,247,0.97);}
+body.light .sp-logo{-webkit-text-fill-color:transparent;}
+
+/* DARK/LIGHT TOGGLE */
+.theme-btn{background:rgba(255,255,255,0.06);border:1px solid var(--border);color:var(--text2);width:30px;height:30px;border-radius:8px;font-size:15px;cursor:pointer;flex-shrink:0;display:flex;align-items:center;justify-content:center;}
+.theme-btn:active{transform:scale(0.92);}
+
+/* PUSH NOTIF BTN */
+.notif-btn{background:rgba(14,165,233,0.08);border:1px solid rgba(14,165,233,0.2);color:var(--blue);width:30px;height:30px;border-radius:8px;font-size:14px;cursor:pointer;flex-shrink:0;display:flex;align-items:center;justify-content:center;}
+.notif-btn.granted{background:rgba(0,255,136,0.08);border-color:rgba(0,255,136,0.2);color:var(--green);}
+
+/* XP BAR */
+.xp-bar-wrap{height:2px;background:var(--border);overflow:hidden;}
+.xp-bar-fill{height:100%;background:linear-gradient(90deg,var(--purple),var(--blue));transition:width 1s;}
+
+/* CHART CANVAS */
+.chart-canvas{width:100%;height:110px;display:block;}
+.chart-tabs{display:flex;gap:6px;margin-bottom:10px;flex-wrap:wrap;}
+.chart-tab{padding:4px 10px;border-radius:20px;font-size:10px;font-weight:700;cursor:pointer;border:1px solid var(--border);color:var(--text3);background:transparent;}
+.chart-tab.active{background:rgba(0,255,136,0.1);color:var(--green);border-color:rgba(0,255,136,0.3);}
+
+/* KEYBOARD HINT */
+.kb-hint{position:fixed;bottom:90px;right:12px;background:var(--card);border:1px solid var(--border);border-radius:10px;padding:8px 12px;font-size:10px;color:var(--text3);font-family:'JetBrains Mono',monospace;z-index:200;opacity:0;transition:opacity 0.3s;pointer-events:none;}
+.kb-hint.show{opacity:1;}
 </style>
 </head>
 <body>
@@ -338,12 +366,15 @@ body{background:var(--bg);color:var(--text);font-family:'Space Grotesk',sans-ser
       </div>
       <div class="hdr-right">
         <span class="hdr-badge">PAPER</span>
+        <button class="notif-btn" id="notifBtn" title="Push notificaties" onclick="requestPushPermission()">🔔</button>
+        <button class="theme-btn" id="themeBtn" title="Dark/Light mode" onclick="toggleTheme()">🌙</button>
         <div class="hdr-portfolio">
-          <div class="hdr-val">€3.171,73</div>
-          <div class="hdr-pnl">+€21,73 deze week ↑</div>
+          <div class="hdr-val" id="hdr-val">€3.171,73</div>
+          <div class="hdr-pnl" id="hdr-pnl">+€21,73 deze week ↑</div>
         </div>
       </div>
     </div>
+    <div class="xp-bar-wrap"><div class="xp-bar-fill" id="xp-bar-fill" style="width:43%"></div></div>
   </div>
 
   <!-- TICKER -->
@@ -384,15 +415,15 @@ body{background:var(--bg);color:var(--text);font-family:'Space Grotesk',sans-ser
     <!-- DASHBOARD -->
     <div id="pg-dashboard" class="page active">
       <div class="lv-card">
-        <div class="lv-ic">🥈</div>
+        <div class="lv-ic" id="lv-ic">🥈</div>
         <div style="flex:1">
-          <div class="lv-title">Paper Trader — Level 2</div>
-          <div class="lv-sub">Nog €2.828 winst voor Level 3</div>
-          <div class="lv-xp">XP: <span>2.172 / 5.000</span></div>
-          <div class="prog" style="margin-top:6px"><div class="prog-f" style="width:43%;background:linear-gradient(90deg,var(--purple),var(--blue))"></div></div>
+          <div class="lv-title" id="lv-title">Paper Trader — Level 2</div>
+          <div class="lv-sub" id="lv-sub">Laden...</div>
+          <div class="lv-xp">XP: <span id="lv-xp-txt">2.172 / 5.000</span></div>
+          <div class="prog" style="margin-top:6px"><div class="prog-f" id="lv-prog" style="width:43%;background:linear-gradient(90deg,var(--purple),var(--blue))"></div></div>
         </div>
         <div style="text-align:right">
-          <div style="font-size:24px;font-weight:800;color:var(--yellow)">🔥3</div>
+          <div style="font-size:24px;font-weight:800;color:var(--yellow)" id="streak-val">🔥3</div>
           <div style="font-size:9px;color:var(--text2)">streak</div>
         </div>
       </div>
@@ -420,18 +451,18 @@ body{background:var(--bg);color:var(--text);font-family:'Space Grotesk',sans-ser
         </div>
       </div>
 
-      <!-- Chart -->
+      <!-- Charts -->
       <div class="card">
-        <div class="card-title">📈 Portfolio Grafiek (7 dagen)<span style="color:var(--green);cursor:pointer" onclick="openModal('chart-modal')">Uitbreiden →</span></div>
-        <svg width="100%" height="100" viewBox="0 0 300 100" preserveAspectRatio="none">
-          <defs><linearGradient id="cg" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#00ff88" stop-opacity="0.3"/><stop offset="100%" stop-color="#00ff88" stop-opacity="0"/></linearGradient></defs>
-          <path d="M0,80 L40,72 L80,76 L120,62 L160,52 L200,42 L240,34 L300,24 L300,100 L0,100Z" fill="url(#cg)"/>
-          <path d="M0,80 L40,72 L80,76 L120,62 L160,52 L200,42 L240,34 L300,24" fill="none" stroke="#00ff88" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
-          <circle cx="300" cy="24" r="4" fill="#00ff88" filter="drop-shadow(0 0 4px #00ff88)"/>
-        </svg>
-        <div style="display:flex;justify-content:space-between;font-size:9px;color:var(--text3);font-family:'JetBrains Mono',monospace;padding-top:5px;border-top:1px solid var(--border)">
-          <span>Ma</span><span>Di</span><span>Wo</span><span>Do</span><span>Vr</span><span>Za</span><span>Nu</span>
+        <div class="card-title">📈 Grafieken</div>
+        <div class="chart-tabs">
+          <div class="chart-tab active" onclick="setChartTab('portfolio',this)">Portfolio</div>
+          <div class="chart-tab" onclick="setChartTab('pnl',this)">PnL/dag</div>
+          <div class="chart-tab" onclick="setChartTab('btc',this)">BTC</div>
+          <div class="chart-tab" onclick="setChartTab('eth',this)">ETH</div>
+          <div class="chart-tab" onclick="setChartTab('ada',this)">ADA</div>
         </div>
+        <canvas id="mainChart" class="chart-canvas" height="110"></canvas>
+        <div id="chart-labels" style="display:flex;justify-content:space-between;font-size:9px;color:var(--text3);font-family:'JetBrains Mono',monospace;padding-top:5px;border-top:1px solid var(--border);margin-top:4px"></div>
       </div>
 
       <!-- Heatmap -->
@@ -682,38 +713,54 @@ body{background:var(--bg);color:var(--text);font-family:'Space Grotesk',sans-ser
     <div id="pg-achievements" class="page">
       <div class="str-card">
         <div style="font-size:30px">🔥</div>
-        <div><div style="font-size:24px;font-weight:800;color:var(--yellow);font-family:'JetBrains Mono',monospace">3</div><div style="font-size:11px;color:var(--text2)">Dagen winstgevend op rij</div></div>
-        <div style="margin-left:auto;text-align:right"><div style="font-size:10px;color:var(--text2)">Record</div><div style="font-size:18px;font-weight:800;color:var(--yellow)">3 🏅</div></div>
+        <div><div id="ach-streak-days" style="font-size:24px;font-weight:800;color:var(--yellow);font-family:'JetBrains Mono',monospace">3</div><div style="font-size:11px;color:var(--text2)">Dagen winstgevend op rij</div></div>
+        <div style="margin-left:auto;text-align:right"><div style="font-size:10px;color:var(--text2)">Record</div><div id="ach-streak-record" style="font-size:18px;font-weight:800;color:var(--yellow)">3 🏅</div></div>
+      </div>
+
+      <!-- XP / Level kaart -->
+      <div class="card" style="margin-bottom:10px">
+        <div class="card-title">⭐ XP & Level</div>
+        <div style="display:flex;align-items:center;gap:12px;margin-bottom:10px">
+          <div style="font-size:36px" id="ach-lv-ic">🥈</div>
+          <div style="flex:1">
+            <div style="font-size:14px;font-weight:800" id="ach-lv-title">Level 2 — Paper Trader</div>
+            <div style="font-size:11px;color:var(--text3)" id="ach-lv-sub">Laden...</div>
+            <div class="prog" style="margin-top:6px"><div class="prog-f" id="ach-xp-prog" style="width:43%;background:linear-gradient(90deg,var(--purple),var(--blue))"></div></div>
+            <div style="font-size:10px;color:var(--text2);margin-top:4px">XP: <span id="ach-xp-txt">2.172 / 5.000</span> &bull; €1 winst = 10 XP</div>
+          </div>
+        </div>
+        <canvas id="pnlChart" style="width:100%;height:70px;display:block;"></canvas>
+        <div id="pnl-chart-labels" style="display:flex;justify-content:space-between;font-size:9px;color:var(--text3);font-family:'JetBrains Mono',monospace;padding-top:4px"></div>
       </div>
 
       <div class="card" style="margin-bottom:10px">
         <div class="card-title">🎯 Doelen</div>
         <div style="margin-bottom:10px">
-          <div style="display:flex;justify-content:space-between;font-size:12px;margin-bottom:4px"><span>€100 winst</span><span style="color:var(--green)">€21,73 / €100</span></div>
-          <div class="prog"><div class="prog-f" style="width:21.73%"></div></div>
+          <div style="display:flex;justify-content:space-between;font-size:12px;margin-bottom:4px"><span>€100 winst</span><span id="goal-100-txt" style="color:var(--green)">€21,73 / €100</span></div>
+          <div class="prog"><div class="prog-f" id="goal-100-bar" style="width:21.73%"></div></div>
         </div>
         <div style="margin-bottom:10px">
           <div style="display:flex;justify-content:space-between;font-size:12px;margin-bottom:4px"><span>37 fases compleet</span><span style="color:var(--purple)">36 / 37</span></div>
           <div class="prog"><div class="prog-f" style="width:97%;background:linear-gradient(90deg,var(--purple),var(--blue))"></div></div>
         </div>
         <div>
-          <div style="display:flex;justify-content:space-between;font-size:12px;margin-bottom:4px"><span>10 dagen streak</span><span style="color:var(--yellow)">3 / 10</span></div>
-          <div class="prog"><div class="prog-f" style="width:30%;background:linear-gradient(90deg,var(--yellow),var(--orange))"></div></div>
+          <div style="display:flex;justify-content:space-between;font-size:12px;margin-bottom:4px"><span>10 dagen streak</span><span id="goal-streak-txt" style="color:var(--yellow)">3 / 10</span></div>
+          <div class="prog"><div class="prog-f" id="goal-streak-bar" style="width:30%;background:linear-gradient(90deg,var(--yellow),var(--orange))"></div></div>
         </div>
       </div>
 
       <div class="card">
         <div class="card-title">🏆 Achievements — Tik voor details</div>
-        <div class="ach-g">
-          <div class="ach un" onclick="openModal('ach-modal','🚀 Builder','Je hebt 36 fases van GenesisX gebouwd! Een uniek prestatie.')"><div class="ach-ic">🚀</div><div class="ach-nm">Builder</div><div class="ach-ds">36 fases</div></div>
-          <div class="ach un" onclick="openModal('ach-modal','🧠 AI Pionier','Claude AI succesvol gekoppeld als trading brain!')"><div class="ach-ic">🧠</div><div class="ach-nm">AI Pionier</div><div class="ach-ds">Claude AI</div></div>
-          <div class="ach un" onclick="openModal('ach-modal','🌐 Exchange King','10 exchanges gekoppeld — indrukwekkend!')"><div class="ach-ic">🌐</div><div class="ach-nm">Exchange King</div><div class="ach-ds">10 exchanges</div></div>
-          <div class="ach un" onclick="openModal('ach-modal','👑 CAIO','Je persoonlijke AI CEO is actief!')"><div class="ach-ic">👑</div><div class="ach-nm">CAIO</div><div class="ach-ds">AI CEO</div></div>
-          <div class="ach un" onclick="openModal('ach-modal','🤖 Bot Army','23 gespecialiseerde trading bots actief!')"><div class="ach-ic">🤖</div><div class="ach-nm">Bot Army</div><div class="ach-ds">23 bots</div></div>
-          <div class="ach un" onclick="openModal('ach-modal','📈 First Green','Je eerste winst is behaald!')"><div class="ach-ic">📈</div><div class="ach-nm">First Green</div><div class="ach-ds">Eerste winst</div></div>
-          <div class="ach lk" onclick="openModal('ach-modal','💰 €100 Winst','Nog €78,27 te gaan!')"><div class="ach-ic">💰</div><div class="ach-nm">€100 Winst</div><div class="ach-ds">Nog €78 te gaan</div></div>
-          <div class="ach lk" onclick="openModal('ach-modal','🔴 Live Trader','Ga live en unlock dit achievement!')"><div class="ach-ic">🔴</div><div class="ach-nm">Live Trader</div><div class="ach-ds">Ga live</div></div>
-          <div class="ach lk" onclick="openModal('ach-modal','💎 Diamond','Behaal €1000 winst!')"><div class="ach-ic">💎</div><div class="ach-nm">Diamond</div><div class="ach-ds">€1000 winst</div></div>
+        <div class="ach-g" id="ach-grid">
+          <div class="ach un" id="ach-builder" onclick="openModal('ach-modal','🚀 Builder','Je hebt 36 fases van GenesisX gebouwd! Een uniek prestatie.')"><div class="ach-ic">🚀</div><div class="ach-nm">Builder</div><div class="ach-ds">36 fases</div></div>
+          <div class="ach un" id="ach-ai" onclick="openModal('ach-modal','🧠 AI Pionier','Claude AI succesvol gekoppeld als trading brain!')"><div class="ach-ic">🧠</div><div class="ach-nm">AI Pionier</div><div class="ach-ds">Claude AI</div></div>
+          <div class="ach un" id="ach-exchange" onclick="openModal('ach-modal','🌐 Exchange King','10 exchanges gekoppeld — indrukwekkend!')"><div class="ach-ic">🌐</div><div class="ach-nm">Exchange King</div><div class="ach-ds">10 exchanges</div></div>
+          <div class="ach un" id="ach-caio" onclick="openModal('ach-modal','👑 CAIO','Je persoonlijke AI CEO is actief!')"><div class="ach-ic">👑</div><div class="ach-nm">CAIO</div><div class="ach-ds">AI CEO</div></div>
+          <div class="ach un" id="ach-bots" onclick="openModal('ach-modal','🤖 Bot Army','23 gespecialiseerde trading bots actief!')"><div class="ach-ic">🤖</div><div class="ach-nm">Bot Army</div><div class="ach-ds">23 bots</div></div>
+          <div class="ach" id="ach-green" onclick="openModal('ach-modal','📈 First Green','Eerste positieve PnL dag behaald!')"><div class="ach-ic">📈</div><div class="ach-nm">First Green</div><div class="ach-ds" id="ach-green-ds">Laden...</div></div>
+          <div class="ach" id="ach-100" onclick="openModal('ach-modal','💰 €100 Winst','Behaal €100 totale winst!')"><div class="ach-ic">💰</div><div class="ach-nm">€100 Winst</div><div class="ach-ds" id="ach-100-ds">Laden...</div></div>
+          <div class="ach lk" id="ach-live" onclick="openModal('ach-modal','🔴 Live Trader','Ga live en unlock dit achievement!')"><div class="ach-ic">🔴</div><div class="ach-nm">Live Trader</div><div class="ach-ds">Ga live</div></div>
+          <div class="ach lk" id="ach-diamond" onclick="openModal('ach-modal','💎 Diamond','Behaal €1000 winst!')"><div class="ach-ic">💎</div><div class="ach-nm">Diamond</div><div class="ach-ds" id="ach-diamond-ds">€1000 winst</div></div>
         </div>
       </div>
     </div>
@@ -802,6 +849,44 @@ body{background:var(--bg);color:var(--text);font-family:'Space Grotesk',sans-ser
 </div>
 
 <script>
+// ===== SESSION CHECK =====
+(function checkSession(){
+  const SESSION_KEY='gx_session';
+  const INACTIVITY_MS=30*60*1000;
+  const s=sessionStorage.getItem(SESSION_KEY)||localStorage.getItem(SESSION_KEY);
+  if(!s){window.location.replace('login.html');return;}
+  try{
+    const parsed=JSON.parse(s);
+    if(!parsed.expires||parsed.expires<Date.now()){
+      localStorage.removeItem(SESSION_KEY);
+      sessionStorage.removeItem(SESSION_KEY);
+      window.location.replace('login.html');
+      return;
+    }
+  }catch{window.location.replace('login.html');return;}
+
+  let inactiveTimer;
+  function resetTimer(){
+    clearTimeout(inactiveTimer);
+    inactiveTimer=setTimeout(()=>{
+      localStorage.removeItem(SESSION_KEY);
+      sessionStorage.removeItem(SESSION_KEY);
+      alert('⏱️ Je bent uitgelogd vanwege 30 minuten inactiviteit.');
+      window.location.replace('login.html');
+    },INACTIVITY_MS);
+  }
+  ['click','touchstart','keydown','scroll','mousemove'].forEach(e=>document.addEventListener(e,resetTimer,{passive:true}));
+  resetTimer();
+})();
+
+function logout(){
+  if(!confirm('Wil je uitloggen uit GenesisX?'))return;
+  localStorage.removeItem('gx_session');
+  sessionStorage.removeItem('gx_session');
+  localStorage.removeItem('gx_remember');
+  window.location.replace('login.html');
+}
+
 // ===== DATA =====
 const bots=[
   {name:'WhaleX',score:91,wr:100,trades:1,status:'ACTIVE',emoji:'🐋',pers:'Majestueuze oceaan koning',color:'linear-gradient(135deg,#00ff88,#00b4d8)'},
@@ -1303,15 +1388,275 @@ function confetti(){
 // Fix openModal to work properly
 window.openModal=openModal;
 
+// ===== DARK / LIGHT MODE =====
+function toggleTheme(){
+  const light=document.body.classList.toggle('light');
+  localStorage.setItem('gx_theme',light?'light':'dark');
+  document.getElementById('themeBtn').textContent=light?'☀️':'🌙';
+}
+(function applyTheme(){
+  if(localStorage.getItem('gx_theme')==='light'){
+    document.body.classList.add('light');
+    const b=document.getElementById('themeBtn');
+    if(b)b.textContent='☀️';
+  }
+})();
+
+// ===== XP & LEVEL SYSTEM =====
+const LEVELS=[
+  {level:1,icon:'🥉',title:'Beginner',minXP:0,maxXP:500},
+  {level:2,icon:'🥈',title:'Paper Trader',minXP:500,maxXP:2000},
+  {level:3,icon:'🥇',title:'Pro Trader',minXP:2000,maxXP:5000},
+  {level:4,icon:'💎',title:'Elite Trader',minXP:5000,maxXP:Infinity}
+];
+
+function calcXP(totalPnl){return Math.max(0,Math.round(totalPnl*10));}
+
+function getLevel(xp){
+  for(let i=LEVELS.length-1;i>=0;i--){if(xp>=LEVELS[i].minXP)return LEVELS[i];}
+  return LEVELS[0];
+}
+
+function updateXPUI(xp,streak){
+  const lv=getLevel(xp);
+  const next=LEVELS.find(l=>l.minXP>xp)||lv;
+  const pct=lv.maxXP===Infinity?100:Math.min(100,Math.round((xp-lv.minXP)/(lv.maxXP-lv.minXP)*100));
+  const xpTxt=lv.maxXP===Infinity?xp+' XP (MAX)':xp+' / '+lv.maxXP;
+  const sub=lv.maxXP===Infinity?'Maximum level bereikt!':'Nog '+Math.round((next.minXP-xp)/10)+' winst voor '+next.title;
+
+  // Dashboard lv-card
+  const set=(id,v)=>{const e=document.getElementById(id);if(e)e.textContent=v;};
+  const setp=(id,v)=>{const e=document.getElementById(id);if(e)e.style.width=v+'%';};
+  set('lv-ic',lv.icon);set('lv-title',lv.title+' — Level '+lv.level);
+  set('lv-sub',sub);set('lv-xp-txt',xpTxt);setp('lv-prog',pct);
+  const sf=document.getElementById('streak-val');if(sf)sf.textContent='🔥'+(streak||0);
+  const xbf=document.getElementById('xp-bar-fill');if(xbf)xbf.style.width=pct+'%';
+
+  // Achievements page
+  set('ach-lv-ic',lv.icon);set('ach-lv-title','Level '+lv.level+' — '+lv.title);
+  set('ach-lv-sub',sub);set('ach-xp-txt',xpTxt);setp('ach-xp-prog',pct);
+  set('ach-streak-days',streak||0);set('ach-streak-record',(streak||0)+' 🏅');
+}
+
+function updateAchievements(totalPnl,streak,tradingMode){
+  const pnl=parseFloat(totalPnl)||0;
+  const unlock=(id)=>{const e=document.getElementById(id);if(e){e.classList.remove('lk');e.classList.add('un');}};
+  const setDs=(id,txt)=>{const e=document.getElementById(id);if(e)e.textContent=txt;};
+
+  if(pnl>0){unlock('ach-green');setDs('ach-green-ds','✅ Unlocked');}
+  else{setDs('ach-green-ds','Eerste winstdag');}
+
+  if(pnl>=100){unlock('ach-100');setDs('ach-100-ds','✅ €'+pnl.toFixed(0)+' winst');}
+  else{setDs('ach-100-ds','€'+pnl.toFixed(2)+' / €100');}
+  setDs('ach-diamond-ds',pnl>=1000?'✅ Diamond!':'€'+pnl.toFixed(0)+' / €1000');
+  if(pnl>=1000)unlock('ach-diamond');
+  if(tradingMode==='LIVE')unlock('ach-live');
+
+  // Doelen
+  const p100=Math.min(100,(pnl/100)*100);
+  const pStr=Math.min(100,((streak||0)/10)*100);
+  const g1=document.getElementById('goal-100-txt');if(g1)g1.textContent='€'+pnl.toFixed(2)+' / €100';
+  const g1b=document.getElementById('goal-100-bar');if(g1b)g1b.style.width=p100+'%';
+  const gs=document.getElementById('goal-streak-txt');if(gs)gs.textContent=(streak||0)+' / 10';
+  const gsb=document.getElementById('goal-streak-bar');if(gsb)gsb.style.width=pStr+'%';
+}
+
+// ===== CHARTS (Canvas) =====
+let activeChartTab='portfolio';
+
+// Gesimuleerde historische data (7 dagen)
+function getChartData(type){
+  const days=['Ma','Di','Wo','Do','Vr','Za','Nu'];
+  const seed={'portfolio':[3050,3060,3055,3090,3110,3140,3172],
+    'pnl':[-2.50,10.20,-5.80,35.00,20.00,30.00,9.83],
+    'btc':[56200,57000,56500,58000,58200,58400,58457],
+    'eth':[1720,1740,1730,1760,1775,1780,1785],
+    'ada':[1.10,1.12,1.09,1.14,1.16,1.17,1.18]};
+  return{labels:days,values:seed[type]||seed.portfolio};
+}
+
+function drawLineChart(canvasId,data,color,fill){
+  const canvas=document.getElementById(canvasId);
+  if(!canvas)return;
+  const ctx=canvas.getContext('2d');
+  const W=canvas.offsetWidth||canvas.width;const H=canvas.height||110;
+  canvas.width=W;canvas.height=H;
+  const vals=data.values;const min=Math.min(...vals);const max=Math.max(...vals);
+  const range=max-min||1;
+  const pad=12;
+  const xs=vals.map((_,i)=>pad+(i/(vals.length-1))*(W-2*pad));
+  const ys=vals.map(v=>H-pad-(((v-min)/range)*(H-2*pad)));
+  ctx.clearRect(0,0,W,H);
+
+  // Grid lines
+  ctx.strokeStyle='rgba(255,255,255,0.05)';ctx.lineWidth=1;
+  for(let i=0;i<4;i++){const y=pad+i*((H-2*pad)/3);ctx.beginPath();ctx.moveTo(0,y);ctx.lineTo(W,y);ctx.stroke();}
+
+  if(fill){
+    const grad=ctx.createLinearGradient(0,0,0,H);
+    grad.addColorStop(0,color+'55');grad.addColorStop(1,color+'00');
+    ctx.beginPath();ctx.moveTo(xs[0],ys[0]);
+    xs.forEach((x,i)=>{if(i>0)ctx.lineTo(x,ys[i]);});
+    ctx.lineTo(xs[xs.length-1],H);ctx.lineTo(xs[0],H);ctx.closePath();
+    ctx.fillStyle=grad;ctx.fill();
+  }
+
+  ctx.beginPath();ctx.moveTo(xs[0],ys[0]);
+  xs.forEach((x,i)=>{if(i>0){const px=xs[i-1],py=ys[i-1];const cx=(px+x)/2;ctx.bezierCurveTo(cx,py,cx,ys[i],x,ys[i]);}});
+  ctx.strokeStyle=color;ctx.lineWidth=2.5;ctx.lineJoin='round';ctx.stroke();
+
+  // Last point dot
+  const lx=xs[xs.length-1],ly=ys[ys.length-1];
+  ctx.beginPath();ctx.arc(lx,ly,4,0,Math.PI*2);
+  ctx.fillStyle=color;ctx.shadowColor=color;ctx.shadowBlur=8;ctx.fill();
+  ctx.shadowBlur=0;
+
+  // Value label
+  ctx.fillStyle=color;ctx.font='bold 10px JetBrains Mono,monospace';
+  ctx.textAlign='right';
+  const lastVal=vals[vals.length-1];
+  ctx.fillText(lastVal>=1000?'€'+Math.round(lastVal).toLocaleString('nl-NL'):lastVal>=10?'€'+lastVal.toFixed(2):lastVal.toFixed(4),W-2,ly-6);
+}
+
+function drawPnLChart(canvasId,data){
+  const canvas=document.getElementById(canvasId);
+  if(!canvas)return;
+  const ctx=canvas.getContext('2d');
+  const W=canvas.offsetWidth||canvas.width;const H=canvas.height||70;
+  canvas.width=W;canvas.height=H;
+  const vals=data.values;const max=Math.max(...vals.map(Math.abs))||1;
+  const barW=Math.floor((W-4)/vals.length)-2;
+  ctx.clearRect(0,0,W,H);
+  const mid=H/2;
+  ctx.strokeStyle='rgba(255,255,255,0.08)';ctx.lineWidth=1;
+  ctx.beginPath();ctx.moveTo(0,mid);ctx.lineTo(W,mid);ctx.stroke();
+  vals.forEach((v,i)=>{
+    const x=i*(barW+2)+2;const h=Math.abs(v/max)*(H/2-2);
+    ctx.fillStyle=v>=0?'rgba(0,255,136,0.8)':'rgba(239,68,68,0.8)';
+    ctx.beginPath();ctx.roundRect(x,v>=0?mid-h:mid,barW,h,2);ctx.fill();
+  });
+}
+
+function setChartTab(type,el){
+  activeChartTab=type;
+  document.querySelectorAll('.chart-tab').forEach(t=>t.classList.remove('active'));
+  if(el)el.classList.add('active');
+  const data=getChartData(type);
+  const colors={portfolio:'#00ff88',pnl:'#00ff88',btc:'#f7931a',eth:'#627eea',ada:'#0033ad'};
+  const col=colors[type]||'#00ff88';
+  if(type==='pnl'){drawPnLChart('mainChart',data);}
+  else{drawLineChart('mainChart',data,col,true);}
+  const lbl=document.getElementById('chart-labels');
+  if(lbl)lbl.innerHTML=data.labels.map(l=>'<span>'+l+'</span>').join('');
+}
+
+function initCharts(){
+  setChartTab('portfolio',document.querySelector('.chart-tab.active'));
+  const pnlData=getChartData('pnl');
+  drawPnLChart('pnlChart',pnlData);
+  const pl=document.getElementById('pnl-chart-labels');
+  if(pl)pl.innerHTML=pnlData.labels.map(l=>'<span>'+l+'</span>').join('');
+}
+
+// ===== PUSH NOTIFICATIES =====
+function requestPushPermission(){
+  if(!('Notification' in window)){alert('Push notificaties worden niet ondersteund door deze browser.');return;}
+  if(Notification.permission==='granted'){alert('✅ Push notificaties zijn al ingeschakeld!');return;}
+  Notification.requestPermission().then(perm=>{
+    const btn=document.getElementById('notifBtn');
+    if(perm==='granted'){
+      if(btn){btn.textContent='🔕';btn.classList.add('granted');}
+      showPushNotification('🚀 GenesisX','Push notificaties zijn nu actief! Je ontvangt alerts van CAIO.');
+    } else {
+      if(btn)btn.textContent='🔕';
+      alert('Notificaties geweigerd. Wijzig dit in je browserinstellingen.');
+    }
+  });
+}
+
+function showPushNotification(title,body,icon){
+  if(Notification.permission!=='granted')return;
+  try{new Notification(title,{body,icon:icon||'icons/icon-192.png'});}catch(e){}
+}
+
+function checkAlertNotifications(newAlerts){
+  if(!Array.isArray(newAlerts)||Notification.permission!=='granted')return;
+  const lastSeen=parseInt(localStorage.getItem('gx_last_alert')||'0');
+  const now=Date.now();
+  newAlerts.slice(0,1).forEach(a=>{
+    if(now-lastSeen>60000){showPushNotification('📡 GenesisX Alert',a.msg);}
+  });
+  localStorage.setItem('gx_last_alert',String(now));
+}
+
+// Update notification btn on load
+(function(){
+  const btn=document.getElementById('notifBtn');
+  if(btn&&Notification.permission==='granted'){btn.textContent='🔕';btn.classList.add('granted');}
+})();
+
+// ===== LIVE DATA =====
+const API_URL='https://interparliamentary-matrilaterally-rutha.ngrok-free.dev/webhook/genesisxapi';
+
+function fetchAndApplyLiveData(){
+  fetch(API_URL,{signal:AbortSignal.timeout(10000)})
+  .then(r=>r.json())
+  .then(d=>{
+    const p=d.prices||{};
+    const portfolio=d.portfolio||{};
+    const sentiment=d.sentiment||{};
+    const totalPnl=parseFloat(portfolio.weekPnl||portfolio.pnl||21.73);
+    const xp=calcXP(totalPnl);
+    const streak=parseInt(portfolio.streak||3);
+
+    updateXPUI(xp,streak);
+    updateAchievements(totalPnl,streak,portfolio.tradingMode);
+
+    // Header
+    const hv=document.getElementById('hdr-val');
+    if(hv&&portfolio.totalCapital)hv.textContent='€'+Math.round(portfolio.totalCapital).toLocaleString('nl-NL');
+    const hp=document.getElementById('hdr-pnl');
+    if(hp&&totalPnl!==undefined){
+      const sign=totalPnl>=0?'+':'';
+      hp.textContent=sign+'€'+Math.abs(totalPnl).toFixed(2)+' deze week '+(totalPnl>=0?'↑':'↓');
+      hp.style.color=totalPnl>=0?'var(--green)':'var(--red)';
+    }
+
+    // Alerts notificaties
+    checkAlertNotifications(d.alerts||[]);
+  })
+  .catch(()=>{
+    // Fallback: gebruik statische data
+    updateXPUI(calcXP(21.73),3);
+    updateAchievements(21.73,3,'PAPER');
+  });
+}
+
+// ===== KEYBOARD SHORTCUTS =====
+document.addEventListener('keydown',e=>{
+  if(e.target.tagName==='INPUT'||e.target.tagName==='TEXTAREA')return;
+  const map={d:'dashboard',p:'portfolio',b:'bots',c:'caio',s:'signals',f:'flows',a:'alerts'};
+  if(map[e.key.toLowerCase()]){
+    showTab(map[e.key.toLowerCase()],null);
+    const hint=document.getElementById('kb-hint');
+    if(hint){hint.textContent='→ '+map[e.key.toLowerCase()].toUpperCase();hint.classList.add('show');clearTimeout(hint._t);hint._t=setTimeout(()=>hint.classList.remove('show'),1500);}
+    return;
+  }
+  if(e.key==='Escape'){closeModal&&closeModal();}
+});
+
 // ===== INIT =====
-window.addEventListener('load',()=>{
+document.addEventListener('DOMContentLoaded',()=>{
   renderBots();renderFlows();renderExchanges();renderAlerts();
   setTimeout(()=>{
-    document.getElementById('splash').classList.add('out');
-    setTimeout(()=>document.getElementById('splash').remove(),500);
+    const sp=document.getElementById('splash');
+    if(sp){sp.classList.add('out');setTimeout(()=>sp.remove(),500);}
   },2200);
+  setTimeout(()=>{initCharts();fetchAndApplyLiveData();},500);
+  setInterval(fetchAndApplyLiveData,60000);
   setTimeout(()=>location.reload(),5*60*1000);
 });
 </script>
+<div class="kb-hint" id="kb-hint"></div>
 </body>
 </html>
