@@ -1924,6 +1924,12 @@ function runSplash() {
 
 // ─── INIT ─────────────────────────────────────────────────────────────────────
 window.addEventListener('load', () => {
+  // Nucleaire optie - splash weg na 3 seconden NO MATTER WHAT
+  setTimeout(function() {
+    var s = document.getElementById('splash');
+    if (s) { s.style.display = 'none'; }
+  }, 3000);
+
   checkSession();   // altijd true — geen blocking redirect
   renderXP();
   startLiveClock();
