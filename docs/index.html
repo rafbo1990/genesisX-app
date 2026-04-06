@@ -945,21 +945,65 @@ function updateDashFromData(data) {
   };
   state.priceData = prices;
   renderPriceGrid(prices);
-  renderDashBots();
+  renderDashBots(data?.bots);
   renderDashSignals(data?.signals);
   updateDashStats(data);
+  // Update exchange balances van live data
+  if (data?.exchanges) updateExchangeBalances(data.exchanges);
+  // Update portfolio stats van live data
+  if (data?.portfolio) updatePortfolioStats(data.portfolio);
+  // XP bijwerken op basis van echte PnL (alleen bij positieve data)
+  if (data && typeof data.pnl === 'number' && data.pnl !== 0) addXP(data.pnl);
+  // Sentiment bijwerken als signals-tab actief is
+  if (data?.sentiment && state.tab === 'signals') renderSentiment(data.sentiment);
 }
 
 function updateDashStats(data) {
   const pnl = data?.pnl || 0;
   const pnlPct = data?.pnlPct || 0;
-  const el = document.getElementById('d-pnl');
-  if (el) {
-    el.textContent = (pnl >= 0 ? '+' : '') + '€' + Math.abs(pnl).toFixed(2);
-    el.className = 'stat-value ' + (pnl >= 0 ? 'pos' : 'neg');
-  }
+  const total = data?.portfolio?.total || data?.totalCapital || 3150;
+  const activeBots = data?.activeBots || data?.bots?.filter(b => b.status === 'ACTIVE')?.length || 20;
+  const health = data?.systemHealth || data?.uptime || 99.9;
+
+  const pnlEl = document.getElementById('d-pnl');
+  if (pnlEl) { pnlEl.textContent = (pnl >= 0 ? '+' : '') + '€' + Math.abs(pnl).toFixed(2); pnlEl.className = 'stat-value ' + (pnl >= 0 ? 'pos' : 'neg'); }
   const pctEl = document.getElementById('d-pnl-pct');
   if (pctEl) { pctEl.textContent = (pnlPct >= 0 ? '+' : '') + pnlPct.toFixed(2) + '%'; pctEl.className = 'stat-change ' + (pnlPct >= 0 ? 'pos' : 'neg'); }
+  const portEl = document.getElementById('d-portfolio');
+  if (portEl) portEl.textContent = '€' + total.toLocaleString('nl-NL', {maximumFractionDigits:0});
+  const botsEl = document.getElementById('d-bots');
+  if (botsEl) botsEl.textContent = activeBots;
+  const healthEl = document.getElementById('d-health');
+  if (healthEl) { healthEl.textContent = health + '%'; healthEl.className = 'stat-value ' + (health >= 99 ? 'pos' : health >= 95 ? 'neu' : 'neg'); }
+}
+
+function updateExchangeBalances(liveExchanges) {
+  if (!Array.isArray(liveExchanges)) return;
+  liveExchanges.forEach(le => {
+    const found = EXCHANGES.find(e => e.name.toLowerCase().includes((le.name||'').toLowerCase()) || (le.name||'').toLowerCase().includes(e.name.toLowerCase()));
+    if (found && typeof le.balance === 'number') found.capital = le.balance;
+    if (found && le.status) found.status = le.status;
+  });
+  // Herbereken totaal
+  const total = EXCHANGES.reduce((s, e) => s + e.capital, 0);
+  // Herrender als portfolio tab actief is
+  if (state.tab === 'portfolio') renderPortfolio();
+}
+
+function updatePortfolioStats(portfolio) {
+  const total = portfolio.total || portfolio.totalCapital || 3150;
+  const pnl = portfolio.pnl || portfolio.totalPnL || 0;
+  const deployed = portfolio.deployed || portfolio.inTrades || 0;
+  const free = portfolio.free || portfolio.available || (total - deployed);
+  const pnlPct = total > 0 ? ((pnl / total) * 100) : 0;
+  const depPct = total > 0 ? Math.round((deployed / total) * 100) : 0;
+
+  const set = (id, val) => { const el = document.getElementById(id); if (el) el.textContent = val; };
+  set('p-total', '€' + total.toLocaleString('nl-NL', {maximumFractionDigits:0}));
+  set('p-pnl', (pnl >= 0 ? '+' : '') + '€' + Math.abs(pnl).toFixed(2));
+  set('p-deployed', '€' + deployed.toLocaleString('nl-NL', {maximumFractionDigits:0}));
+  set('p-deployed-pct', depPct + '%');
+  set('p-free', '€' + free.toLocaleString('nl-NL', {maximumFractionDigits:0}));
 }
 
 // ─── PRICE GRID ───────────────────────────────────────────────────────────────
@@ -998,19 +1042,24 @@ function loadDashboard() {
   renderDashBots();
 }
 
-function renderDashBots() {
+function renderDashBots(botData) {
   const el = document.getElementById('dash-bot-scores');
   if (!el) return;
   const top5 = BOTS.slice(0, 5);
   el.innerHTML = top5.map(b => {
-    const score = Math.floor(Math.random() * 30 + 60);
-    const w = score + '%';
+    const apiBot = Array.isArray(botData) ? botData.find(ab => ab.name === b.name || ab.id === b.id) : null;
+    // Gebruik echte score/winRate van API, anders behoud vorige of genereer stabiele waarde
+    const score = apiBot?.score ?? apiBot?.winRate ?? (state.botScores?.[b.name] || Math.floor(Math.random() * 20 + 65));
+    if (!state.botScores) state.botScores = {};
+    state.botScores[b.name] = score;
+    const pnl = apiBot?.pnl != null ? (apiBot.pnl >= 0 ? '+€' + apiBot.pnl.toFixed(2) : '-€' + Math.abs(apiBot.pnl).toFixed(2)) : null;
+    const color = score >= 80 ? 'var(--green)' : score >= 60 ? 'var(--blue)' : 'var(--amber)';
     return '<div style="display:flex;align-items:center;gap:8px;margin-bottom:8px">' +
       '<span style="font-size:14px;width:24px;text-align:center">' + b.emoji + '</span>' +
       '<span style="font-size:12px;width:70px;color:var(--text2)">' + b.name + '</span>' +
       '<div style="flex:1;height:6px;background:var(--bg);border-radius:3px;overflow:hidden">' +
-        '<div style="height:100%;width:' + w + ';background:linear-gradient(90deg,var(--blue),var(--green));border-radius:3px"></div></div>' +
-      '<span style="font-size:11px;font-family:var(--mono);color:var(--text2);width:32px;text-align:right">' + score + '</span></div>';
+        '<div style="height:100%;width:' + score + '%;background:linear-gradient(90deg,var(--blue),' + color + ');border-radius:3px;transition:width .5s"></div></div>' +
+      '<span style="font-size:11px;font-family:var(--mono);color:' + color + ';width:52px;text-align:right">' + (pnl || score) + '</span></div>';
   }).join('');
 }
 
@@ -1034,19 +1083,67 @@ function renderDashSignals(signals) {
 
 // ─── PORTFOLIO ────────────────────────────────────────────────────────────────
 function renderPortfolio() {
-  // Exchange list
+  const total = EXCHANGES.reduce((s, e) => s + e.capital, 0) || 3150;
+
+  // Exchange lijst met live balansen
   const el = document.getElementById('p-exchange-list');
   if (el) {
     el.innerHTML = EXCHANGES.map(e => {
-      const pct = Math.round((e.capital / 3150) * 100);
+      const pct = Math.round((e.capital / total) * 100);
+      const dot = e.status === 'connected' ? '<span style="color:var(--green);font-size:9px">●</span>' : '<span style="color:var(--amber);font-size:9px">●</span>';
       return '<div style="display:flex;align-items:center;gap:8px;margin-bottom:8px">' +
-        '<span>' + e.flag + '</span>' +
+        dot + '<span>' + e.flag + '</span>' +
         '<span style="font-size:12px;flex:1">' + e.name + '</span>' +
-        '<span style="font-size:11px;font-family:var(--mono);color:var(--text2)">€' + e.capital + '</span>' +
+        '<span style="font-size:11px;font-family:var(--mono);color:var(--text2)">€' + e.capital.toLocaleString('nl-NL', {maximumFractionDigits:0}) + '</span>' +
         '<span style="font-size:10px;color:var(--text3);width:30px;text-align:right">' + pct + '%</span>' +
         '</div>';
     }).join('');
   }
+
+  // Open posities van live API data
+  const tbody = document.getElementById('p-positions-body');
+  if (tbody) {
+    const positions = state.apiData?.positions || state.apiData?.openPositions || [];
+    if (positions.length === 0) {
+      tbody.innerHTML = '<tr><td colspan="7" style="text-align:center;color:var(--text3);padding:20px">Geen open posities — PAPER TRADING</td></tr>';
+    } else {
+      tbody.innerHTML = positions.map(p => {
+        const pnlCls = (p.pnl || 0) >= 0 ? 'pos' : 'neg';
+        const pnlFmt = (p.pnl >= 0 ? '+' : '') + '€' + Math.abs(p.pnl || 0).toFixed(2);
+        return '<tr>' +
+          '<td><strong>' + (p.asset || p.symbol || '—') + '</strong></td>' +
+          '<td>' + (p.exchange || '—') + '</td>' +
+          '<td>€' + (p.amount || p.size || 0).toFixed(2) + '</td>' +
+          '<td class="mono">€' + (p.price || p.entryPrice || 0).toLocaleString('nl-NL') + '</td>' +
+          '<td class="' + pnlCls + ' mono">' + pnlFmt + '</td>' +
+          '<td class="mono" style="font-size:10px;color:var(--text3)">' + (p.sl ? 'SL:€' + p.sl : '—') + ' ' + (p.tp ? 'TP:€' + p.tp : '') + '</td>' +
+          '<td><button class="bot-btn" onclick="closePosition(\'' + (p.id || p.asset) + '\')">Sluiten</button></td>' +
+          '</tr>';
+      }).join('');
+    }
+  }
+
+  // Trade geschiedenis
+  const histEl = document.getElementById('p-history-body');
+  if (histEl) {
+    const history = state.apiData?.tradeHistory || state.apiData?.trades || [];
+    if (history.length > 0) {
+      histEl.innerHTML = history.slice(0, 20).map(t => {
+        const pnlCls = (t.pnl || 0) >= 0 ? 'pos' : 'neg';
+        return '<tr>' +
+          '<td class="mono" style="font-size:11px">' + (t.date || t.timestamp || '—').toString().slice(0,10) + '</td>' +
+          '<td><strong>' + (t.asset || t.symbol || '—') + '</strong></td>' +
+          '<td><span class="signal-badge ' + (t.action==='BUY'?'sig-buy':'sig-sell') + '">' + (t.action||'—') + '</span></td>' +
+          '<td class="mono">€' + (t.amount || 0).toFixed(2) + '</td>' +
+          '<td class="mono">€' + (t.price || 0).toLocaleString('nl-NL') + '</td>' +
+          '<td class="' + pnlCls + ' mono">' + ((t.pnl||0) >= 0 ? '+' : '') + '€' + Math.abs(t.pnl||0).toFixed(2) + '</td>' +
+          '<td><span class="tag ' + (t.status==='CLOSED'?'tag-green':'tag-blue') + '">' + (t.status||'—') + '</span></td>' +
+          '</tr>';
+      }).join('');
+    }
+  }
+
+  if (state.apiData?.portfolio) updatePortfolioStats(state.apiData.portfolio);
   requestAnimationFrame(() => drawAllocationChart());
 }
 
@@ -1283,24 +1380,31 @@ function renderSentiment(sent) {
 async function loadArbitrage() {
   const el = document.getElementById('signals-arbitrage');
   if (!el) return;
-  // Simulate arbitrage data
-  const opps = [
-    {asset:'XRP', buyEx:'Bitvavo', buyPr:2.14, sellEx:'Bybit', sellPr:2.156, netSpread:0.52, netProfit:2.60, action:'BUY_BITVAVO_SELL_BYBIT'},
-    {asset:'ADA', buyEx:'Bitvavo', buyPr:0.681, sellEx:'OKX', sellPr:0.686, netSpread:0.38, netProfit:1.90, action:'BUY_BITVAVO_SELL_OKX'},
-    {asset:'SOL', buyEx:'Bybit', buyPr:127.8, sellEx:'Kraken', sellPr:128.4, netSpread:0.12, netProfit:0.60, action:'BUY_BYBIT_SELL_KRAKEN'},
+  // Gebruik live API data als beschikbaar, anders fallback
+  const FALLBACK = [
+    {asset:'XRP', buyEx:'Bitvavo', buyPr:2.14,  sellEx:'Bybit',  sellPr:2.156, netSpread:0.52, netProfit:2.60},
+    {asset:'ADA', buyEx:'Bitvavo', buyPr:0.681, sellEx:'OKX',    sellPr:0.686, netSpread:0.38, netProfit:1.90},
+    {asset:'SOL', buyEx:'Bybit',   buyPr:127.8, sellEx:'Kraken', sellPr:128.4, netSpread:0.12, netProfit:0.60},
   ];
+  const opps = state.apiData?.arbitrage || state.apiData?.opportunities || state.apiData?.arbOpportunities || FALLBACK;
+  const isLive = !!(state.apiData?.arbitrage || state.apiData?.opportunities);
   el.innerHTML = opps.map(o => {
-    const profitable = o.netSpread > 0;
+    const spread = typeof o.netSpread === 'number' ? o.netSpread : (typeof o.spread === 'number' ? o.spread : 0);
+    const profit = typeof o.netProfit === 'number' ? o.netProfit : (typeof o.profit === 'number' ? o.profit : 0);
+    const buyEx = o.buyEx || o.buyExchange || o.exchange1 || '—';
+    const sellEx = o.sellEx || o.sellExchange || o.exchange2 || '—';
+    const profitCls = profit > 0 ? 'sig-buy' : 'sig-hold';
     return '<div class="signal-row" style="margin-bottom:6px">' +
-      '<div class="signal-asset">' + o.asset + '</div>' +
-      '<div class="signal-badge sig-buy">ARB</div>' +
+      '<div class="signal-asset">' + (o.asset || o.symbol || '?') + '</div>' +
+      '<div class="signal-badge ' + profitCls + '">ARB</div>' +
       '<div class="signal-info">' +
-        '<div class="signal-reason">' + o.buyEx + ' → ' + o.sellEx + ' | Spread: ' + o.netSpread + '%</div>' +
-        '<div class="signal-conf">Netto winst: €' + o.netProfit.toFixed(2) + ' op €500</div>' +
+        '<div class="signal-reason">' + buyEx + ' → ' + sellEx + ' | Spread: ' + spread.toFixed(2) + '%' + (isLive ? ' 🔴LIVE' : '') + '</div>' +
+        '<div class="signal-conf">Netto winst: €' + profit.toFixed(2) + ' op €500</div>' +
       '</div>' +
-      (profitable ? '<button class="signal-exec" onclick="executeArbitrage(\'' + o.asset + '\')">Execute</button>' : '') +
+      (spread > 0 ? '<button class="signal-exec" onclick="executeArbitrage(\'' + (o.asset||o.symbol) + '\')">Execute</button>' : '') +
       '</div>';
   }).join('');
+  if (opps.length === 0) el.innerHTML = '<div class="empty-state"><div class="es-icon">🔍</div>Geen kansen gevonden</div>';
 }
 
 async function executeSignal(asset, signal) {
@@ -1594,23 +1698,26 @@ function showExchangeDetail(name) {
 function renderSettings() {
   const el = document.getElementById('settings-content');
   if (!el) return;
+  // Laad opgeslagen waarden uit localStorage
+  const s = JSON.parse(localStorage.getItem('gx_settings') || '{}');
+  const v = (key, def) => s[key] !== undefined ? s[key] : def;
   el.innerHTML = [
     '<div class="setting-group">',
       '<div class="setting-label">🤖 Trading Modus</div>',
       '<div class="setting-row"><div><div class="setting-name">Trading Modus</div><div class="setting-sub">Live trading uitgeschakeld tot API keys zijn ingesteld</div></div><span class="tag tag-blue">PAPER</span></div>',
-      '<div class="setting-row"><div><div class="setting-name">Max Positiegrootte</div><div class="setting-sub">% van kapitaal per trade</div></div><input class="setting-input" type="number" value="20" min="1" max="100"> %</div>',
-      '<div class="setting-row"><div><div class="setting-name">Min Confidence Score</div><div class="setting-sub">Signalen onder drempel worden genegeerd</div></div><input class="setting-input" type="number" value="65" min="40" max="95"> %</div>',
+      '<div class="setting-row"><div><div class="setting-name">Max Positiegrootte</div><div class="setting-sub">% van kapitaal per trade</div></div><input id="s-max-pos" class="setting-input" type="number" value="' + v('maxPos',20) + '" min="1" max="100"> %</div>',
+      '<div class="setting-row"><div><div class="setting-name">Min Confidence Score</div><div class="setting-sub">Signalen onder drempel worden genegeerd</div></div><input id="s-min-conf" class="setting-input" type="number" value="' + v('minConf',65) + '" min="40" max="95"> %</div>',
     '</div>',
     '<div class="setting-group">',
       '<div class="setting-label">🛡️ Risico Parameters</div>',
-      '<div class="setting-row"><div><div class="setting-name">Dagelijks Stop-Loss</div><div class="setting-sub">Stop trading bij dit verlies</div></div><input class="setting-input" type="number" value="50"> €</div>',
-      '<div class="setting-row"><div><div class="setting-name">Max Drawdown</div><div class="setting-sub">Systeem pauzeert bij dit %</div></div><input class="setting-input" type="number" value="15"> %</div>',
-      '<div class="setting-row"><div><div class="setting-name">Stop-Loss per Trade</div><div class="setting-sub">Automatisch trailing SL</div></div><input class="setting-input" type="number" value="4"> %</div>',
+      '<div class="setting-row"><div><div class="setting-name">Dagelijks Stop-Loss</div><div class="setting-sub">Stop trading bij dit verlies</div></div><input id="s-sl-daily" class="setting-input" type="number" value="' + v('slDaily',50) + '"> €</div>',
+      '<div class="setting-row"><div><div class="setting-name">Max Drawdown</div><div class="setting-sub">Systeem pauzeert bij dit %</div></div><input id="s-max-dd" class="setting-input" type="number" value="' + v('maxDD',15) + '"> %</div>',
+      '<div class="setting-row"><div><div class="setting-name">Stop-Loss per Trade</div><div class="setting-sub">Automatisch trailing SL</div></div><input id="s-sl-trade" class="setting-input" type="number" value="' + v('slTrade',4) + '"> %</div>',
     '</div>',
     '<div class="setting-group">',
       '<div class="setting-label">💰 Cashflow</div>',
-      '<div class="setting-row"><div><div class="setting-name">Reinvestering</div><div class="setting-sub">% winst terug in systeem</div></div><span class="setting-val">75%</span></div>',
-      '<div class="setting-row"><div><div class="setting-name">Cold Wallet</div><div class="setting-sub">% naar hardware wallet</div></div><span class="setting-val">25%</span></div>',
+      '<div class="setting-row"><div><div class="setting-name">Reinvestering</div><div class="setting-sub">% winst terug in systeem</div></div><input id="s-reinvest" class="setting-input" type="number" value="' + v('reinvest',75) + '" min="0" max="100"> %</div>',
+      '<div class="setting-row"><div><div class="setting-name">Cold Wallet</div><div class="setting-sub">% naar hardware wallet</div></div><span class="setting-val" id="s-cold-val">' + (100 - v('reinvest',75)) + '%</span></div>',
     '</div>',
     '<div class="setting-group">',
       '<div class="setting-label">🔔 Notificaties</div>',
@@ -1620,7 +1727,7 @@ function renderSettings() {
     '<div class="setting-group">',
       '<div class="setting-label">🎨 Weergave</div>',
       '<div class="setting-row"><div><div class="setting-name">Thema</div><div class="setting-sub">Dark space thema</div></div><span class="setting-val">DARK</span></div>',
-      '<div class="setting-row"><div><div class="setting-name">Live Update Interval</div><div class="setting-sub">Data verversing</div></div><span class="setting-val">30s</span></div>',
+      '<div class="setting-row"><div><div class="setting-name">Live Update Interval</div><div class="setting-sub">Data verversing</div></div><input id="s-interval" class="setting-input" type="number" value="' + v('refreshInterval',30) + '" min="10" max="300"> s</div>',
     '</div>',
     '<div class="setting-group">',
       '<div class="setting-label">🔑 Sessie</div>',
@@ -1632,10 +1739,38 @@ function renderSettings() {
       '<button class="btn btn-danger" onclick="logout()">🚪 Uitloggen</button>',
     '</div>',
   ].join('');
+
+  // Reinvest slider: update cold wallet live
+  const ri = document.getElementById('s-reinvest');
+  if (ri) ri.addEventListener('input', () => {
+    const cw = document.getElementById('s-cold-val');
+    if (cw) cw.textContent = (100 - parseInt(ri.value || 75)) + '%';
+  });
 }
 
-function saveSettings() {
-  toast('Instellingen opgeslagen', 'success');
+async function saveSettings() {
+  const g = id => { const el = document.getElementById(id); return el ? parseFloat(el.value) || 0 : null; };
+  const settings = {
+    maxPos:          g('s-max-pos')    ?? 20,
+    minConf:         g('s-min-conf')   ?? 65,
+    slDaily:         g('s-sl-daily')   ?? 50,
+    maxDD:           g('s-max-dd')     ?? 15,
+    slTrade:         g('s-sl-trade')   ?? 4,
+    reinvest:        g('s-reinvest')   ?? 75,
+    refreshInterval: g('s-interval')   ?? 30,
+    savedAt:         new Date().toISOString(),
+  };
+  // Opslaan in localStorage
+  localStorage.setItem('gx_settings', JSON.stringify(settings));
+  // Live refresh interval aanpassen
+  if (state.liveInterval) { clearInterval(state.liveInterval); state.liveInterval = setInterval(liveRefresh, settings.refreshInterval * 1000); }
+  // Verstuur naar n8n via ACTIONS_URL
+  try {
+    await apiFetch(ACTIONS_URL, {action: 'save_settings', settings});
+    toast('Instellingen opgeslagen & verstuurd naar systeem', 'success');
+  } catch(e) {
+    toast('Instellingen opgeslagen lokaal (API offline)', 'warn');
+  }
 }
 
 // ─── TRADE MODAL ──────────────────────────────────────────────────────────────
@@ -1661,6 +1796,20 @@ function openTradeModal() {
       '<button class="btn btn-primary" onclick="submitTrade()">Trade Plaatsen</button>',
     '</div>',
   ].join(''));
+}
+
+async function closePosition(id) {
+  toast('Positie sluiten: ' + id + '...', 'info');
+  try {
+    await apiFetch(ACTIONS_URL, {action:'close_position', id, timestamp:new Date().toISOString()});
+    toast('Positie gesloten: ' + id, 'success');
+    if (state.apiData?.positions) {
+      state.apiData.positions = state.apiData.positions.filter(p => (p.id||p.asset) !== id);
+      renderPortfolio();
+    }
+  } catch(e) {
+    toast('Sluit-order verstuurd (offline modus)', 'warn');
+  }
 }
 
 async function submitTrade() {
