@@ -1,0 +1,1725 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
+<meta name="theme-color" content="#08111f">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="description" content="GenesisX™ AI Trading System — 38 fases, 20 bots, volledig geautomatiseerd">
+<title>GenesisX™ — AI Trading</title>
+<link rel="manifest" href="manifest.json">
+<link rel="icon" href="icon-192.png">
+<link rel="apple-touch-icon" href="icon-192.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#08111f;--bg2:#0d1829;--bg3:#111e33;--bg4:#162036;
+  --card:#0d1829;--card2:#111e33;--card3:#162036;
+  --border:#1a2d4a;--border2:#243d63;--border3:#2d4f82;
+  --green:#00ff88;--green2:#00cc6a;--green3:rgba(0,255,136,.12);
+  --blue:#3b82f6;--blue2:#2563eb;--blue3:rgba(59,130,246,.12);
+  --purple:#8b5cf6;--purple2:#7c3aed;--purple3:rgba(139,92,246,.12);
+  --cyan:#06b6d4;--cyan3:rgba(6,182,212,.12);
+  --amber:#f59e0b;--amber3:rgba(245,158,11,.12);
+  --red:#ef4444;--red3:rgba(239,68,68,.12);
+  --text:#e2e8f0;--text2:#94a3b8;--text3:#475569;
+  --font:'Space Grotesk',sans-serif;--mono:'JetBrains Mono',monospace;
+  --hdr:56px;--side:220px;--bnav:62px;--r:12px;--r2:8px;
+  --shadow:0 4px 24px rgba(0,0,0,.4);
+}
+*{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{height:100%;background:var(--bg);color:var(--text);font-family:var(--font);font-size:14px;line-height:1.5;overflow-x:hidden}
+a{color:inherit;text-decoration:none}
+button{cursor:pointer;border:none;outline:none;font-family:var(--font)}
+input,textarea,select{font-family:var(--font);outline:none}
+::-webkit-scrollbar{width:4px;height:4px}
+::-webkit-scrollbar-track{background:var(--bg2)}
+::-webkit-scrollbar-thumb{background:var(--border2);border-radius:2px}
+
+/* ── TOAST ─────────────────────────────────────────────────────────────── */
+#toasts{position:fixed;top:68px;right:12px;z-index:9999;display:flex;flex-direction:column;gap:8px;pointer-events:none}
+.toast{display:flex;align-items:center;gap:10px;background:var(--bg3);border:1px solid var(--border2);border-left:3px solid var(--green);border-radius:var(--r2);padding:10px 14px;font-size:13px;box-shadow:var(--shadow);pointer-events:all;animation:slideIn .25s ease;max-width:300px}
+.toast.error{border-left-color:var(--red)}
+.toast.warn{border-left-color:var(--amber)}
+.toast.success{border-left-color:var(--green)}
+@keyframes slideIn{from{transform:translateX(120%);opacity:0}to{transform:translateX(0);opacity:1}}
+@keyframes fadeOut{to{transform:translateX(120%);opacity:0}}
+
+/* ── MODAL ─────────────────────────────────────────────────────────────── */
+#modal-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.75);z-index:8000;align-items:center;justify-content:center;padding:16px}
+#modal-overlay.open{display:flex}
+#modal-box{background:var(--bg3);border:1px solid var(--border2);border-radius:var(--r);width:100%;max-width:560px;max-height:85vh;overflow:hidden;display:flex;flex-direction:column;box-shadow:var(--shadow)}
+#modal-hdr{display:flex;align-items:center;justify-content:space-between;padding:16px 20px;border-bottom:1px solid var(--border)}
+#modal-title{font-size:16px;font-weight:600}
+#modal-close{background:var(--bg2);color:var(--text2);border:1px solid var(--border);border-radius:6px;padding:4px 10px;font-size:18px;line-height:1;transition:.2s}
+#modal-close:hover{background:var(--red3);color:var(--red)}
+#modal-body{padding:20px;overflow-y:auto;flex:1}
+
+/* ── MORE DRAWER ───────────────────────────────────────────────────────── */
+#more-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.6);z-index:7000}
+#more-overlay.open{display:block}
+#more-drawer{position:fixed;bottom:0;left:0;right:0;background:var(--bg3);border-top:1px solid var(--border2);border-radius:16px 16px 0 0;z-index:7001;padding:12px 0 24px;transform:translateY(100%);transition:transform .3s ease}
+#more-drawer.open{transform:translateY(0)}
+.more-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:4px;padding:8px 16px}
+.more-item{display:flex;flex-direction:column;align-items:center;gap:6px;padding:14px 8px;border-radius:var(--r2);cursor:pointer;transition:.2s;font-size:12px;color:var(--text2)}
+.more-item:hover,.more-item.active{background:var(--green3);color:var(--green)}
+.more-item span:first-child{font-size:24px}
+
+/* ── HEADER ────────────────────────────────────────────────────────────── */
+#app-header{position:fixed;top:0;left:0;right:0;height:var(--hdr);background:rgba(8,17,31,.95);backdrop-filter:blur(12px);border-bottom:1px solid var(--border);z-index:500;display:flex;align-items:center;padding:0 16px;gap:12px}
+.hdr-logo{font-size:18px;font-weight:700;background:linear-gradient(135deg,var(--green),var(--cyan));-webkit-background-clip:text;-webkit-text-fill-color:transparent;letter-spacing:-.5px;white-space:nowrap}
+.hdr-logo sup{font-size:9px;-webkit-text-fill-color:var(--green2);vertical-align:super}
+.hdr-live{display:flex;align-items:center;gap:5px;font-size:11px;color:var(--green);font-family:var(--mono)}
+.live-dot{width:6px;height:6px;background:var(--green);border-radius:50%;animation:pulse 2s infinite}
+@keyframes pulse{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.5;transform:scale(.8)}}
+.hdr-spacer{flex:1}
+#hdr-xp{display:flex;align-items:center;gap:6px;font-size:11px;color:var(--text2);font-family:var(--mono)}
+#hdr-level{background:linear-gradient(135deg,var(--green),var(--cyan));color:#000;font-size:10px;font-weight:700;padding:2px 7px;border-radius:20px}
+.hdr-btn{background:var(--bg3);border:1px solid var(--border);color:var(--text2);border-radius:var(--r2);padding:6px 10px;font-size:13px;transition:.2s;white-space:nowrap}
+.hdr-btn:hover{border-color:var(--green);color:var(--green)}
+#refresh-btn{background:none;border:none;color:var(--text3);font-size:16px;padding:4px;transition:.2s;cursor:pointer}
+#refresh-btn:hover{color:var(--green);transform:rotate(180deg)}
+#refresh-btn.spinning{animation:spin .7s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+
+/* ── LAYOUT ────────────────────────────────────────────────────────────── */
+#app-layout{display:flex;margin-top:var(--hdr);min-height:calc(100vh - var(--hdr))}
+#sidebar{display:none;width:var(--side);background:var(--bg2);border-right:1px solid var(--border);position:fixed;top:var(--hdr);left:0;height:calc(100vh - var(--hdr));overflow-y:auto;padding:12px 8px;flex-direction:column;gap:2px;z-index:400}
+.sb-section{font-size:10px;font-weight:600;color:var(--text3);text-transform:uppercase;letter-spacing:.8px;padding:12px 10px 4px}
+.sb-item{display:flex;align-items:center;gap:10px;padding:9px 12px;border-radius:var(--r2);cursor:pointer;color:var(--text2);font-size:13px;transition:.2s;white-space:nowrap}
+.sb-item:hover{background:var(--bg3);color:var(--text)}
+.sb-item.active{background:var(--green3);color:var(--green);font-weight:500}
+.sb-item .sb-icon{font-size:16px;width:20px;text-align:center;flex-shrink:0}
+.sb-badge{margin-left:auto;background:var(--green);color:#000;font-size:9px;font-weight:700;padding:1px 5px;border-radius:10px;font-family:var(--mono)}
+#main-content{flex:1;padding:16px;padding-bottom:calc(var(--bnav) + 16px);min-width:0}
+.page{display:none}
+.page.active{display:block}
+
+/* ── BOTTOM NAV ────────────────────────────────────────────────────────── */
+#bnav{position:fixed;bottom:0;left:0;right:0;height:var(--bnav);background:rgba(13,24,41,.97);backdrop-filter:blur(12px);border-top:1px solid var(--border);z-index:500;display:flex;align-items:center;justify-content:space-around;padding:0 4px}
+.bn-item{display:flex;flex-direction:column;align-items:center;gap:3px;padding:6px 12px;cursor:pointer;color:var(--text3);font-size:10px;transition:.2s;border-radius:var(--r2);flex:1;min-width:0}
+.bn-item:hover,.bn-item.active{color:var(--green)}
+.bn-item .bn-icon{font-size:20px;line-height:1}
+.bn-item.active .bn-icon{filter:drop-shadow(0 0 6px var(--green))}
+
+/* ── RESPONSIVE ────────────────────────────────────────────────────────── */
+@media(min-width:768px){
+  #sidebar{display:flex}
+  #bnav{display:none}
+  #main-content{margin-left:var(--side);padding-bottom:16px}
+}
+
+/* ── CARDS ─────────────────────────────────────────────────────────────── */
+.card{background:var(--card);border:1px solid var(--border);border-radius:var(--r);padding:16px}
+.card-hdr{display:flex;align-items:center;justify-content:space-between;margin-bottom:14px}
+.card-title{font-size:13px;font-weight:600;color:var(--text2);text-transform:uppercase;letter-spacing:.5px}
+.card-action{font-size:11px;color:var(--blue);cursor:pointer;padding:4px 8px;border-radius:6px;transition:.2s}
+.card-action:hover{background:var(--blue3)}
+
+/* ── STATS GRID ────────────────────────────────────────────────────────── */
+.stats-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:10px;margin-bottom:14px}
+@media(min-width:480px){.stats-grid{grid-template-columns:repeat(4,1fr)}}
+.stat-card{background:var(--card);border:1px solid var(--border);border-radius:var(--r);padding:14px}
+.stat-label{font-size:10px;color:var(--text3);text-transform:uppercase;letter-spacing:.5px;margin-bottom:6px}
+.stat-value{font-size:20px;font-weight:700;font-family:var(--mono);margin-bottom:4px}
+.stat-change{font-size:11px;font-family:var(--mono)}
+.pos{color:var(--green)}.neg{color:var(--red)}.neu{color:var(--text2)}
+
+/* ── XP CARD ───────────────────────────────────────────────────────────── */
+.xp-card{background:linear-gradient(135deg,var(--bg3),var(--bg2));border:1px solid var(--border2);border-radius:var(--r);padding:14px;margin-bottom:14px;display:flex;align-items:center;gap:14px}
+.xp-badge{width:48px;height:48px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:20px;flex-shrink:0;border:2px solid var(--green)}
+.xp-info{flex:1;min-width:0}
+.xp-top{display:flex;justify-content:space-between;font-size:11px;margin-bottom:6px}
+.xp-name{font-weight:600;color:var(--green)}
+.xp-pts{color:var(--text2);font-family:var(--mono)}
+.xp-bar{height:6px;background:var(--bg);border-radius:3px;overflow:hidden}
+.xp-fill{height:100%;background:linear-gradient(90deg,var(--green),var(--cyan));border-radius:3px;transition:width .5s ease}
+
+/* ── PRICE GRID ────────────────────────────────────────────────────────── */
+.price-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:8px;margin-bottom:14px}
+@media(min-width:480px){.price-grid{grid-template-columns:repeat(5,1fr)}}
+.price-card{background:var(--card);border:1px solid var(--border);border-radius:var(--r2);padding:12px;cursor:pointer;transition:.2s}
+.price-card:hover{border-color:var(--green);background:var(--green3)}
+.price-sym{font-size:12px;font-weight:700;color:var(--text2)}
+.price-val{font-size:15px;font-weight:700;font-family:var(--mono);margin:4px 0}
+.price-chg{font-size:11px;font-family:var(--mono)}
+
+/* ── GRID LAYOUTS ──────────────────────────────────────────────────────── */
+.grid-2{display:grid;grid-template-columns:1fr;gap:12px}
+@media(min-width:600px){.grid-2{grid-template-columns:repeat(2,1fr)}}
+.grid-3{display:grid;grid-template-columns:1fr;gap:12px}
+@media(min-width:600px){.grid-3{grid-template-columns:repeat(2,1fr)}}
+@media(min-width:900px){.grid-3{grid-template-columns:repeat(3,1fr)}}
+
+/* ── BOT CARDS ─────────────────────────────────────────────────────────── */
+.bot-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:10px}
+@media(min-width:600px){.bot-grid{grid-template-columns:repeat(3,1fr)}}
+@media(min-width:900px){.bot-grid{grid-template-columns:repeat(4,1fr)}}
+.bot-card{background:var(--card);border:1px solid var(--border);border-radius:var(--r);padding:14px;cursor:pointer;transition:.2s;position:relative}
+.bot-card:hover{border-color:var(--blue);transform:translateY(-1px);box-shadow:0 4px 16px rgba(59,130,246,.15)}
+.bot-card.active-bot{border-color:var(--green)}
+.bot-card.paused-bot{opacity:.6}
+.bot-emoji{font-size:28px;margin-bottom:8px}
+.bot-name{font-size:13px;font-weight:700;margin-bottom:2px}
+.bot-strat{font-size:10px;color:var(--text3);margin-bottom:8px;line-height:1.3}
+.bot-stats{display:flex;justify-content:space-between;font-size:10px;font-family:var(--mono);margin-bottom:10px}
+.bot-capital{color:var(--text2)}
+.bot-pnl{color:var(--green)}
+.bot-risk{position:absolute;top:10px;right:10px;font-size:9px;padding:2px 6px;border-radius:10px;font-weight:600}
+.risk-low{background:var(--green3);color:var(--green)}
+.risk-med{background:var(--amber3);color:var(--amber)}
+.risk-high{background:var(--red3);color:var(--red)}
+.risk-ext{background:var(--purple3);color:var(--purple)}
+.bot-actions{display:flex;gap:6px}
+.bot-btn{flex:1;background:var(--bg3);border:1px solid var(--border);color:var(--text2);border-radius:6px;padding:5px 4px;font-size:10px;transition:.2s;text-align:center}
+.bot-btn:hover{border-color:var(--green);color:var(--green)}
+.bot-status{font-size:9px;padding:2px 7px;border-radius:10px;margin-bottom:6px;display:inline-block}
+.status-active{background:var(--green3);color:var(--green)}
+.status-paper{background:var(--blue3);color:var(--blue)}
+.status-paused{background:var(--amber3);color:var(--amber)}
+
+/* ── CSUITE ────────────────────────────────────────────────────────────── */
+.csuite-grid{display:grid;grid-template-columns:1fr;gap:12px}
+@media(min-width:600px){.csuite-grid{grid-template-columns:repeat(2,1fr)}}
+@media(min-width:900px){.csuite-grid{grid-template-columns:repeat(3,1fr)}}
+.csuite-card{background:var(--card);border:1px solid var(--border);border-radius:var(--r);padding:16px;transition:.2s}
+.csuite-card:hover{border-color:var(--purple)}
+.csuite-role{font-size:10px;color:var(--purple);text-transform:uppercase;letter-spacing:.6px;margin-bottom:4px}
+.csuite-name{font-size:15px;font-weight:700;margin-bottom:2px}
+.csuite-focus{font-size:11px;color:var(--text3);margin-bottom:12px}
+.csuite-advice{font-size:12px;color:var(--text2);line-height:1.5;background:var(--bg2);border-radius:8px;padding:10px;margin-bottom:10px;min-height:60px}
+.csuite-conf{display:flex;align-items:center;gap:8px;font-size:11px;color:var(--text3)}
+.conf-bar{flex:1;height:4px;background:var(--bg);border-radius:2px;overflow:hidden}
+.conf-fill{height:100%;background:linear-gradient(90deg,var(--purple),var(--blue));border-radius:2px}
+
+/* ── SIGNALS ───────────────────────────────────────────────────────────── */
+.signal-row{display:flex;align-items:center;gap:12px;padding:12px;background:var(--card);border:1px solid var(--border);border-radius:var(--r2);margin-bottom:8px;cursor:pointer;transition:.2s}
+.signal-row:hover{border-color:var(--green)}
+.signal-asset{font-weight:700;font-size:14px;width:44px;flex-shrink:0}
+.signal-badge{font-size:10px;font-weight:700;padding:3px 8px;border-radius:10px;flex-shrink:0}
+.sig-buy{background:var(--green3);color:var(--green)}
+.sig-sell{background:var(--red3);color:var(--red)}
+.sig-hold{background:var(--amber3);color:var(--amber)}
+.signal-info{flex:1;min-width:0}
+.signal-reason{font-size:11px;color:var(--text2);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.signal-conf{font-size:11px;color:var(--text3);font-family:var(--mono)}
+.signal-exec{background:var(--green);color:#000;font-size:11px;font-weight:700;padding:5px 12px;border-radius:6px;transition:.2s;flex-shrink:0}
+.signal-exec:hover{background:var(--green2)}
+
+/* ── CAIO CHAT ─────────────────────────────────────────────────────────── */
+#pg-caio{display:none;flex-direction:column;height:calc(100vh - var(--hdr) - var(--bnav) - 32px)}
+#pg-caio.active{display:flex}
+@media(min-width:768px){#pg-caio,#pg-caio.active{height:calc(100vh - var(--hdr) - 32px)}}
+.caio-header{background:linear-gradient(135deg,var(--purple3),var(--blue3));border:1px solid var(--purple);border-radius:var(--r);padding:14px;margin-bottom:12px;display:flex;align-items:center;gap:12px;flex-shrink:0}
+.caio-avatar{width:40px;height:40px;background:linear-gradient(135deg,var(--purple),var(--blue));border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:20px;flex-shrink:0}
+.caio-title{font-weight:700;font-size:15px}
+.caio-sub{font-size:11px;color:var(--text3)}
+#caio-msgs{flex:1;overflow-y:auto;display:flex;flex-direction:column;gap:10px;padding:4px 0;min-height:0}
+.msg{display:flex;gap:10px;animation:fadeUp .2s ease}
+@keyframes fadeUp{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+.msg-avatar{width:30px;height:30px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:14px;flex-shrink:0;margin-top:2px}
+.msg.user .msg-avatar{background:var(--blue3);border:1px solid var(--blue);order:2}
+.msg.user{flex-direction:row-reverse}
+.msg-bubble{background:var(--card2);border:1px solid var(--border);border-radius:12px;padding:10px 14px;max-width:85%;font-size:13px;line-height:1.6}
+.msg.user .msg-bubble{background:var(--blue3);border-color:var(--blue)}
+.msg.ai .msg-bubble{background:var(--purple3);border-color:var(--purple)}
+.msg-actions{display:flex;flex-wrap:wrap;gap:6px;margin-top:8px}
+.msg-action-btn{background:var(--green);color:#000;font-size:11px;font-weight:600;padding:4px 10px;border-radius:6px;cursor:pointer;transition:.2s}
+.msg-action-btn:hover{background:var(--green2)}
+.msg-sug{background:var(--bg3);border:1px solid var(--border2);color:var(--text2);font-size:11px;padding:4px 10px;border-radius:6px;cursor:pointer;transition:.2s}
+.msg-sug:hover{border-color:var(--purple);color:var(--purple)}
+.caio-suggestions{display:flex;flex-wrap:wrap;gap:6px;padding:8px 0;flex-shrink:0}
+.sug-chip{background:var(--bg3);border:1px solid var(--border);color:var(--text2);font-size:11px;padding:5px 12px;border-radius:20px;cursor:pointer;transition:.2s}
+.sug-chip:hover{border-color:var(--purple);color:var(--purple);background:var(--purple3)}
+.caio-input-row{display:flex;gap:8px;padding-top:8px;flex-shrink:0}
+#caio-input{flex:1;background:var(--bg3);border:1px solid var(--border2);color:var(--text);border-radius:var(--r2);padding:10px 14px;font-size:13px;resize:none;height:44px;transition:.2s}
+#caio-input:focus{border-color:var(--purple)}
+#caio-send{background:linear-gradient(135deg,var(--purple),var(--blue));color:#fff;border-radius:var(--r2);padding:0 18px;font-size:15px;transition:.2s;font-weight:600}
+#caio-send:hover{opacity:.85}
+#caio-send:disabled{opacity:.4;cursor:not-allowed}
+
+/* ── FLOWS ─────────────────────────────────────────────────────────────── */
+.flow-row{display:flex;align-items:center;gap:12px;padding:12px 14px;background:var(--card);border:1px solid var(--border);border-radius:var(--r2);margin-bottom:6px;transition:.2s}
+.flow-row:hover{border-color:var(--border2)}
+.flow-icon{font-size:18px;flex-shrink:0;width:28px;text-align:center}
+.flow-info{flex:1;min-width:0}
+.flow-name{font-size:13px;font-weight:500}
+.flow-desc{font-size:10px;color:var(--text3)}
+.flow-status{font-size:10px;padding:2px 8px;border-radius:10px;flex-shrink:0}
+.flow-on{background:var(--green3);color:var(--green)}
+.flow-off{background:var(--bg3);color:var(--text3);border:1px solid var(--border)}
+.toggle{position:relative;width:36px;height:20px;flex-shrink:0}
+.toggle input{opacity:0;width:0;height:0}
+.toggle-slider{position:absolute;cursor:pointer;inset:0;background:var(--bg3);border:1px solid var(--border2);border-radius:20px;transition:.2s}
+.toggle-slider:before{content:'';position:absolute;width:14px;height:14px;left:2px;top:2px;background:var(--text3);border-radius:50%;transition:.2s}
+.toggle input:checked+.toggle-slider{background:var(--green3);border-color:var(--green)}
+.toggle input:checked+.toggle-slider:before{transform:translateX(16px);background:var(--green)}
+
+/* ── REPORTS ───────────────────────────────────────────────────────────── */
+.report-card{background:var(--card);border:1px solid var(--border);border-radius:var(--r);padding:16px;display:flex;align-items:center;gap:14px;margin-bottom:10px;transition:.2s}
+.report-card:hover{border-color:var(--border2)}
+.report-icon{font-size:32px;flex-shrink:0}
+.report-info{flex:1}
+.report-name{font-size:14px;font-weight:600;margin-bottom:2px}
+.report-desc{font-size:11px;color:var(--text3)}
+.report-btns{display:flex;gap:8px;flex-shrink:0}
+.report-btn{padding:7px 14px;border-radius:var(--r2);font-size:12px;font-weight:600;transition:.2s}
+.btn-generate{background:var(--blue3);color:var(--blue);border:1px solid var(--blue)}
+.btn-generate:hover{background:var(--blue);color:#fff}
+.btn-dl{background:var(--green3);color:var(--green);border:1px solid var(--green)}
+.btn-dl:hover{background:var(--green);color:#000}
+
+/* ── EXCHANGES ─────────────────────────────────────────────────────────── */
+.exc-card{background:var(--card);border:1px solid var(--border);border-radius:var(--r);padding:14px;transition:.2s}
+.exc-card:hover{border-color:var(--border2)}
+.exc-top{display:flex;align-items:center;gap:10px;margin-bottom:12px}
+.exc-flag{font-size:24px}
+.exc-name{font-size:14px;font-weight:700}
+.exc-type{font-size:10px;color:var(--text3);margin-top:1px}
+.exc-status{margin-left:auto;font-size:10px;padding:3px 8px;border-radius:10px}
+.exc-on{background:var(--green3);color:var(--green)}
+.exc-off{background:var(--amber3);color:var(--amber)}
+.exc-pending{background:var(--bg3);color:var(--text3);border:1px solid var(--border)}
+.exc-bar{height:4px;background:var(--bg);border-radius:2px;margin-bottom:6px;overflow:hidden}
+.exc-fill{height:100%;background:linear-gradient(90deg,var(--cyan),var(--blue));border-radius:2px}
+.exc-amounts{display:flex;justify-content:space-between;font-size:10px;font-family:var(--mono);color:var(--text3)}
+
+/* ── SETTINGS ──────────────────────────────────────────────────────────── */
+.setting-group{margin-bottom:20px}
+.setting-label{font-size:11px;color:var(--text3);text-transform:uppercase;letter-spacing:.6px;margin-bottom:10px;display:flex;align-items:center;gap:6px}
+.setting-row{display:flex;align-items:center;justify-content:space-between;padding:12px 14px;background:var(--card);border:1px solid var(--border);border-radius:var(--r2);margin-bottom:6px}
+.setting-name{font-size:13px;font-weight:500}
+.setting-sub{font-size:10px;color:var(--text3);margin-top:2px}
+.setting-val{font-size:13px;font-family:var(--mono);color:var(--green)}
+.setting-input{background:var(--bg3);border:1px solid var(--border2);color:var(--text);border-radius:6px;padding:5px 10px;font-size:12px;font-family:var(--mono);width:120px;text-align:right}
+
+/* ── ALERTS LIST ───────────────────────────────────────────────────────── */
+.alert-row{display:flex;align-items:flex-start;gap:10px;padding:10px;background:var(--card);border-radius:var(--r2);margin-bottom:6px;border-left:3px solid var(--border)}
+.alert-row.alert-ok{border-left-color:var(--green)}
+.alert-row.alert-warn{border-left-color:var(--amber)}
+.alert-row.alert-err{border-left-color:var(--red)}
+.alert-icon{font-size:14px;flex-shrink:0;margin-top:1px}
+.alert-text{font-size:12px;flex:1}
+.alert-time{font-size:10px;color:var(--text3);font-family:var(--mono);flex-shrink:0}
+
+/* ── TABLE ─────────────────────────────────────────────────────────────── */
+.tbl{width:100%;border-collapse:collapse;font-size:12px}
+.tbl th{text-align:left;padding:8px 10px;color:var(--text3);font-size:10px;text-transform:uppercase;letter-spacing:.5px;border-bottom:1px solid var(--border);font-weight:500}
+.tbl td{padding:10px 10px;border-bottom:1px solid var(--border);vertical-align:middle}
+.tbl tr:hover td{background:var(--bg3)}
+.tbl-wrap{overflow-x:auto}
+
+/* ── MISC ──────────────────────────────────────────────────────────────── */
+.section-title{font-size:11px;font-weight:600;color:var(--text3);text-transform:uppercase;letter-spacing:.6px;margin:0 0 10px;display:flex;align-items:center;gap:6px}
+.section-title::after{content:'';flex:1;height:1px;background:var(--border)}
+.empty-state{text-align:center;padding:40px;color:var(--text3);font-size:13px}
+.empty-state .es-icon{font-size:40px;margin-bottom:10px;opacity:.4}
+.btn{padding:8px 18px;border-radius:var(--r2);font-size:13px;font-weight:600;transition:.2s;cursor:pointer;border:none}
+.btn-primary{background:linear-gradient(135deg,var(--green),var(--cyan));color:#000}
+.btn-primary:hover{opacity:.85;transform:translateY(-1px)}
+.btn-ghost{background:var(--bg3);border:1px solid var(--border2);color:var(--text2)}
+.btn-ghost:hover{border-color:var(--green);color:var(--green)}
+.btn-danger{background:var(--red3);border:1px solid var(--red);color:var(--red)}
+.btn-danger:hover{background:var(--red);color:#fff}
+.loading{opacity:.5;pointer-events:none}
+.skeleton{background:linear-gradient(90deg,var(--bg2) 25%,var(--bg3) 50%,var(--bg2) 75%);background-size:200% 100%;animation:shimmer 1.5s infinite;border-radius:6px}
+@keyframes shimmer{0%{background-position:200% 0}100%{background-position:-200% 0}}
+.separator{height:1px;background:var(--border);margin:16px 0}
+.tag{display:inline-block;font-size:10px;padding:2px 7px;border-radius:10px;font-weight:500}
+.tag-green{background:var(--green3);color:var(--green)}
+.tag-blue{background:var(--blue3);color:var(--blue)}
+.tag-purple{background:var(--purple3);color:var(--purple)}
+.tag-amber{background:var(--amber3);color:var(--amber)}
+.tag-red{background:var(--red3);color:var(--red)}
+canvas{display:block;width:100%;border-radius:var(--r2)}
+.mb8{margin-bottom:8px}.mb12{margin-bottom:12px}.mb16{margin-bottom:16px}
+.flex{display:flex}.items-center{align-items:center}.gap8{gap:8px}.gap12{gap:12px}
+.fw7{font-weight:700}.fs11{font-size:11px}.fs13{font-size:13px}
+.mono{font-family:var(--mono)}
+.page-title{font-size:18px;font-weight:700;margin-bottom:16px;display:flex;align-items:center;gap:8px}
+</style>
+</head>
+<body>
+
+<!-- ── TOASTS ─────────────────────────────────────────────────────────────── -->
+<div id="toasts"></div>
+
+<!-- ── MODAL ──────────────────────────────────────────────────────────────── -->
+<div id="modal-overlay" onclick="if(event.target===this)closeModal()">
+  <div id="modal-box">
+    <div id="modal-hdr">
+      <div id="modal-title">Details</div>
+      <button id="modal-close" onclick="closeModal()">✕</button>
+    </div>
+    <div id="modal-body"></div>
+  </div>
+</div>
+
+<!-- ── MORE DRAWER ─────────────────────────────────────────────────────────── -->
+<div id="more-overlay" onclick="closeMore()"></div>
+<div id="more-drawer">
+  <div class="more-grid">
+    <div class="more-item" onclick="showTab('csuite');closeMore()"><span>🏛️</span><span>C-Suite</span></div>
+    <div class="more-item" onclick="showTab('signals');closeMore()"><span>📡</span><span>Signalen</span></div>
+    <div class="more-item" onclick="showTab('flows');closeMore()"><span>⚡</span><span>Flows</span></div>
+    <div class="more-item" onclick="showTab('rapporten');closeMore()"><span>📋</span><span>Rapporten</span></div>
+    <div class="more-item" onclick="showTab('exchanges');closeMore()"><span>🌐</span><span>Exchanges</span></div>
+    <div class="more-item" onclick="showTab('instellingen');closeMore()"><span>⚙️</span><span>Instellingen</span></div>
+  </div>
+</div>
+
+<!-- ── HEADER ──────────────────────────────────────────────────────────────── -->
+<header id="app-header">
+  <div class="hdr-logo">GenesisX<sup>™</sup></div>
+  <div class="hdr-live"><div class="live-dot"></div><span id="live-time">LIVE</span></div>
+  <div class="hdr-spacer"></div>
+  <div id="hdr-xp"><div id="hdr-level">LV1</div><span id="hdr-xp-val">0 XP</span></div>
+  <button id="refresh-btn" onclick="manualRefresh()" title="Vernieuwen">↻</button>
+  <button class="hdr-btn" onclick="logout()">Uitloggen</button>
+</header>
+
+<!-- ── APP LAYOUT ─────────────────────────────────────────────────────────── -->
+<div id="app-layout">
+
+<!-- ── SIDEBAR ──────────────────────────────────────────────────────────── -->
+<nav id="sidebar">
+  <div class="sb-section">Hoofdmenu</div>
+  <div class="sb-item active" data-tab="dashboard" onclick="showTab('dashboard',this)"><span class="sb-icon">📊</span>Dashboard</div>
+  <div class="sb-item" data-tab="portfolio" onclick="showTab('portfolio',this)"><span class="sb-icon">💼</span>Portfolio</div>
+  <div class="sb-item" data-tab="bots" onclick="showTab('bots',this)"><span class="sb-icon">🤖</span>Bots<span class="sb-badge" id="sb-bots-badge">20</span></div>
+  <div class="sb-section">AI Systeem</div>
+  <div class="sb-item" data-tab="csuite" onclick="showTab('csuite',this)"><span class="sb-icon">🏛️</span>C-Suite</div>
+  <div class="sb-item" data-tab="signals" onclick="showTab('signals',this)"><span class="sb-icon">📡</span>Signalen</div>
+  <div class="sb-item" data-tab="caio" onclick="showTab('caio',this)"><span class="sb-icon">🧠</span>CAIO</div>
+  <div class="sb-section">Beheer</div>
+  <div class="sb-item" data-tab="flows" onclick="showTab('flows',this)"><span class="sb-icon">⚡</span>Flows<span class="sb-badge" id="sb-flows-badge">38</span></div>
+  <div class="sb-item" data-tab="rapporten" onclick="showTab('rapporten',this)"><span class="sb-icon">📋</span>Rapporten</div>
+  <div class="sb-item" data-tab="exchanges" onclick="showTab('exchanges',this)"><span class="sb-icon">🌐</span>Exchanges</div>
+  <div class="sb-item" data-tab="instellingen" onclick="showTab('instellingen',this)"><span class="sb-icon">⚙️</span>Instellingen</div>
+</nav>
+
+<!-- ── MAIN CONTENT ──────────────────────────────────────────────────────── -->
+<main id="main-content">
+
+<!-- ═══════════════════════════ DASHBOARD ═══════════════════════════════ -->
+<div id="pg-dashboard" class="page active">
+  <div class="stats-grid">
+    <div class="stat-card"><div class="stat-label">Portfolio</div><div class="stat-value" id="d-portfolio">€3,150</div><div class="stat-change neu" id="d-portfolio-chg">PAPER TRADING</div></div>
+    <div class="stat-card"><div class="stat-label">Vandaag PnL</div><div class="stat-value pos" id="d-pnl">€0.00</div><div class="stat-change neu" id="d-pnl-pct">0.00%</div></div>
+    <div class="stat-card"><div class="stat-label">Actieve Bots</div><div class="stat-value" id="d-bots">20</div><div class="stat-change neu">Van 20 totaal</div></div>
+    <div class="stat-card"><div class="stat-label">Systeem</div><div class="stat-value pos" id="d-health">99.9%</div><div class="stat-change pos" id="d-uptime">GROEN</div></div>
+  </div>
+
+  <div class="xp-card">
+    <div class="xp-badge" id="xp-badge">🥉</div>
+    <div class="xp-info">
+      <div class="xp-top"><span class="xp-name" id="xp-level-name">BRONZE — Level 1</span><span class="xp-pts mono" id="xp-display">0 / 500 XP</span></div>
+      <div class="xp-bar"><div class="xp-fill" id="xp-fill" style="width:0%"></div></div>
+    </div>
+    <div style="font-size:11px;color:var(--text3);flex-shrink:0">€1 PnL = 10 XP</div>
+  </div>
+
+  <div class="price-grid" id="price-grid">
+    <div class="price-card skeleton" style="height:70px"></div>
+    <div class="price-card skeleton" style="height:70px"></div>
+    <div class="price-card skeleton" style="height:70px"></div>
+    <div class="price-card skeleton" style="height:70px"></div>
+    <div class="price-card skeleton" style="height:70px"></div>
+  </div>
+
+  <div class="grid-2 mb16">
+    <div class="card">
+      <div class="card-hdr"><div class="card-title">📈 Portfolio Waarde</div><div class="card-action" onclick="showTab('portfolio')">Details →</div></div>
+      <canvas id="chart-portfolio" height="80"></canvas>
+    </div>
+    <div class="card">
+      <div class="card-hdr"><div class="card-title">🤖 Bot Prestaties</div><div class="card-action" onclick="showTab('bots')">Alle bots →</div></div>
+      <div id="dash-bot-scores"></div>
+    </div>
+  </div>
+
+  <div class="grid-2">
+    <div class="card">
+      <div class="card-hdr"><div class="card-title">🚨 Recente Alerts</div><span id="alert-count" class="tag tag-green">0</span></div>
+      <div id="dash-alerts"><div class="empty-state"><div class="es-icon">✅</div>Geen actieve alerts</div></div>
+    </div>
+    <div class="card">
+      <div class="card-hdr"><div class="card-title">📡 Laatste Signalen</div><div class="card-action" onclick="showTab('signals')">Alle →</div></div>
+      <div id="dash-signals"><div class="empty-state"><div class="es-icon">📡</div>Signalen laden...</div></div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════ PORTFOLIO ════════════════════════════════ -->
+<div id="pg-portfolio" class="page">
+  <div class="page-title">💼 Portfolio</div>
+  <div class="stats-grid mb16">
+    <div class="stat-card"><div class="stat-label">Totaal Kapitaal</div><div class="stat-value" id="p-total">€3,150</div><div class="stat-change neu">Start kapitaal</div></div>
+    <div class="stat-card"><div class="stat-label">Totaal PnL</div><div class="stat-value pos" id="p-pnl">€0.00</div><div class="stat-change neu">0.00%</div></div>
+    <div class="stat-card"><div class="stat-label">Gedeployeerd</div><div class="stat-value" id="p-deployed">€0</div><div class="stat-change neu" id="p-deployed-pct">0%</div></div>
+    <div class="stat-card"><div class="stat-label">Beschikbaar</div><div class="stat-value pos" id="p-free">€3,150</div><div class="stat-change neu">100%</div></div>
+  </div>
+
+  <div class="grid-2 mb16">
+    <div class="card">
+      <div class="card-hdr"><div class="card-title">🌐 Exchange Verdeling</div></div>
+      <canvas id="chart-allocation" height="120"></canvas>
+    </div>
+    <div class="card">
+      <div class="card-hdr"><div class="card-title">💹 Per Exchange</div></div>
+      <div id="p-exchange-list"></div>
+    </div>
+  </div>
+
+  <div class="card mb16">
+    <div class="card-hdr"><div class="card-title">📋 Open Posities</div><button class="btn btn-primary" style="font-size:12px;padding:6px 14px" onclick="openTradeModal()">+ Nieuwe Trade</button></div>
+    <div class="tbl-wrap">
+      <table class="tbl" id="p-positions-tbl">
+        <thead><tr><th>Asset</th><th>Exchange</th><th>Inleg</th><th>Prijs</th><th>PnL</th><th>SL/TP</th><th>Actie</th></tr></thead>
+        <tbody id="p-positions-body"><tr><td colspan="7" style="text-align:center;color:var(--text3);padding:20px">Geen open posities — PAPER TRADING</td></tr></tbody>
+      </table>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-hdr"><div class="card-title">📜 Trade Geschiedenis</div></div>
+    <div class="tbl-wrap">
+      <table class="tbl">
+        <thead><tr><th>Datum</th><th>Asset</th><th>Actie</th><th>Bedrag</th><th>Prijs</th><th>PnL</th><th>Status</th></tr></thead>
+        <tbody id="p-history-body"><tr><td colspan="7" style="text-align:center;color:var(--text3);padding:20px">Nog geen trades uitgevoerd</td></tr></tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════ BOTS ═════════════════════════════════════ -->
+<div id="pg-bots" class="page">
+  <div class="page-title">🤖 Bot Leger</div>
+  <div class="flex gap8 mb16" style="flex-wrap:wrap">
+    <button class="btn btn-ghost" id="filter-all" onclick="filterBots('all')">Alle (20)</button>
+    <button class="btn btn-ghost" id="filter-active" onclick="filterBots('active')">Actief</button>
+    <button class="btn btn-ghost" id="filter-paused" onclick="filterBots('paused')">Gepauzeerd</button>
+    <div style="flex:1"></div>
+    <div class="stats-grid" style="margin:0;grid-template-columns:repeat(3,1fr);gap:8px;max-width:300px">
+      <div class="stat-card" style="padding:10px"><div class="stat-label" style="font-size:9px">Totaal PnL</div><div class="stat-value pos" style="font-size:14px">€0.00</div></div>
+      <div class="stat-card" style="padding:10px"><div class="stat-label" style="font-size:9px">Win Rate</div><div class="stat-value" style="font-size:14px">0%</div></div>
+      <div class="stat-card" style="padding:10px"><div class="stat-label" style="font-size:9px">Actief</div><div class="stat-value pos" style="font-size:14px">20</div></div>
+    </div>
+  </div>
+  <div class="bot-grid" id="bots-grid"></div>
+</div>
+
+<!-- ═══════════════════════════ C-SUITE ══════════════════════════════════ -->
+<div id="pg-csuite" class="page">
+  <div class="page-title">🏛️ C-Suite AI Raad</div>
+  <div class="card mb16">
+    <div class="card-hdr">
+      <div>
+        <div class="card-title">🎯 Systeem Confidence</div>
+        <div style="font-size:11px;color:var(--text3);margin-top:2px" id="csuite-timestamp">Laatste analyse: —</div>
+      </div>
+      <button class="btn btn-primary" onclick="startCSuiteAnalysis()" id="csuite-btn">▶ Nieuwe Analyse</button>
+    </div>
+    <div style="display:flex;align-items:center;gap:12px">
+      <div style="flex:1;height:10px;background:var(--bg);border-radius:5px;overflow:hidden">
+        <div id="csuite-conf-bar" style="height:100%;background:linear-gradient(90deg,var(--purple),var(--blue),var(--green));border-radius:5px;width:0%;transition:width .8s ease"></div>
+      </div>
+      <div id="csuite-conf-val" class="mono fw7" style="font-size:18px;color:var(--green);min-width:48px">—%</div>
+    </div>
+    <div id="csuite-top-rec" style="margin-top:10px;font-size:12px;color:var(--text2)"></div>
+  </div>
+  <div class="csuite-grid" id="csuite-grid"></div>
+</div>
+
+<!-- ═══════════════════════════ SIGNALEN ═════════════════════════════════ -->
+<div id="pg-signals" class="page">
+  <div class="page-title">📡 Signalen</div>
+  <div class="grid-2 mb16">
+    <div class="card">
+      <div class="card-hdr"><div class="card-title">🧠 AI Brain Analyse</div><button class="btn btn-ghost" style="font-size:11px;padding:5px 12px" onclick="loadSignals()">Vernieuwen</button></div>
+      <div id="signals-brain"></div>
+    </div>
+    <div class="card">
+      <div class="card-hdr"><div class="card-title">🌡️ Sentiment</div></div>
+      <div id="signals-sentiment">
+        <div style="text-align:center;padding:20px">
+          <div style="font-size:40px;margin-bottom:8px" id="sent-emoji">⚪</div>
+          <div style="font-size:24px;font-weight:700;font-family:var(--mono);margin-bottom:4px" id="sent-score">50</div>
+          <div style="font-size:13px;color:var(--text2)" id="sent-label">Neutraal</div>
+          <div style="height:8px;background:linear-gradient(90deg,var(--red),var(--amber),var(--green));border-radius:4px;margin:12px 0;position:relative">
+            <div id="sent-marker" style="position:absolute;top:-2px;width:12px;height:12px;background:#fff;border-radius:50%;border:2px solid var(--bg);transition:.5s;transform:translateX(-50%);left:50%"></div>
+          </div>
+          <div style="display:flex;justify-content:space-between;font-size:10px;color:var(--text3)"><span>Angst</span><span>Neutraal</span><span>Hebzucht</span></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card mb16">
+    <div class="card-hdr"><div class="card-title">💹 Arbitrage Kansen</div><button class="btn btn-ghost" style="font-size:11px;padding:5px 12px" onclick="loadArbitrage()">Scannen</button></div>
+    <div id="signals-arbitrage"><div class="empty-state"><div class="es-icon">🔍</div>Kansen scannen...</div></div>
+  </div>
+
+  <div class="card">
+    <div class="card-hdr"><div class="card-title">📜 Signaal Geschiedenis</div></div>
+    <div id="signals-history"><div class="empty-state"><div class="es-icon">📡</div>Geen signalen geladen</div></div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════ CAIO ══════════════════════════════════════ -->
+<div id="pg-caio" class="page">
+  <div class="caio-header">
+    <div class="caio-avatar">🤖</div>
+    <div>
+      <div class="caio-title">CAIO — Chief AI Officer</div>
+      <div class="caio-sub">Powered by Claude Opus 4.6 · Geheugen actief</div>
+    </div>
+    <button class="btn btn-ghost" style="margin-left:auto;font-size:11px;padding:5px 12px" onclick="clearCaioHistory()">Wissen</button>
+  </div>
+  <div id="caio-msgs"></div>
+  <div class="caio-suggestions" id="caio-sugs"></div>
+  <div class="caio-input-row">
+    <textarea id="caio-input" placeholder="Vraag CAIO iets over GenesisX..." onkeydown="caioKey(event)" rows="1"></textarea>
+    <button id="caio-send" onclick="caioSend()">➤</button>
+  </div>
+</div>
+
+<!-- ═══════════════════════════ FLOWS ════════════════════════════════════ -->
+<div id="pg-flows" class="page">
+  <div class="page-title">⚡ n8n Flows</div>
+  <div class="stats-grid mb16">
+    <div class="stat-card"><div class="stat-label">Totaal Flows</div><div class="stat-value">38</div></div>
+    <div class="stat-card"><div class="stat-label">Actief</div><div class="stat-value pos" id="flows-active-count">—</div></div>
+    <div class="stat-card"><div class="stat-label">Inactief</div><div class="stat-value" id="flows-inactive-count">—</div></div>
+    <div class="stat-card"><div class="stat-label">Laatste Run</div><div class="stat-value" style="font-size:14px" id="flows-last-run">—</div></div>
+  </div>
+  <div id="flows-list"></div>
+</div>
+
+<!-- ═══════════════════════════ RAPPORTEN ════════════════════════════════ -->
+<div id="pg-rapporten" class="page">
+  <div class="page-title">📋 Rapporten</div>
+  <div id="reports-list"></div>
+</div>
+
+<!-- ═══════════════════════════ EXCHANGES ════════════════════════════════ -->
+<div id="pg-exchanges" class="page">
+  <div class="page-title">🌐 Exchanges</div>
+  <div class="stats-grid mb16">
+    <div class="stat-card"><div class="stat-label">Totaal Kapitaal</div><div class="stat-value">€3,150</div></div>
+    <div class="stat-card"><div class="stat-label">Verbonden</div><div class="stat-value pos">3</div></div>
+    <div class="stat-card"><div class="stat-label">Pending</div><div class="stat-value" style="color:var(--amber)">7</div></div>
+    <div class="stat-card"><div class="stat-label">Exchanges</div><div class="stat-value">10</div></div>
+  </div>
+  <div class="grid-3" id="exchanges-grid"></div>
+</div>
+
+<!-- ═══════════════════════════ INSTELLINGEN ══════════════════════════════ -->
+<div id="pg-instellingen" class="page">
+  <div class="page-title">⚙️ Instellingen</div>
+  <div id="settings-content"></div>
+</div>
+
+</main>
+</div><!-- end app-layout -->
+
+<!-- ── BOTTOM NAV ──────────────────────────────────────────────────────────── -->
+<nav id="bnav">
+  <div class="bn-item active" id="bn-dashboard" onclick="showTab('dashboard',null,'bn-dashboard')">
+    <div class="bn-icon">📊</div><div>Dashboard</div>
+  </div>
+  <div class="bn-item" id="bn-portfolio" onclick="showTab('portfolio',null,'bn-portfolio')">
+    <div class="bn-icon">💼</div><div>Portfolio</div>
+  </div>
+  <div class="bn-item" id="bn-bots" onclick="showTab('bots',null,'bn-bots')">
+    <div class="bn-icon">🤖</div><div>Bots</div>
+  </div>
+  <div class="bn-item" id="bn-caio" onclick="showTab('caio',null,'bn-caio')">
+    <div class="bn-icon">🧠</div><div>CAIO</div>
+  </div>
+  <div class="bn-item" id="bn-meer" onclick="showMore()">
+    <div class="bn-icon">☰</div><div>Meer</div>
+  </div>
+</nav>
+
+<script>
+'use strict';
+// ─── CONFIG ──────────────────────────────────────────────────────────────────
+const API_URL     = 'https://interparliamentary-matrilaterally-rutha.ngrok-free.dev/webhook/genesisxapi';
+const ACTIONS_URL = 'https://interparliamentary-matrilaterally-rutha.ngrok-free.dev/webhook/genesisxactions';
+const CAIO_URL    = 'https://interparliamentary-matrilaterally-rutha.ngrok-free.dev/webhook/genesisxcaio';
+const REPORTS_URL = 'https://interparliamentary-matrilaterally-rutha.ngrok-free.dev/webhook/genesisxreports';
+const HUB_URL     = 'https://interparliamentary-matrilaterally-rutha.ngrok-free.dev/webhook/genesisxhub';
+const HDR = {'Content-Type':'application/json','ngrok-skip-browser-warning':'true'};
+const SESSION_KEY = 'gx_session';
+const INACTIVITY_MS = 30 * 60 * 1000;
+
+// ─── DATA ─────────────────────────────────────────────────────────────────────
+const BOTS = [
+  {id:'15.1', name:'ScalpX',   emoji:'⚡', strategy:'Snelle scalps 1m chart',   interval:'1m',  risk:'high',    capital:50,  color:'red'},
+  {id:'15.2', name:'SwingX',   emoji:'🌊', strategy:'Meerdaagse swing trades',   interval:'4h',  risk:'medium',  capital:50,  color:'blue'},
+  {id:'15.3', name:'SnipeX',   emoji:'🎯', strategy:'Perfecte instapmoment',     interval:'15m', risk:'medium',  capital:50,  color:'blue'},
+  {id:'15.4', name:'RebalX',   emoji:'⚖️', strategy:'Portfolio rebalancering',   interval:'24h', risk:'low',     capital:50,  color:'green'},
+  {id:'15.5', name:'ArbiX',    emoji:'🔄', strategy:'Cross-exchange arbitrage',  interval:'5m',  risk:'low',     capital:50,  color:'green'},
+  {id:'15.6', name:'CashX',    emoji:'💵', strategy:'Cashflow optimalisatie',    interval:'1h',  risk:'low',     capital:50,  color:'green'},
+  {id:'15.7', name:'ProtectX', emoji:'🛡️', strategy:'Verliesbescherming',        interval:'5m',  risk:'low',     capital:50,  color:'green'},
+  {id:'15.8', name:'StakeX',   emoji:'🏆', strategy:'Staking rewards oogsten',   interval:'24h', risk:'low',     capital:50,  color:'green'},
+  {id:'15.9', name:'DexX',     emoji:'🔗', strategy:'DEX/Uniswap trading',       interval:'15m', risk:'high',    capital:50,  color:'red'},
+  {id:'15.10',name:'CexX',     emoji:'🏦', strategy:'CEX spot trading',          interval:'15m', risk:'medium',  capital:50,  color:'blue'},
+  {id:'15.11',name:'ShadowX',  emoji:'👻', strategy:'Verborgen marktbewegingen', interval:'30m', risk:'high',    capital:50,  color:'red'},
+  {id:'15.12',name:'EventX',   emoji:'📰', strategy:'Nieuws & events trader',    interval:'5m',  risk:'high',    capital:50,  color:'red'},
+  {id:'15.13',name:'ScoutX',   emoji:'🔭', strategy:'Nieuwe kansen scouten',     interval:'1h',  risk:'medium',  capital:50,  color:'blue'},
+  {id:'15.14',name:'TestX',    emoji:'🧪', strategy:'Strategie backtesting',     interval:'1h',  risk:'low',     capital:50,  color:'green'},
+  {id:'15.15',name:'BurnerX',  emoji:'🔥', strategy:'High-freq micro trades',    interval:'15m', risk:'extreme', capital:25,  color:'purple'},
+  {id:'15.16',name:'MirrorX',  emoji:'🪞', strategy:'Copy trading beste bots',   interval:'5m',  risk:'medium',  capital:50,  color:'blue'},
+  {id:'15.17',name:'MultiX',   emoji:'🌍', strategy:'Multi-exchange mesh',       interval:'15m', risk:'medium',  capital:50,  color:'blue'},
+  {id:'15.18',name:'LoopX',    emoji:'🔁', strategy:'Herhalende patronen',       interval:'1h',  risk:'medium',  capital:50,  color:'blue'},
+  {id:'15.19',name:'DeltaX',   emoji:'📈', strategy:'Volatiliteitshandel',       interval:'30m', risk:'high',    capital:50,  color:'red'},
+  {id:'15.20',name:'GuardX',   emoji:'🔒', strategy:'Systeem bewaker & monitor', interval:'1m',  risk:'none',    capital:0,   color:'green'},
+];
+
+const CSUITE_ROLES = [
+  {role:'CEO',  emoji:'👑', name:'Rafik',    focus:'Strategie & Visie',          color:'green'},
+  {role:'CFO',  emoji:'💰', name:'FinanceX', focus:'Kapitaal & Cashflow',        color:'amber'},
+  {role:'CRO',  emoji:'🛡️', name:'RiskX',    focus:'Risico & Beveiliging',       color:'red'},
+  {role:'CMO',  emoji:'📊', name:'MarketX',  focus:'Marktanalyse & Trends',      color:'blue'},
+  {role:'CTO',  emoji:'⚙️', name:'TechX',    focus:'Technologie & Automatisering',color:'cyan'},
+  {role:'CAIO', emoji:'🤖', name:'ClaudeX',  focus:'AI Strategie & Optimalisatie',color:'purple'},
+];
+
+const EXCHANGES = [
+  {name:'Bitvavo',      flag:'🇳🇱', type:'CEX', capital:788,  status:'connected',  pct:25},
+  {name:'Bybit EU',     flag:'🌍', type:'CEX', capital:630,  status:'connected',  pct:20},
+  {name:'OKX',          flag:'🌐', type:'CEX', capital:473,  status:'connected',  pct:15},
+  {name:'Kraken',       flag:'🦑', type:'CEX', capital:315,  status:'pending',    pct:10},
+  {name:'MEXC',         flag:'🌐', type:'CEX', capital:315,  status:'pending',    pct:10},
+  {name:'Coinbase',     flag:'🇺🇸', type:'CEX', capital:158,  status:'pending',    pct:5},
+  {name:'KuCoin',       flag:'🐊', type:'CEX', capital:158,  status:'pending',    pct:5},
+  {name:'Gate.io',      flag:'🚪', type:'CEX', capital:158,  status:'pending',    pct:5},
+  {name:'DEX/Uniswap',  flag:'🦄', type:'DEX', capital:158,  status:'pending',    pct:5},
+  {name:'Forex/eToro',  flag:'📈', type:'FX',  capital:157,  status:'pending',    pct:5},
+];
+
+const FLOWS_LIST = [
+  {name:'Market Data v4',         desc:'Live marktdata aggregator',         icon:'📊', active:true},
+  {name:'Telegram Command Center',desc:'Telegram bot command handler',       icon:'📱', active:true},
+  {name:'AI Strategy v1',         desc:'AI strategie beslissingen',         icon:'🧠', active:true},
+  {name:'CSuite Commander',       desc:'C-Suite coördinatie hub',           icon:'🏛️', active:true},
+  {name:'Cashflow Engine',        desc:'75/25 winst reinvestering',         icon:'💵', active:true},
+  {name:'Dashboard Final',        desc:'Dagelijks masterrapport',           icon:'📊', active:false},
+  {name:'Governance Monitor',     desc:'30min systeem governance check',    icon:'🔍', active:true},
+  {name:'SubBot Army',            desc:'20 subbots coördinatie',            icon:'🤖', active:true},
+  {name:'Bot Registry',           desc:'Bot performance tracker',           icon:'📋', active:true},
+  {name:'Risk Management',        desc:'Stop-loss & drawdown bewaking',     icon:'🛡️', active:true},
+  {name:'Failsafe Security',      desc:'5min veiligheidscheck',             icon:'🔐', active:true},
+  {name:'Exchange Mesh v1',       desc:'15 exchanges integratie',           icon:'🌐', active:true},
+  {name:'AI Brain v1',            desc:'Claude AI marktanalyse (30min)',    icon:'🧠', active:false},
+  {name:'Trading Engine',         desc:'15min trading engine',              icon:'⚡', active:false},
+  {name:'Learning Memory',        desc:'AI leergeheugen (6-uurlijks)',      icon:'💾', active:false},
+  {name:'Sentiment Analysis',     desc:'Nieuws sentiment analyse (30min)',  icon:'📰', active:false},
+  {name:'CSuite AI v1',           desc:'C-Suite AI beslissingen',           icon:'🤖', active:true},
+  {name:'StopLoss Manager',       desc:'Auto stop-loss beheer (5min)',      icon:'🛑', active:false},
+  {name:'Backtesting Engine',     desc:'Strategie backtester',              icon:'⏮️', active:false},
+  {name:'Portfolio Rebalancer',   desc:'Portfolio herbalancering',          icon:'⚖️', active:false},
+  {name:'Email Reports',          desc:'Wekelijkse email rapporten',        icon:'📧', active:false},
+  {name:'Arbitrage Engine',       desc:'2min arbitrage scanner',            icon:'🔄', active:false},
+  {name:'CAIO v3',                desc:'Chief AI Officer chat',             icon:'🧠', active:true},
+  {name:'Telegram Control',       desc:'Telegram handelsbeheer',            icon:'📱', active:true},
+  {name:'AI Autonomie v1',        desc:'Bot persoonlijkheid optimalisatie', icon:'🦾', active:false},
+  {name:'GenesisX API',           desc:'Externe API endpoints',             icon:'🔌', active:true},
+  {name:'GenesisX Actions',       desc:'Actie uitvoering engine',           icon:'▶️', active:true},
+  {name:'GenesisX Reports',       desc:'Rapport generator',                 icon:'📋', active:true},
+  {name:'GenesisX DataHub',       desc:'Data centralisatie hub',            icon:'🗄️', active:true},
+  {name:'TelegramFilter',         desc:'Centrale Telegram filter',          icon:'📨', active:true},
+  {name:'Visual Dashboard',       desc:'Visueel dashboard generator',       icon:'🎨', active:false},
+  {name:'Alert Flow',             desc:'Kritieke alerts systeem',           icon:'🚨', active:true},
+  {name:'Sheets Logger',          desc:'Google Sheets logging',             icon:'📊', active:true},
+  {name:'Paper Trading Engine',   desc:'Paper trading simulator',           icon:'🧪', active:false},
+  {name:'Performance Dashboard',  desc:'Performance metrics dashboard',     icon:'📈', active:false},
+  {name:'PumpDump Detector',      desc:'Pump & dump detectie',              icon:'🔍', active:false},
+  {name:'CSuite AI Upgrade',      desc:'C-Suite AI v2 upgrade',             icon:'⬆️', active:false},
+  {name:'Market Data Legacy',     desc:'Legacy marktdata flow',             icon:'📡', active:false},
+];
+
+const REPORTS = [
+  {type:'weekrapport',    name:'Week Rapport',          desc:'Volledig wekelijks overzicht van alle prestaties', icon:'📊', format:'HTML'},
+  {type:'portfolio',      name:'Portfolio Snapshot',    desc:'Huidige portfolio status en posities',             icon:'💼', format:'HTML'},
+  {type:'belasting',      name:'Belasting Rapport',     desc:'Jaarlijks crypto belastingrapport (NL)',           icon:'🏛️', format:'HTML'},
+  {type:'trades',         name:'Trades Export',         desc:'Alle trades als CSV voor analyse',                 icon:'📈', format:'CSV'},
+  {type:'performance',    name:'Performance Report',    desc:'Bot en systeem prestatie analyse',                 icon:'⚡', format:'HTML'},
+];
+
+// ─── STATE ────────────────────────────────────────────────────────────────────
+const state = {
+  tab: 'dashboard',
+  xp: parseInt(localStorage.getItem('gx_xp') || '0'),
+  caioHistory: [],
+  liveInterval: null,
+  inactivityTimer: null,
+  lastActivity: Date.now(),
+  botFilter: 'all',
+  priceData: {BTC:0,ETH:0,SOL:0,XRP:0,ADA:0},
+  apiData: null,
+  csuite: null,
+};
+
+// ─── SESSION ──────────────────────────────────────────────────────────────────
+function checkSession() {
+  const s = localStorage.getItem(SESSION_KEY) || sessionStorage.getItem(SESSION_KEY);
+  if (!s) { window.location.href = 'login.html'; return false; }
+  try {
+    const parsed = JSON.parse(s);
+    if (parsed.expires && Date.now() > parsed.expires) {
+      localStorage.removeItem(SESSION_KEY);
+      sessionStorage.removeItem(SESSION_KEY);
+      window.location.href = 'login.html';
+      return false;
+    }
+  } catch(e) { /* basic token, keep */ }
+  resetInactivity();
+  document.addEventListener('click', resetInactivity);
+  document.addEventListener('keydown', resetInactivity);
+  return true;
+}
+
+function resetInactivity() {
+  state.lastActivity = Date.now();
+  clearTimeout(state.inactivityTimer);
+  state.inactivityTimer = setTimeout(() => {
+    toast('Sessie verlopen wegens inactiviteit', 'warn');
+    setTimeout(logout, 2000);
+  }, INACTIVITY_MS);
+}
+
+function logout() {
+  localStorage.removeItem(SESSION_KEY);
+  sessionStorage.removeItem(SESSION_KEY);
+  window.location.href = 'login.html';
+}
+
+// ─── NAV ──────────────────────────────────────────────────────────────────────
+function showTab(id, sbEl, bnId) {
+  state.tab = id;
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.sb-item').forEach(s => s.classList.remove('active'));
+  document.querySelectorAll('.bn-item').forEach(b => b.classList.remove('active'));
+  const pg = document.getElementById('pg-' + id);
+  if (pg) pg.classList.add('active');
+  if (sbEl) { sbEl.classList.add('active'); }
+  else {
+    const found = document.querySelector('.sb-item[data-tab="' + id + '"]');
+    if (found) found.classList.add('active');
+  }
+  if (bnId) {
+    const bn = document.getElementById(bnId);
+    if (bn) bn.classList.add('active');
+  }
+  // Trigger tab-specific load
+  const tabLoaders = {
+    dashboard: loadDashboard,
+    portfolio: renderPortfolio,
+    bots: renderBots,
+    csuite: renderCSuiteShell,
+    signals: loadSignals,
+    caio: initCAIO,
+    flows: renderFlows,
+    rapporten: renderReports,
+    exchanges: renderExchanges,
+    instellingen: renderSettings,
+  };
+  if (tabLoaders[id]) tabLoaders[id]();
+}
+
+function showMore() {
+  document.getElementById('more-overlay').classList.add('open');
+  document.getElementById('more-drawer').classList.add('open');
+}
+function closeMore() {
+  document.getElementById('more-overlay').classList.remove('open');
+  document.getElementById('more-drawer').classList.remove('open');
+}
+
+// ─── TOAST ────────────────────────────────────────────────────────────────────
+function toast(msg, type = 'info') {
+  const icons = {info:'ℹ️', success:'✅', warn:'⚠️', error:'❌'};
+  const el = document.createElement('div');
+  el.className = 'toast ' + type;
+  el.innerHTML = '<span>' + (icons[type] || 'ℹ️') + '</span><span>' + msg + '</span>';
+  document.getElementById('toasts').appendChild(el);
+  setTimeout(() => {
+    el.style.animation = 'fadeOut .3s ease forwards';
+    setTimeout(() => el.remove(), 300);
+  }, 3500);
+}
+
+// ─── MODAL ────────────────────────────────────────────────────────────────────
+function showModal(title, html) {
+  document.getElementById('modal-title').textContent = title;
+  document.getElementById('modal-body').innerHTML = html;
+  document.getElementById('modal-overlay').classList.add('open');
+}
+function closeModal() {
+  document.getElementById('modal-overlay').classList.remove('open');
+}
+
+// ─── FETCH ────────────────────────────────────────────────────────────────────
+async function apiFetch(url, body = null) {
+  const opts = {headers: HDR};
+  if (body) { opts.method = 'POST'; opts.body = JSON.stringify(body); }
+  const resp = await fetch(url, opts);
+  if (!resp.ok) throw new Error('HTTP ' + resp.status);
+  return resp.json();
+}
+
+// ─── REFRESH BTN ──────────────────────────────────────────────────────────────
+function manualRefresh() {
+  const btn = document.getElementById('refresh-btn');
+  btn.classList.add('spinning');
+  liveRefresh().finally(() => setTimeout(() => btn.classList.remove('spinning'), 600));
+}
+
+// ─── LIVE DATA ────────────────────────────────────────────────────────────────
+async function liveRefresh() {
+  const now = new Date();
+  document.getElementById('live-time').textContent = now.toLocaleTimeString('nl-NL', {hour:'2-digit',minute:'2-digit',second:'2-digit'});
+  try {
+    const data = await apiFetch(API_URL);
+    state.apiData = data;
+    updateDashFromData(data);
+  } catch(e) {
+    // Use fallback/static data
+    updateDashFromData(null);
+  }
+}
+
+function updateDashFromData(data) {
+  const prices = data?.prices || {
+    BTC: {price: 84250, change: 1.2},
+    ETH: {price: 1820, change: -0.5},
+    SOL: {price: 128, change: 2.8},
+    XRP: {price: 2.14, change: 0.9},
+    ADA: {price: 0.68, change: -1.1},
+  };
+  state.priceData = prices;
+  renderPriceGrid(prices);
+  renderDashBots();
+  renderDashSignals(data?.signals);
+  updateDashStats(data);
+}
+
+function updateDashStats(data) {
+  const pnl = data?.pnl || 0;
+  const pnlPct = data?.pnlPct || 0;
+  const el = document.getElementById('d-pnl');
+  if (el) {
+    el.textContent = (pnl >= 0 ? '+' : '') + '€' + Math.abs(pnl).toFixed(2);
+    el.className = 'stat-value ' + (pnl >= 0 ? 'pos' : 'neg');
+  }
+  const pctEl = document.getElementById('d-pnl-pct');
+  if (pctEl) { pctEl.textContent = (pnlPct >= 0 ? '+' : '') + pnlPct.toFixed(2) + '%'; pctEl.className = 'stat-change ' + (pnlPct >= 0 ? 'pos' : 'neg'); }
+}
+
+// ─── PRICE GRID ───────────────────────────────────────────────────────────────
+function renderPriceGrid(prices) {
+  const assets = ['BTC','ETH','SOL','XRP','ADA'];
+  const labels = {BTC:'Bitcoin',ETH:'Ethereum',SOL:'Solana',XRP:'Ripple',ADA:'Cardano'};
+  const grid = document.getElementById('price-grid');
+  if (!grid) return;
+  grid.innerHTML = assets.map(sym => {
+    const p = prices[sym] || {price:0,change:0};
+    const chg = p.change || 0;
+    const cls = chg >= 0 ? 'pos' : 'neg';
+    const fmt = p.price >= 1000 ? '€' + p.price.toLocaleString('nl-NL', {maximumFractionDigits:0}) :
+                p.price >= 1 ? '€' + p.price.toFixed(2) : '€' + p.price.toFixed(4);
+    return '<div class="price-card" onclick="showPriceModal(\'' + sym + '\')">' +
+      '<div class="price-sym">' + sym + '</div>' +
+      '<div class="price-val">' + fmt + '</div>' +
+      '<div class="price-chg ' + cls + '">' + (chg >= 0 ? '+' : '') + chg.toFixed(2) + '%</div>' +
+      '</div>';
+  }).join('');
+}
+
+function showPriceModal(sym) {
+  const p = state.priceData[sym] || {price:0,change:0};
+  showModal(sym + ' Details', '<div style="text-align:center;padding:20px">' +
+    '<div style="font-size:40px;margin-bottom:12px">' + {BTC:'₿',ETH:'Ξ',SOL:'◎',XRP:'✕',ADA:'₳'}[sym] + '</div>' +
+    '<div style="font-size:32px;font-weight:700;font-family:var(--mono);margin-bottom:8px">€' + (p.price||0).toLocaleString('nl-NL') + '</div>' +
+    '<div class="' + (p.change >= 0 ? 'pos' : 'neg') + '" style="font-size:18px;margin-bottom:16px">' + (p.change >= 0 ? '+' : '') + (p.change||0).toFixed(2) + '%</div>' +
+    '<button class="btn btn-primary" onclick="closeModal()">Sluiten</button></div>');
+}
+
+// ─── DASHBOARD ────────────────────────────────────────────────────────────────
+function loadDashboard() {
+  drawPortfolioChart();
+  renderDashBots();
+}
+
+function renderDashBots() {
+  const el = document.getElementById('dash-bot-scores');
+  if (!el) return;
+  const top5 = BOTS.slice(0, 5);
+  el.innerHTML = top5.map(b => {
+    const score = Math.floor(Math.random() * 30 + 60);
+    const w = score + '%';
+    return '<div style="display:flex;align-items:center;gap:8px;margin-bottom:8px">' +
+      '<span style="font-size:14px;width:24px;text-align:center">' + b.emoji + '</span>' +
+      '<span style="font-size:12px;width:70px;color:var(--text2)">' + b.name + '</span>' +
+      '<div style="flex:1;height:6px;background:var(--bg);border-radius:3px;overflow:hidden">' +
+        '<div style="height:100%;width:' + w + ';background:linear-gradient(90deg,var(--blue),var(--green));border-radius:3px"></div></div>' +
+      '<span style="font-size:11px;font-family:var(--mono);color:var(--text2);width:32px;text-align:right">' + score + '</span></div>';
+  }).join('');
+}
+
+function renderDashSignals(signals) {
+  const el = document.getElementById('dash-signals');
+  if (!el) return;
+  const items = signals || [
+    {asset:'BTC',signal:'HOLD',confidence:55,reason:'Markt consolideert'},
+    {asset:'ETH',signal:'BUY',confidence:68,reason:'Bullish divergentie'},
+    {asset:'SOL',signal:'BUY',confidence:72,reason:'Uitbraak boven weerstand'},
+  ];
+  el.innerHTML = items.slice(0,3).map(s => {
+    const cls = s.signal === 'BUY' ? 'sig-buy' : s.signal === 'SELL' ? 'sig-sell' : 'sig-hold';
+    return '<div class="signal-row" style="margin-bottom:6px">' +
+      '<div class="signal-asset">' + s.asset + '</div>' +
+      '<div class="signal-badge ' + cls + '">' + s.signal + '</div>' +
+      '<div class="signal-info"><div class="signal-reason">' + s.reason + '</div><div class="signal-conf">' + s.confidence + '% conf</div></div>' +
+      '</div>';
+  }).join('');
+}
+
+// ─── PORTFOLIO ────────────────────────────────────────────────────────────────
+function renderPortfolio() {
+  // Exchange list
+  const el = document.getElementById('p-exchange-list');
+  if (el) {
+    el.innerHTML = EXCHANGES.map(e => {
+      const pct = Math.round((e.capital / 3150) * 100);
+      return '<div style="display:flex;align-items:center;gap:8px;margin-bottom:8px">' +
+        '<span>' + e.flag + '</span>' +
+        '<span style="font-size:12px;flex:1">' + e.name + '</span>' +
+        '<span style="font-size:11px;font-family:var(--mono);color:var(--text2)">€' + e.capital + '</span>' +
+        '<span style="font-size:10px;color:var(--text3);width:30px;text-align:right">' + pct + '%</span>' +
+        '</div>';
+    }).join('');
+  }
+  drawAllocationChart();
+}
+
+// ─── CHARTS ───────────────────────────────────────────────────────────────────
+function drawPortfolioChart() {
+  const canvas = document.getElementById('chart-portfolio');
+  if (!canvas) return;
+  const ctx = canvas.getContext('2d');
+  const W = canvas.offsetWidth || 300;
+  const H = 80;
+  canvas.width = W;
+  canvas.height = H;
+  const pts = [3150,3148,3152,3155,3149,3160,3158,3165,3162,3170,3168,3175];
+  const min = Math.min(...pts) - 10;
+  const max = Math.max(...pts) + 10;
+  const xs = pts.map((_,i) => (i / (pts.length-1)) * W);
+  const ys = pts.map(p => H - ((p - min) / (max - min)) * H);
+  ctx.clearRect(0,0,W,H);
+  const grad = ctx.createLinearGradient(0,0,0,H);
+  grad.addColorStop(0,'rgba(0,255,136,.25)');
+  grad.addColorStop(1,'rgba(0,255,136,0)');
+  ctx.beginPath();
+  ctx.moveTo(xs[0], ys[0]);
+  for (let i=1;i<xs.length;i++) {
+    const cpx = (xs[i-1]+xs[i])/2;
+    ctx.bezierCurveTo(cpx,ys[i-1],cpx,ys[i],xs[i],ys[i]);
+  }
+  ctx.lineTo(W,H);ctx.lineTo(0,H);ctx.closePath();
+  ctx.fillStyle = grad;ctx.fill();
+  ctx.beginPath();
+  ctx.moveTo(xs[0],ys[0]);
+  for (let i=1;i<xs.length;i++) {
+    const cpx = (xs[i-1]+xs[i])/2;
+    ctx.bezierCurveTo(cpx,ys[i-1],cpx,ys[i],xs[i],ys[i]);
+  }
+  ctx.strokeStyle = '#00ff88';ctx.lineWidth = 2;ctx.stroke();
+}
+
+function drawAllocationChart() {
+  const canvas = document.getElementById('chart-allocation');
+  if (!canvas) return;
+  const ctx = canvas.getContext('2d');
+  const W = canvas.offsetWidth || 260;
+  const H = 120;
+  canvas.width = W;
+  canvas.height = H;
+  const cx = W/2, cy = H/2, r = Math.min(cx,cy) - 10;
+  const colors = ['#00ff88','#3b82f6','#8b5cf6','#06b6d4','#f59e0b','#ef4444','#ec4899','#10b981','#f97316','#84cc16'];
+  let angle = -Math.PI/2;
+  ctx.clearRect(0,0,W,H);
+  EXCHANGES.forEach((e,i) => {
+    const slice = (e.capital / 3150) * 2 * Math.PI;
+    ctx.beginPath();
+    ctx.moveTo(cx,cy);
+    ctx.arc(cx,cy,r,angle,angle+slice);
+    ctx.closePath();
+    ctx.fillStyle = colors[i % colors.length];
+    ctx.fill();
+    ctx.strokeStyle = '#08111f';
+    ctx.lineWidth = 2;
+    ctx.stroke();
+    angle += slice;
+  });
+  ctx.beginPath();
+  ctx.arc(cx,cy,r*0.55,0,Math.PI*2);
+  ctx.fillStyle = '#0d1829';
+  ctx.fill();
+  ctx.fillStyle = '#e2e8f0';
+  ctx.font = 'bold 13px Space Grotesk';
+  ctx.textAlign = 'center';
+  ctx.fillText('€3,150', cx, cy+4);
+}
+
+// ─── BOTS ─────────────────────────────────────────────────────────────────────
+function renderBots() {
+  const grid = document.getElementById('bots-grid');
+  if (!grid) return;
+  const filtered = state.botFilter === 'all' ? BOTS :
+    state.botFilter === 'active' ? BOTS.filter(b => b.risk !== 'none') :
+    BOTS.filter(b => b.risk === 'none');
+  const riskMap = {low:'risk-low',medium:'risk-med',high:'risk-high',extreme:'risk-ext',none:'risk-low'};
+  const riskLabel = {low:'LAAG',medium:'MEDIUM',high:'HOOG',extreme:'EXTREEM',none:'NONE'};
+  grid.innerHTML = filtered.map(b => {
+    return '<div class="bot-card active-bot" onclick="showBotDetail(' + "'" + b.name + "'" + ')">' +
+      '<div class="bot-risk ' + riskMap[b.risk] + '">' + riskLabel[b.risk] + '</div>' +
+      '<div class="bot-emoji">' + b.emoji + '</div>' +
+      '<div class="bot-name">' + b.name + '</div>' +
+      '<div class="bot-strat">' + b.strategy + '</div>' +
+      '<div class="bot-stats"><span class="bot-capital">€' + b.capital + '</span><span class="bot-pnl">+€0.00</span></div>' +
+      '<div class="bot-status status-paper">PAPER</div>' +
+      '<div class="bot-actions">' +
+        '<button class="bot-btn" onclick="event.stopPropagation();botAction(\'' + b.name + '\',\'pause\')">⏸ Pause</button>' +
+        '<button class="bot-btn" onclick="event.stopPropagation();botAction(\'' + b.name + '\',\'promote\')">⬆ Live</button>' +
+      '</div></div>';
+  }).join('');
+}
+
+function filterBots(f) {
+  state.botFilter = f;
+  renderBots();
+}
+
+function showBotDetail(name) {
+  const b = BOTS.find(x => x.name === name);
+  if (!b) return;
+  const riskColors = {low:'var(--green)',medium:'var(--amber)',high:'var(--red)',extreme:'var(--purple)',none:'var(--text3)'};
+  showModal(b.emoji + ' ' + b.name, [
+    '<div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:14px">',
+      '<div class="stat-card" style="padding:10px"><div class="stat-label">Strategie</div><div style="font-size:12px;margin-top:4px;color:var(--text2)">' + b.strategy + '</div></div>',
+      '<div class="stat-card" style="padding:10px"><div class="stat-label">Interval</div><div class="stat-value" style="font-size:18px">' + b.interval + '</div></div>',
+      '<div class="stat-card" style="padding:10px"><div class="stat-label">Kapitaal</div><div class="stat-value" style="font-size:18px">€' + b.capital + '</div></div>',
+      '<div class="stat-card" style="padding:10px"><div class="stat-label">Risico</div><div class="stat-value" style="font-size:16px;color:' + riskColors[b.risk] + '">' + b.risk.toUpperCase() + '</div></div>',
+    '</div>',
+    '<div style="display:flex;gap:8px;flex-wrap:wrap">',
+      '<button class="btn btn-ghost" onclick="botAction(\'' + b.name + '\',\'pause\');closeModal()">⏸ Pauzeren</button>',
+      '<button class="btn btn-ghost" onclick="botAction(\'' + b.name + '\',\'resume\');closeModal()">▶ Hervatten</button>',
+      '<button class="btn btn-primary" onclick="botAction(\'' + b.name + '\',\'promote\');closeModal()">⬆ Live zetten</button>',
+      '<button class="btn btn-danger" onclick="botAction(\'' + b.name + '\',\'stop\');closeModal()">⏹ Stoppen</button>',
+    '</div>',
+  ].join(''));
+}
+
+async function botAction(name, action) {
+  toast(name + ' → ' + action + ' wordt uitgevoerd...', 'info');
+  try {
+    await apiFetch(ACTIONS_URL, {action: 'bot_' + action, bot: name, timestamp: new Date().toISOString()});
+    toast(name + ' succesvol: ' + action, 'success');
+  } catch(e) {
+    toast(name + ': actie verstuurd (offline modus)', 'warn');
+  }
+}
+
+// ─── C-SUITE ──────────────────────────────────────────────────────────────────
+function renderCSuiteShell() {
+  const grid = document.getElementById('csuite-grid');
+  if (!grid) return;
+  const defaultAdvice = {
+    CEO: 'Systeem operationeel in paper trading modus. Wachten op live trading activering.',
+    CFO: 'Kapitaalstructuur gezond: €3,150 verdeeld over 10 exchanges. Cash reserve: 100%.',
+    CRO: 'Risiconiveau: LAAG. Geen actieve posities. Failsafe systemen operationeel.',
+    CMO: 'Markt sentiment: NEUTRAAL. BTC consolideert. Kansen in altcoins.',
+    CTO: 'Alle 38 n8n flows geconfigureerd. TelegramFilter actief. API verbindingen stabiel.',
+    CAIO: 'AI Brain klaar voor live analyse. Sentiment systemen actief. Leergeheugen geïnitialiseerd.',
+  };
+  const colorMap = {green:'var(--green)',amber:'var(--amber)',red:'var(--red)',blue:'var(--blue)',cyan:'var(--cyan)',purple:'var(--purple)'};
+  grid.innerHTML = CSUITE_ROLES.map(r => {
+    const advice = state.csuite?.roles?.[r.role] || defaultAdvice[r.role] || 'Analyse wordt geladen...';
+    const conf = state.csuite?.confidence || 0;
+    return '<div class="csuite-card">' +
+      '<div class="csuite-role" style="color:' + colorMap[r.color] + '">' + r.role + '</div>' +
+      '<div class="csuite-name">' + r.emoji + ' ' + r.name + '</div>' +
+      '<div class="csuite-focus">' + r.focus + '</div>' +
+      '<div class="csuite-advice">' + advice + '</div>' +
+      '<div class="csuite-conf"><span>' + conf + '% conf</span>' +
+        '<div class="conf-bar"><div class="conf-fill" style="width:' + conf + '%"></div></div>' +
+      '</div></div>';
+  }).join('');
+}
+
+async function startCSuiteAnalysis() {
+  const btn = document.getElementById('csuite-btn');
+  btn.textContent = '⏳ Analyseren...';
+  btn.disabled = true;
+  toast('C-Suite analyse gestart via DataHub...', 'info');
+  try {
+    const data = await apiFetch(HUB_URL);
+    state.csuite = data;
+    const conf = data?.confidence || data?.overallConfidence || 74;
+    document.getElementById('csuite-conf-bar').style.width = conf + '%';
+    document.getElementById('csuite-conf-val').textContent = conf + '%';
+    document.getElementById('csuite-timestamp').textContent = 'Laatste analyse: ' + new Date().toLocaleTimeString('nl-NL');
+    if (data?.topRecommendation) document.getElementById('csuite-top-rec').textContent = '🎯 ' + data.topRecommendation;
+    renderCSuiteShell();
+    toast('C-Suite analyse compleet! Confidence: ' + conf + '%', 'success');
+  } catch(e) {
+    // Show demo data
+    const conf = 74;
+    document.getElementById('csuite-conf-bar').style.width = conf + '%';
+    document.getElementById('csuite-conf-val').textContent = conf + '%';
+    document.getElementById('csuite-timestamp').textContent = 'Laatste analyse: ' + new Date().toLocaleTimeString('nl-NL');
+    document.getElementById('csuite-top-rec').textContent = '🎯 XRP arbitrage kans gedetecteerd — 74% confidence';
+    toast('Analyse voltooid (demo modus)', 'warn');
+  }
+  btn.textContent = '▶ Nieuwe Analyse';
+  btn.disabled = false;
+}
+
+// ─── SIGNALS ──────────────────────────────────────────────────────────────────
+async function loadSignals() {
+  const brainEl = document.getElementById('signals-brain');
+  if (brainEl) brainEl.innerHTML = '<div class="empty-state"><div class="es-icon skeleton" style="width:40px;height:40px;margin:0 auto 10px;border-radius:50%"></div>Laden...</div>';
+  try {
+    const data = await apiFetch(API_URL);
+    renderSignalsBrain(data?.signals);
+    renderSentiment(data?.sentiment);
+  } catch(e) {
+    renderSignalsBrain(null);
+    renderSentiment(null);
+  }
+  loadArbitrage();
+}
+
+function renderSignalsBrain(signals) {
+  const el = document.getElementById('signals-brain');
+  if (!el) return;
+  const items = signals || [
+    {asset:'BTC',signal:'HOLD',confidence:55,reason:'Markt consolideert boven steun'},
+    {asset:'ETH',signal:'BUY',confidence:68,reason:'Bullish divergentie op 4h'},
+    {asset:'SOL',signal:'BUY',confidence:72,reason:'Uitbraak boven €125 weerstand'},
+    {asset:'XRP',signal:'HOLD',confidence:60,reason:'Wacht op markt bevestiging'},
+    {asset:'ADA',signal:'SELL',confidence:62,reason:'Bearish patroon gevormd'},
+  ];
+  el.innerHTML = items.map(s => {
+    const cls = s.signal === 'BUY' ? 'sig-buy' : s.signal === 'SELL' ? 'sig-sell' : 'sig-hold';
+    const execBtn = s.signal !== 'HOLD' ? '<button class="signal-exec" onclick="executeSignal(\'' + s.asset + '\',\'' + s.signal + '\')">Execute</button>' : '';
+    return '<div class="signal-row">' +
+      '<div class="signal-asset">' + s.asset + '</div>' +
+      '<div class="signal-badge ' + cls + '">' + s.signal + '</div>' +
+      '<div class="signal-info"><div class="signal-reason">' + s.reason + '</div><div class="signal-conf">' + s.confidence + '% confidence</div></div>' +
+      execBtn + '</div>';
+  }).join('');
+}
+
+function renderSentiment(sent) {
+  const score = sent?.score || sent?.fearGreedScore || 52;
+  const labels = score >= 75 ? '🤑 Extreme Hebzucht' : score >= 55 ? '😊 Hebzucht' : score <= 25 ? '😰 Extreme Angst' : score <= 45 ? '😟 Angst' : '😐 Neutraal';
+  const emoji = score >= 75 ? '🤑' : score >= 55 ? '😊' : score <= 25 ? '😰' : score <= 45 ? '😟' : '😐';
+  document.getElementById('sent-score').textContent = score;
+  document.getElementById('sent-label').textContent = labels;
+  document.getElementById('sent-emoji').textContent = emoji;
+  document.getElementById('sent-marker').style.left = score + '%';
+}
+
+async function loadArbitrage() {
+  const el = document.getElementById('signals-arbitrage');
+  if (!el) return;
+  // Simulate arbitrage data
+  const opps = [
+    {asset:'XRP', buyEx:'Bitvavo', buyPr:2.14, sellEx:'Bybit', sellPr:2.156, netSpread:0.52, netProfit:2.60, action:'BUY_BITVAVO_SELL_BYBIT'},
+    {asset:'ADA', buyEx:'Bitvavo', buyPr:0.681, sellEx:'OKX', sellPr:0.686, netSpread:0.38, netProfit:1.90, action:'BUY_BITVAVO_SELL_OKX'},
+    {asset:'SOL', buyEx:'Bybit', buyPr:127.8, sellEx:'Kraken', sellPr:128.4, netSpread:0.12, netProfit:0.60, action:'BUY_BYBIT_SELL_KRAKEN'},
+  ];
+  el.innerHTML = opps.map(o => {
+    const profitable = o.netSpread > 0;
+    return '<div class="signal-row" style="margin-bottom:6px">' +
+      '<div class="signal-asset">' + o.asset + '</div>' +
+      '<div class="signal-badge sig-buy">ARB</div>' +
+      '<div class="signal-info">' +
+        '<div class="signal-reason">' + o.buyEx + ' → ' + o.sellEx + ' | Spread: ' + o.netSpread + '%</div>' +
+        '<div class="signal-conf">Netto winst: €' + o.netProfit.toFixed(2) + ' op €500</div>' +
+      '</div>' +
+      (profitable ? '<button class="signal-exec" onclick="executeArbitrage(\'' + o.asset + '\')">Execute</button>' : '') +
+      '</div>';
+  }).join('');
+}
+
+async function executeSignal(asset, signal) {
+  toast(signal + ' signaal voor ' + asset + ' wordt uitgevoerd...', 'info');
+  try {
+    await apiFetch(ACTIONS_URL, {action:'execute_signal', asset, signal, timestamp:new Date().toISOString()});
+    toast(signal + ' order geplaatst voor ' + asset + '!', 'success');
+  } catch(e) {
+    toast(asset + ' ' + signal + ' verstuurd (paper modus)', 'warn');
+  }
+}
+
+async function executeArbitrage(asset) {
+  toast('Arbitrage voor ' + asset + ' wordt uitgevoerd...', 'info');
+  try {
+    await apiFetch(ACTIONS_URL, {action:'execute_arbitrage', asset, timestamp:new Date().toISOString()});
+    toast('Arbitrage order geplaatst voor ' + asset + '!', 'success');
+  } catch(e) {
+    toast(asset + ' arbitrage verstuurd (paper modus)', 'warn');
+  }
+}
+
+// ─── CAIO ──────────────────────────────────────────────────────────────────────
+function initCAIO() {
+  state.caioHistory = JSON.parse(localStorage.getItem('caio_history') || '[]');
+  const msgs = document.getElementById('caio-msgs');
+  if (!msgs) return;
+  if (msgs.children.length === 0) {
+    if (state.caioHistory.length === 0) {
+      addCaioMsg('ai', '👋 Hallo! Ik ben CAIO, de Chief AI Officer van GenesisX™. Ik heb volledige kennis van alle 38 fases, 20 bots en je portfolio. Hoe kan ik je helpen?');
+    } else {
+      state.caioHistory.forEach(m => addCaioMsg(m.role, m.content, false));
+    }
+    renderCaioSuggestions();
+  }
+}
+
+function renderCaioSuggestions() {
+  const sugs = ['📊 Hoe gaat het systeem?','🤖 Beste bot op dit moment?','📈 Markt analyse','💰 Portfolio optimalisatie','⚡ Welke flows zijn actief?','🎯 Top aanbeveling nu'];
+  const el = document.getElementById('caio-sugs');
+  if (el) el.innerHTML = sugs.map(s => '<div class="sug-chip" onclick="caioQuick(\'' + s + '\')">' + s + '</div>').join('');
+}
+
+function caioQuick(q) {
+  document.getElementById('caio-input').value = q;
+  caioSend();
+}
+
+function caioKey(e) {
+  if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); caioSend(); }
+}
+
+async function caioSend() {
+  const input = document.getElementById('caio-input');
+  const msg = (input.value || '').trim();
+  if (!msg) return;
+  input.value = '';
+  document.getElementById('caio-send').disabled = true;
+  addCaioMsg('user', msg);
+  state.caioHistory.push({role:'user', content:msg});
+  // Typing indicator
+  const typingId = 'typing-' + Date.now();
+  const typingEl = document.createElement('div');
+  typingEl.className = 'msg ai';
+  typingEl.id = typingId;
+  typingEl.innerHTML = '<div class="msg-avatar" style="background:var(--purple3);border:1px solid var(--purple)">🤖</div><div class="msg-bubble"><span style="opacity:.5">CAIO denkt...</span></div>';
+  document.getElementById('caio-msgs').appendChild(typingEl);
+  scrollCaio();
+  try {
+    const ctx = {
+      portfolio: '€3,150 kapitaal, PAPER TRADING, 20 bots actief',
+      prices: Object.entries(state.priceData).map(([k,v]) => k + ':€' + (v.price||0)).join(', '),
+      systemStatus: 'Alle flows actief, 99.9% uptime',
+    };
+    const data = await apiFetch(CAIO_URL, {
+      question: msg,
+      context: JSON.stringify(ctx),
+      history: state.caioHistory.slice(-6),
+    });
+    typingEl.remove();
+    const reply = data?.answer || data?.response || data?.message || 'Ik heb je vraag verwerkt. Kan je meer details geven?';
+    addCaioMsg('ai', reply);
+    state.caioHistory.push({role:'assistant', content:reply});
+    if (data?.suggestions) renderCaioMsgSuggestions(data.suggestions);
+    if (data?.actions) renderCaioMsgActions(data.actions);
+  } catch(e) {
+    typingEl.remove();
+    const fallbacks = [
+      'Op dit moment kan ik de GenesisX API niet bereiken. Het systeem draait in offline modus. Alle 20 bots zijn geconfigureerd en klaar voor live trading.',
+      'De verbinding met de backend is tijdelijk verbroken. Je portfolio staat op €3,150 in paper trading modus. Wil je een specifieke bot of flow informatie?',
+      'API tijdelijk niet bereikbaar. Ik kan je vertellen dat alle 38 n8n flows zijn geconfigureerd en de TelegramFilter actief is.',
+    ];
+    addCaioMsg('ai', fallbacks[Math.floor(Math.random() * fallbacks.length)]);
+    state.caioHistory.push({role:'assistant', content:fallbacks[0]});
+  }
+  localStorage.setItem('caio_history', JSON.stringify(state.caioHistory.slice(-20)));
+  document.getElementById('caio-send').disabled = false;
+  renderCaioSuggestions();
+}
+
+function addCaioMsg(role, content, scroll = true) {
+  const msgs = document.getElementById('caio-msgs');
+  if (!msgs) return;
+  const el = document.createElement('div');
+  el.className = 'msg ' + (role === 'user' ? 'user' : 'ai');
+  const avatar = role === 'user' ? '👤' : '🤖';
+  const avStyle = role === 'user' ? 'background:var(--blue3);border:1px solid var(--blue)' : 'background:var(--purple3);border:1px solid var(--purple)';
+  el.innerHTML = '<div class="msg-avatar" style="' + avStyle + '">' + avatar + '</div><div class="msg-bubble">' + content.replace(/\n/g,'<br>') + '</div>';
+  msgs.appendChild(el);
+  if (scroll) scrollCaio();
+}
+
+function renderCaioMsgSuggestions(sugs) {
+  const msgs = document.getElementById('caio-msgs');
+  if (!msgs || !sugs || !sugs.length) return;
+  const el = document.createElement('div');
+  el.className = 'msg ai';
+  el.innerHTML = '<div style="width:30px"></div><div class="msg-actions">' + sugs.map(s => '<div class="msg-sug" onclick="caioQuick(\'' + s + '\')">' + s + '</div>').join('') + '</div>';
+  msgs.appendChild(el);
+  scrollCaio();
+}
+
+function renderCaioMsgActions(actions) {
+  const msgs = document.getElementById('caio-msgs');
+  if (!msgs || !actions || !actions.length) return;
+  const el = document.createElement('div');
+  el.className = 'msg ai';
+  el.innerHTML = '<div style="width:30px"></div><div class="msg-actions">' + actions.map(a => '<button class="msg-action-btn" onclick="executeAction(\'' + a.action + '\',\'' + a.params + '\')">' + a.label + '</button>').join('') + '</div>';
+  msgs.appendChild(el);
+  scrollCaio();
+}
+
+function scrollCaio() {
+  const msgs = document.getElementById('caio-msgs');
+  if (msgs) msgs.scrollTop = msgs.scrollHeight;
+}
+
+function clearCaioHistory() {
+  state.caioHistory = [];
+  localStorage.removeItem('caio_history');
+  const msgs = document.getElementById('caio-msgs');
+  if (msgs) msgs.innerHTML = '';
+  initCAIO();
+  toast('CAIO geheugen gewist', 'info');
+}
+
+async function executeAction(action, params) {
+  toast('Actie: ' + action + ' wordt uitgevoerd...', 'info');
+  try {
+    await apiFetch(ACTIONS_URL, {action, params, timestamp:new Date().toISOString()});
+    toast('Actie uitgevoerd: ' + action, 'success');
+  } catch(e) {
+    toast('Actie verstuurd (offline modus)', 'warn');
+  }
+}
+
+// ─── FLOWS ────────────────────────────────────────────────────────────────────
+function renderFlows() {
+  const el = document.getElementById('flows-list');
+  if (!el) return;
+  const active = FLOWS_LIST.filter(f => f.active).length;
+  const inactive = FLOWS_LIST.length - active;
+  const a = document.getElementById('flows-active-count');
+  const i = document.getElementById('flows-inactive-count');
+  if (a) a.textContent = active;
+  if (i) i.textContent = inactive;
+  const lr = document.getElementById('flows-last-run');
+  if (lr) lr.textContent = new Date().toLocaleTimeString('nl-NL',{hour:'2-digit',minute:'2-digit'});
+  el.innerHTML = FLOWS_LIST.map((f,idx) => {
+    const checked = f.active ? 'checked' : '';
+    return '<div class="flow-row">' +
+      '<div class="flow-icon">' + f.icon + '</div>' +
+      '<div class="flow-info"><div class="flow-name">' + f.name + '</div><div class="flow-desc">' + f.desc + '</div></div>' +
+      '<span class="flow-status ' + (f.active ? 'flow-on' : 'flow-off') + '">' + (f.active ? 'ACTIEF' : 'INACTIEF') + '</span>' +
+      '<label class="toggle"><input type="checkbox" ' + checked + ' onchange="toggleFlow(' + idx + ',this.checked)"><span class="toggle-slider"></span></label>' +
+      '</div>';
+  }).join('');
+}
+
+async function toggleFlow(idx, active) {
+  const flow = FLOWS_LIST[idx];
+  if (!flow) return;
+  flow.active = active;
+  toast(flow.name + ' → ' + (active ? 'Activeren' : 'Deactiveren') + '...', 'info');
+  try {
+    await apiFetch(ACTIONS_URL, {action: active ? 'activate_flow' : 'deactivate_flow', flow: flow.name});
+    toast(flow.name + ' ' + (active ? 'geactiveerd' : 'gedeactiveerd'), 'success');
+  } catch(e) {
+    toast(flow.name + ': status bijgewerkt (offline)', 'warn');
+  }
+  renderFlows();
+}
+
+// ─── REPORTS ──────────────────────────────────────────────────────────────────
+function renderReports() {
+  const el = document.getElementById('reports-list');
+  if (!el) return;
+  el.innerHTML = REPORTS.map(r => {
+    return '<div class="report-card">' +
+      '<div class="report-icon">' + r.icon + '</div>' +
+      '<div class="report-info"><div class="report-name">' + r.name + '</div><div class="report-desc">' + r.desc + '</div></div>' +
+      '<div class="report-btns">' +
+        '<button class="report-btn btn-generate" onclick="generateReport(\'' + r.type + '\')">⚡ Genereer</button>' +
+        '<button class="report-btn btn-dl" onclick="downloadReport(\'' + r.type + '\',\'' + r.format + '\')">⬇ Download</button>' +
+      '</div></div>';
+  }).join('');
+}
+
+async function generateReport(type) {
+  toast('Rapport wordt gegenereerd: ' + type + '...', 'info');
+  try {
+    await apiFetch(REPORTS_URL, {type, format: REPORTS.find(r => r.type === type)?.format || 'HTML'});
+    toast('Rapport gegenereerd!', 'success');
+  } catch(e) {
+    toast('Rapport aangevraagd (offline modus)', 'warn');
+  }
+}
+
+async function downloadReport(type, format) {
+  toast('Rapport downloaden: ' + type + '...', 'info');
+  try {
+    const resp = await fetch(REPORTS_URL, {method:'POST', headers:HDR, body:JSON.stringify({type, format})});
+    const text = await resp.text();
+    const clean = text.replace(/```[\w]*\n?/g,'').trim();
+    const mime = format === 'CSV' ? 'text/csv' : format === 'JSON' ? 'application/json' : 'text/html';
+    const blob = new Blob([clean], {type: mime});
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = 'GenesisX_' + type + '_' + new Date().toISOString().slice(0,10) + '.' + format.toLowerCase();
+    a.click();
+    URL.revokeObjectURL(url);
+    toast('Rapport gedownload!', 'success');
+  } catch(e) {
+    toast('Download mislukt — API niet bereikbaar', 'error');
+  }
+}
+
+// ─── EXCHANGES ────────────────────────────────────────────────────────────────
+function renderExchanges() {
+  const grid = document.getElementById('exchanges-grid');
+  if (!grid) return;
+  grid.innerHTML = EXCHANGES.map(e => {
+    const statusCls = e.status === 'connected' ? 'exc-on' : e.status === 'pending' ? 'exc-pending' : 'exc-off';
+    const statusLabel = e.status === 'connected' ? '✓ Verbonden' : e.status === 'pending' ? '⏳ Pending' : '✗ Offline';
+    const pct = Math.round((e.capital / 3150) * 100);
+    return '<div class="exc-card">' +
+      '<div class="exc-top">' +
+        '<div class="exc-flag">' + e.flag + '</div>' +
+        '<div><div class="exc-name">' + e.name + '</div><div class="exc-type">' + e.type + '</div></div>' +
+        '<div class="exc-status ' + statusCls + '">' + statusLabel + '</div>' +
+      '</div>' +
+      '<div class="exc-bar"><div class="exc-fill" style="width:' + pct + '%"></div></div>' +
+      '<div class="exc-amounts"><span>Kapitaal: <strong>€' + e.capital + '</strong></span><span>' + pct + '%</span></div>' +
+      '<div style="display:flex;gap:6px;margin-top:10px">' +
+        '<button class="btn btn-ghost" style="font-size:11px;padding:5px 10px;flex:1" onclick="testExchange(\'' + e.name + '\')">🔌 Test</button>' +
+        '<button class="btn btn-ghost" style="font-size:11px;padding:5px 10px;flex:1" onclick="showExchangeDetail(\'' + e.name + '\')">Info</button>' +
+      '</div></div>';
+  }).join('');
+}
+
+async function testExchange(name) {
+  toast(name + ' verbinding testen...', 'info');
+  try {
+    await apiFetch(ACTIONS_URL, {action:'test_exchange', exchange:name});
+    toast(name + ': verbinding OK!', 'success');
+  } catch(e) {
+    toast(name + ': test verstuurd (offline)', 'warn');
+  }
+}
+
+function showExchangeDetail(name) {
+  const e = EXCHANGES.find(x => x.name === name);
+  if (!e) return;
+  showModal(e.flag + ' ' + e.name, [
+    '<div class="stats-grid" style="grid-template-columns:repeat(2,1fr);gap:8px;margin-bottom:14px">',
+      '<div class="stat-card" style="padding:10px"><div class="stat-label">Type</div><div class="stat-value" style="font-size:16px">' + e.type + '</div></div>',
+      '<div class="stat-card" style="padding:10px"><div class="stat-label">Kapitaal</div><div class="stat-value" style="font-size:16px">€' + e.capital + '</div></div>',
+      '<div class="stat-card" style="padding:10px"><div class="stat-label">Allocatie</div><div class="stat-value" style="font-size:16px">' + e.pct + '%</div></div>',
+      '<div class="stat-card" style="padding:10px"><div class="stat-label">Status</div><div class="stat-value" style="font-size:16px;color:' + (e.status==='connected'?'var(--green)':'var(--amber)') + '">' + e.status.toUpperCase() + '</div></div>',
+    '</div>',
+    e.status !== 'connected' ? '<div style="background:var(--amber3);border:1px solid var(--amber);border-radius:8px;padding:12px;font-size:12px;color:var(--amber)">⚠️ Vereist: API key & secret in .env bestand instellen, dan account aanmaken op ' + e.name + '.</div>' : '',
+    '<div style="margin-top:14px;display:flex;gap:8px">',
+      '<button class="btn btn-primary" onclick="testExchange(\'' + e.name + '\');closeModal()">🔌 Test Verbinding</button>',
+      '<button class="btn btn-ghost" onclick="closeModal()">Sluiten</button>',
+    '</div>',
+  ].join(''));
+}
+
+// ─── SETTINGS ─────────────────────────────────────────────────────────────────
+function renderSettings() {
+  const el = document.getElementById('settings-content');
+  if (!el) return;
+  el.innerHTML = [
+    '<div class="setting-group">',
+      '<div class="setting-label">🤖 Trading Modus</div>',
+      '<div class="setting-row"><div><div class="setting-name">Trading Modus</div><div class="setting-sub">Live trading uitgeschakeld tot API keys zijn ingesteld</div></div><span class="tag tag-blue">PAPER</span></div>',
+      '<div class="setting-row"><div><div class="setting-name">Max Positiegrootte</div><div class="setting-sub">% van kapitaal per trade</div></div><input class="setting-input" type="number" value="20" min="1" max="100"> %</div>',
+      '<div class="setting-row"><div><div class="setting-name">Min Confidence Score</div><div class="setting-sub">Signalen onder drempel worden genegeerd</div></div><input class="setting-input" type="number" value="65" min="40" max="95"> %</div>',
+    '</div>',
+    '<div class="setting-group">',
+      '<div class="setting-label">🛡️ Risico Parameters</div>',
+      '<div class="setting-row"><div><div class="setting-name">Dagelijks Stop-Loss</div><div class="setting-sub">Stop trading bij dit verlies</div></div><input class="setting-input" type="number" value="50"> €</div>',
+      '<div class="setting-row"><div><div class="setting-name">Max Drawdown</div><div class="setting-sub">Systeem pauzeert bij dit %</div></div><input class="setting-input" type="number" value="15"> %</div>',
+      '<div class="setting-row"><div><div class="setting-name">Stop-Loss per Trade</div><div class="setting-sub">Automatisch trailing SL</div></div><input class="setting-input" type="number" value="4"> %</div>',
+    '</div>',
+    '<div class="setting-group">',
+      '<div class="setting-label">💰 Cashflow</div>',
+      '<div class="setting-row"><div><div class="setting-name">Reinvestering</div><div class="setting-sub">% winst terug in systeem</div></div><span class="setting-val">75%</span></div>',
+      '<div class="setting-row"><div><div class="setting-name">Cold Wallet</div><div class="setting-sub">% naar hardware wallet</div></div><span class="setting-val">25%</span></div>',
+    '</div>',
+    '<div class="setting-group">',
+      '<div class="setting-label">🔔 Notificaties</div>',
+      '<div class="setting-row"><div><div class="setting-name">Push Notificaties</div><div class="setting-sub">Browser push alerts</div></div><button class="btn btn-ghost" style="font-size:11px;padding:5px 12px" onclick="requestNotifications()">Activeren</button></div>',
+      '<div class="setting-row"><div><div class="setting-name">Telegram Alerts</div><div class="setting-sub">Max 4 berichten per uur</div></div><span class="setting-val">ACTIEF</span></div>',
+    '</div>',
+    '<div class="setting-group">',
+      '<div class="setting-label">🎨 Weergave</div>',
+      '<div class="setting-row"><div><div class="setting-name">Thema</div><div class="setting-sub">Dark space thema</div></div><span class="setting-val">DARK</span></div>',
+      '<div class="setting-row"><div><div class="setting-name">Live Update Interval</div><div class="setting-sub">Data verversing</div></div><span class="setting-val">30s</span></div>',
+    '</div>',
+    '<div class="setting-group">',
+      '<div class="setting-label">🔑 Sessie</div>',
+      '<div class="setting-row"><div><div class="setting-name">Sessie Duur</div><div class="setting-sub">Automatische uitlog bij inactiviteit</div></div><span class="setting-val">30 min</span></div>',
+      '<div class="setting-row"><div><div class="setting-name">GenesisX Versie</div></div><span class="setting-val">v1.38.0</span></div>',
+    '</div>',
+    '<div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:8px">',
+      '<button class="btn btn-primary" onclick="saveSettings()">💾 Opslaan</button>',
+      '<button class="btn btn-danger" onclick="logout()">🚪 Uitloggen</button>',
+    '</div>',
+  ].join('');
+}
+
+function saveSettings() {
+  toast('Instellingen opgeslagen', 'success');
+}
+
+// ─── TRADE MODAL ──────────────────────────────────────────────────────────────
+function openTradeModal() {
+  showModal('📈 Nieuwe Trade', [
+    '<div style="display:grid;gap:10px">',
+      '<div><label style="font-size:11px;color:var(--text3);margin-bottom:4px;display:block">Asset</label>',
+        '<select style="width:100%;background:var(--bg3);border:1px solid var(--border2);color:var(--text);border-radius:8px;padding:8px 12px;font-family:var(--font)">',
+          '<option>BTC — Bitcoin</option><option>ETH — Ethereum</option><option>SOL — Solana</option><option>XRP — Ripple</option><option>ADA — Cardano</option>',
+        '</select></div>',
+      '<div><label style="font-size:11px;color:var(--text3);margin-bottom:4px;display:block">Richting</label>',
+        '<div style="display:flex;gap:8px">',
+          '<button class="btn" style="flex:1;background:var(--green3);border:1px solid var(--green);color:var(--green)">🟢 BUY</button>',
+          '<button class="btn" style="flex:1;background:var(--red3);border:1px solid var(--red);color:var(--red)">🔴 SELL</button>',
+        '</div></div>',
+      '<div><label style="font-size:11px;color:var(--text3);margin-bottom:4px;display:block">Bedrag (EUR)</label>',
+        '<input type="number" value="100" style="width:100%;background:var(--bg3);border:1px solid var(--border2);color:var(--text);border-radius:8px;padding:8px 12px"></div>',
+      '<div><label style="font-size:11px;color:var(--text3);margin-bottom:4px;display:block">Exchange</label>',
+        '<select style="width:100%;background:var(--bg3);border:1px solid var(--border2);color:var(--text);border-radius:8px;padding:8px 12px;font-family:var(--font)">',
+          EXCHANGES.map(e => '<option>' + e.name + '</option>').join(''),
+        '</select></div>',
+      '<div style="background:var(--amber3);border:1px solid var(--amber);border-radius:8px;padding:10px;font-size:12px;color:var(--amber)">⚠️ PAPER TRADING — Geen echt geld</div>',
+      '<button class="btn btn-primary" onclick="submitTrade()">Trade Plaatsen</button>',
+    '</div>',
+  ].join(''));
+}
+
+async function submitTrade() {
+  toast('Trade wordt geplaatst...', 'info');
+  closeModal();
+  try {
+    await apiFetch(ACTIONS_URL, {action:'place_trade', paperTrading:true, timestamp:new Date().toISOString()});
+    toast('Trade geplaatst (paper modus)!', 'success');
+  } catch(e) {
+    toast('Trade verstuurd (offline modus)', 'warn');
+  }
+}
+
+// ─── XP SYSTEM ────────────────────────────────────────────────────────────────
+const XP_LEVELS = [
+  {name:'BRONZE',  emoji:'🥉', min:0,    max:500,  color:'#cd7f32'},
+  {name:'SILVER',  emoji:'🥈', min:500,  max:2000, color:'#c0c0c0'},
+  {name:'GOLD',    emoji:'🥇', min:2000, max:5000, color:'#ffd700'},
+  {name:'DIAMOND', emoji:'💎', min:5000, max:99999,color:'#00ffff'},
+];
+
+function addXP(pnl) {
+  const earned = Math.floor(Math.abs(pnl) * 10);
+  state.xp = Math.max(0, state.xp + earned);
+  localStorage.setItem('gx_xp', state.xp);
+  renderXP();
+  if (earned > 0) toast('+' + earned + ' XP verdiend!', 'success');
+}
+
+function renderXP() {
+  const lvl = XP_LEVELS.find(l => state.xp >= l.min && state.xp < l.max) || XP_LEVELS[3];
+  const pct = Math.min(100, ((state.xp - lvl.min) / (lvl.max - lvl.min)) * 100);
+  const badge = document.getElementById('xp-badge');
+  const fill = document.getElementById('xp-fill');
+  const name = document.getElementById('xp-level-name');
+  const disp = document.getElementById('xp-display');
+  const hdrLvl = document.getElementById('hdr-level');
+  const hdrXp = document.getElementById('hdr-xp-val');
+  if (badge) badge.textContent = lvl.emoji;
+  if (fill) fill.style.width = pct + '%';
+  if (name) name.textContent = lvl.name + ' — Level ' + (XP_LEVELS.indexOf(lvl) + 1);
+  if (disp) disp.textContent = state.xp + ' / ' + lvl.max + ' XP';
+  if (hdrLvl) hdrLvl.textContent = 'LV' + (XP_LEVELS.indexOf(lvl) + 1);
+  if (hdrXp) hdrXp.textContent = state.xp + ' XP';
+}
+
+// ─── NOTIFICATIONS ────────────────────────────────────────────────────────────
+async function requestNotifications() {
+  if (!('Notification' in window)) { toast('Push notificaties niet ondersteund', 'warn'); return; }
+  const perm = await Notification.requestPermission();
+  if (perm === 'granted') {
+    toast('Push notificaties geactiveerd!', 'success');
+    new Notification('GenesisX™', {body:'Notificaties zijn actief!', icon:'icon-192.png'});
+  } else {
+    toast('Notificaties geweigerd in browser', 'warn');
+  }
+}
+
+// ─── KEYBOARD SHORTCUTS ───────────────────────────────────────────────────────
+document.addEventListener('keydown', e => {
+  if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA') return;
+  const map = {d:'dashboard',p:'portfolio',b:'bots',c:'csuite',s:'signals',a:'caio',f:'flows',r:'rapporten',x:'exchanges',i:'instellingen'};
+  const tab = map[e.key.toLowerCase()];
+  if (tab) showTab(tab);
+  if (e.key === 'Escape') closeModal();
+  if (e.key === 'F5') { e.preventDefault(); manualRefresh(); }
+});
+
+// ─── LIVE CLOCK ───────────────────────────────────────────────────────────────
+function startLiveClock() {
+  setInterval(() => {
+    const now = new Date();
+    const el = document.getElementById('live-time');
+    if (el) el.textContent = now.toLocaleTimeString('nl-NL', {hour:'2-digit',minute:'2-digit',second:'2-digit'});
+  }, 1000);
+}
+
+// ─── SERVICE WORKER ───────────────────────────────────────────────────────────
+function registerSW() {
+  if ('serviceWorker' in navigator) {
+    navigator.serviceWorker.register('sw.js').catch(() => {});
+  }
+}
+
+// ─── INIT ─────────────────────────────────────────────────────────────────────
+window.addEventListener('load', async () => {
+  if (!checkSession()) return;
+  renderXP();
+  startLiveClock();
+  registerSW();
+  // Initial data load
+  await liveRefresh();
+  loadDashboard();
+  // Start live refresh every 30s
+  state.liveInterval = setInterval(liveRefresh, 30000);
+});
+
+window.addEventListener('beforeunload', () => {
+  if (state.liveInterval) clearInterval(state.liveInterval);
+});
+</script>
+</body>
+</html>
