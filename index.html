@@ -1599,7 +1599,7 @@ function checkAlertNotifications(newAlerts){
 const API_URL='https://interparliamentary-matrilaterally-rutha.ngrok-free.dev/webhook/genesisxapi';
 
 function fetchAndApplyLiveData(){
-  fetch(API_URL,{signal:AbortSignal.timeout(10000)})
+  fetch(API_URL,{signal:AbortSignal.timeout(10000),headers:{'ngrok-skip-browser-warning':'true','Content-Type':'application/json'}})
   .then(r=>r.json())
   .then(d=>{
     const p=d.prices||{};
