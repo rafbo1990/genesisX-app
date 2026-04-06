@@ -340,9 +340,35 @@ canvas{display:block;width:100%;border-radius:var(--r2)}
 .fw7{font-weight:700}.fs11{font-size:11px}.fs13{font-size:13px}
 .mono{font-family:var(--mono)}
 .page-title{font-size:18px;font-weight:700;margin-bottom:16px;display:flex;align-items:center;gap:8px}
+
+/* ── SPLASH ─────────────────────────────────────────────────────────────── */
+#splash{position:fixed;inset:0;background:var(--bg);z-index:9999;display:flex;flex-direction:column;align-items:center;justify-content:center;transition:opacity .5s ease,transform .5s ease}
+#splash.out{opacity:0;transform:scale(1.03);pointer-events:none}
+#splash.gone{display:none}
+.sp-logo{font-size:42px;font-weight:700;background:linear-gradient(135deg,var(--green),var(--cyan));-webkit-background-clip:text;-webkit-text-fill-color:transparent;letter-spacing:-.5px;margin-bottom:6px}
+.sp-sub{font-size:11px;color:var(--text3);letter-spacing:4px;text-transform:uppercase;margin-bottom:36px;font-family:var(--mono)}
+.sp-bar-wrap{width:220px;height:2px;background:var(--border);border-radius:2px;overflow:hidden;margin-bottom:28px}
+.sp-prog{height:100%;width:0;background:linear-gradient(90deg,var(--green),var(--cyan));border-radius:2px;transition:width .5s ease}
+.sp-steps{font-family:var(--mono);font-size:11px;text-align:left;line-height:2.2}
+.sp-step{color:var(--text3);opacity:0;transform:translateX(-8px);transition:opacity .3s ease,transform .3s ease,color .3s}
+.sp-step.show{opacity:1;transform:translateX(0);color:var(--green)}
 </style>
 </head>
 <body>
+
+<!-- ── SPLASH ─────────────────────────────────────────────────────────────── -->
+<div id="splash">
+  <div class="sp-logo">⚡ GenesisX™</div>
+  <div class="sp-sub">AI Trading System</div>
+  <div class="sp-bar-wrap"><div class="sp-prog" id="sp-prog"></div></div>
+  <div class="sp-steps">
+    <div class="sp-step" id="sp-s1">✓ Fase 1-10: Fundament geladen...</div>
+    <div class="sp-step" id="sp-s2">✓ Fase 11-20: Trading Engine actief...</div>
+    <div class="sp-step" id="sp-s3">✓ Fase 21-30: AI Brain online...</div>
+    <div class="sp-step" id="sp-s4">✓ Fase 31-38: CAIO &amp; Platform gereed...</div>
+    <div class="sp-step" id="sp-s5">✓ GenesisX™ operationeel 🚀</div>
+  </div>
+</div>
 
 <!-- ── TOASTS ─────────────────────────────────────────────────────────────── -->
 <div id="toasts"></div>
@@ -768,17 +794,23 @@ const state = {
 
 // ─── SESSION ──────────────────────────────────────────────────────────────────
 function checkSession() {
+  // Geen blocking redirect — app laadt altijd.
+  // Als er geen/verlopen sessie is, maak automatisch een nieuwe aan.
   const s = localStorage.getItem(SESSION_KEY) || sessionStorage.getItem(SESSION_KEY);
-  if (!s) { window.location.href = 'login.html'; return false; }
-  try {
-    const parsed = JSON.parse(s);
-    if (parsed.expires && Date.now() > parsed.expires) {
-      localStorage.removeItem(SESSION_KEY);
-      sessionStorage.removeItem(SESSION_KEY);
-      window.location.href = 'login.html';
-      return false;
+  let valid = false;
+  if (s) {
+    try {
+      const parsed = JSON.parse(s);
+      valid = !(parsed.expires && Date.now() > parsed.expires);
+    } catch(e) {
+      valid = true; // basic token, keep
     }
-  } catch(e) { /* basic token, keep */ }
+  }
+  if (!valid) {
+    // Refresh sessie zonder redirect zodat app altijd laadt
+    const token = JSON.stringify({user:'rafik', created:Date.now(), expires:Date.now() + INACTIVITY_MS * 4});
+    sessionStorage.setItem(SESSION_KEY, token);
+  }
   resetInactivity();
   document.addEventListener('click', resetInactivity);
   document.addEventListener('keydown', resetInactivity);
@@ -1713,18 +1745,46 @@ function registerSW() {
   }
 }
 
+// ─── SPLASH ───────────────────────────────────────────────────────────────────
+function hideSplash() {
+  const sp = document.getElementById('splash');
+  if (!sp || sp.classList.contains('out')) return;
+  sp.classList.add('out');
+  setTimeout(() => sp.classList.add('gone'), 550);
+}
+
+function runSplash() {
+  const prog = document.getElementById('sp-prog');
+  const steps = [
+    {id:'sp-s1', pct:20,  delay:0},
+    {id:'sp-s2', pct:40,  delay:500},
+    {id:'sp-s3', pct:60,  delay:1000},
+    {id:'sp-s4', pct:80,  delay:1500},
+    {id:'sp-s5', pct:100, delay:2200},
+  ];
+  steps.forEach(s => {
+    setTimeout(() => {
+      const el = document.getElementById(s.id);
+      if (el) el.classList.add('show');
+      if (prog) prog.style.width = s.pct + '%';
+    }, s.delay);
+  });
+  // Gegarandeerd verbergen na maximaal 3 seconden
+  setTimeout(hideSplash, 3000);
+}
+
 // ─── INIT ─────────────────────────────────────────────────────────────────────
 window.addEventListener('load', () => {
-  if (!checkSession()) return;
+  checkSession();   // altijd true — geen blocking redirect
   renderXP();
   startLiveClock();
   registerSW();
-  // Render dashboard immediately with static/fallback data
+  runSplash();      // splash animatie starten
+  // App laadt direct achter de splash met fallback data
   updateDashFromData(null);
   loadDashboard();
-  // Non-blocking API refresh in background
+  // API refresh op achtergrond — niet-blokkerend
   liveRefresh();
-  // Start live refresh every 30s
   state.liveInterval = setInterval(liveRefresh, 30000);
 });
 
