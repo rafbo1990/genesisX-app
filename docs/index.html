@@ -867,11 +867,19 @@ function closeModal() {
 
 // ─── FETCH ────────────────────────────────────────────────────────────────────
 async function apiFetch(url, body = null) {
-  const opts = {headers: HDR};
-  if (body) { opts.method = 'POST'; opts.body = JSON.stringify(body); }
-  const resp = await fetch(url, opts);
-  if (!resp.ok) throw new Error('HTTP ' + resp.status);
-  return resp.json();
+  const controller = new AbortController();
+  const tid = setTimeout(() => controller.abort(), 8000);
+  try {
+    const opts = {headers: HDR, signal: controller.signal};
+    if (body) { opts.method = 'POST'; opts.body = JSON.stringify(body); }
+    const resp = await fetch(url, opts);
+    clearTimeout(tid);
+    if (!resp.ok) throw new Error('HTTP ' + resp.status);
+    return resp.json();
+  } catch(e) {
+    clearTimeout(tid);
+    throw e;
+  }
 }
 
 // ─── REFRESH BTN ──────────────────────────────────────────────────────────────
@@ -953,7 +961,8 @@ function showPriceModal(sym) {
 
 // ─── DASHBOARD ────────────────────────────────────────────────────────────────
 function loadDashboard() {
-  drawPortfolioChart();
+  // Defer chart draw one frame so canvas has layout dimensions
+  requestAnimationFrame(() => drawPortfolioChart());
   renderDashBots();
 }
 
@@ -1006,7 +1015,7 @@ function renderPortfolio() {
         '</div>';
     }).join('');
   }
-  drawAllocationChart();
+  requestAnimationFrame(() => drawAllocationChart());
 }
 
 // ─── CHARTS ───────────────────────────────────────────────────────────────────
@@ -1705,14 +1714,16 @@ function registerSW() {
 }
 
 // ─── INIT ─────────────────────────────────────────────────────────────────────
-window.addEventListener('load', async () => {
+window.addEventListener('load', () => {
   if (!checkSession()) return;
   renderXP();
   startLiveClock();
   registerSW();
-  // Initial data load
-  await liveRefresh();
+  // Render dashboard immediately with static/fallback data
+  updateDashFromData(null);
   loadDashboard();
+  // Non-blocking API refresh in background
+  liveRefresh();
   // Start live refresh every 30s
   state.liveInterval = setInterval(liveRefresh, 30000);
 });
