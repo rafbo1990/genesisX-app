@@ -182,18 +182,33 @@ input,textarea,select{font-family:var(--font);outline:none}
 .status-paused{background:var(--amber3);color:var(--amber)}
 
 /* ── CSUITE ────────────────────────────────────────────────────────────── */
-.csuite-grid{display:grid;grid-template-columns:1fr;gap:12px}
-@media(min-width:600px){.csuite-grid{grid-template-columns:repeat(2,1fr)}}
-@media(min-width:900px){.csuite-grid{grid-template-columns:repeat(3,1fr)}}
-.csuite-card{background:var(--card);border:1px solid var(--border);border-radius:var(--r);padding:16px;transition:.2s}
-.csuite-card:hover{border-color:var(--purple)}
-.csuite-role{font-size:10px;color:var(--purple);text-transform:uppercase;letter-spacing:.6px;margin-bottom:4px}
-.csuite-name{font-size:15px;font-weight:700;margin-bottom:2px}
-.csuite-focus{font-size:11px;color:var(--text3);margin-bottom:12px}
-.csuite-advice{font-size:12px;color:var(--text2);line-height:1.5;background:var(--bg2);border-radius:8px;padding:10px;margin-bottom:10px;min-height:60px}
-.csuite-conf{display:flex;align-items:center;gap:8px;font-size:11px;color:var(--text3)}
-.conf-bar{flex:1;height:4px;background:var(--bg);border-radius:2px;overflow:hidden}
-.conf-fill{height:100%;background:linear-gradient(90deg,var(--purple),var(--blue));border-radius:2px}
+.csuite-tabs{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:14px}
+.csuite-tab{padding:6px 14px;border-radius:20px;font-size:12px;font-weight:600;cursor:pointer;border:1px solid var(--border);color:var(--text2);background:var(--bg3);transition:.2s}
+.csuite-tab.active{background:var(--purple3);border-color:var(--purple);color:var(--purple)}
+.csuite-panel{display:none}.csuite-panel.active{display:flex;flex-direction:column;gap:10px}
+.csuite-role-hdr{display:flex;align-items:center;gap:12px;padding:12px 14px;background:linear-gradient(135deg,var(--purple3),var(--blue3));border:1px solid var(--purple);border-radius:var(--r)}
+.csuite-role-icon{font-size:28px;flex-shrink:0}
+.csuite-role-info{flex:1}
+.csuite-role-title{font-size:15px;font-weight:700}
+.csuite-role-sub{font-size:11px;color:var(--text3);margin-top:2px}
+.csuite-actions{display:flex;gap:6px;flex-wrap:wrap}
+.csuite-act-btn{background:var(--bg3);border:1px solid var(--border2);color:var(--text2);border-radius:6px;padding:5px 12px;font-size:11px;font-weight:600;cursor:pointer;transition:.2s}
+.csuite-act-btn:hover{border-color:var(--purple);color:var(--purple);background:var(--purple3)}
+.csuite-msgs{max-height:340px;overflow-y:auto;display:flex;flex-direction:column;gap:8px;padding:4px 0}
+.csuite-msg{display:flex;gap:8px;animation:fadeUp .2s ease}
+.csuite-msg.user{flex-direction:row-reverse}
+.csuite-msg-bubble{background:var(--card2);border:1px solid var(--border);border-radius:10px;padding:9px 13px;max-width:90%;font-size:12px;line-height:1.6}
+.csuite-msg.user .csuite-msg-bubble{background:var(--blue3);border-color:var(--blue)}
+.csuite-msg.ai .csuite-msg-bubble{background:var(--purple3);border-color:var(--purple)}
+.csuite-msg-av{width:26px;height:26px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:12px;flex-shrink:0;margin-top:2px}
+.csuite-input-row{display:flex;gap:8px;margin-top:4px}
+.csuite-input{flex:1;background:var(--bg3);border:1px solid var(--border2);color:var(--text);border-radius:var(--r2);padding:8px 12px;font-size:12px;font-family:var(--font)}
+.csuite-input:focus{border-color:var(--purple);outline:none}
+.csuite-send{background:linear-gradient(135deg,var(--purple),var(--blue));color:#fff;border-radius:var(--r2);padding:0 16px;font-size:14px;font-weight:700;cursor:pointer;border:none}
+.csuite-send:disabled{opacity:.4;cursor:not-allowed}
+.csuite-result-btns{display:flex;gap:6px;flex-wrap:wrap;margin-top:4px}
+.csuite-result-btn{background:var(--green);color:#000;font-size:11px;font-weight:700;padding:4px 10px;border-radius:6px;cursor:pointer;border:none;transition:.2s}
+.csuite-result-btn:hover{background:var(--green2)}
 
 /* ── SIGNALS ───────────────────────────────────────────────────────────── */
 .signal-row{display:flex;align-items:center;gap:12px;padding:12px;background:var(--card);border:1px solid var(--border);border-radius:var(--r2);margin-bottom:8px;cursor:pointer;transition:.2s}
@@ -327,6 +342,7 @@ input,textarea,select{font-family:var(--font);outline:none}
 .loading{opacity:.5;pointer-events:none}
 .skeleton{background:linear-gradient(90deg,var(--bg2) 25%,var(--bg3) 50%,var(--bg2) 75%);background-size:200% 100%;animation:shimmer 1.5s infinite;border-radius:6px}
 @keyframes shimmer{0%{background-position:200% 0}100%{background-position:-200% 0}}
+@keyframes tickerScroll{0%{transform:translateX(0)}100%{transform:translateX(-50%)}}
 .separator{height:1px;background:var(--border);margin:16px 0}
 .tag{display:inline-block;font-size:10px;padding:2px 7px;border-radius:10px;font-weight:500}
 .tag-green{background:var(--green3);color:var(--green)}
@@ -432,14 +448,37 @@ canvas{display:block;width:100%;border-radius:var(--r2)}
 
 <!-- ═══════════════════════════ DASHBOARD ═══════════════════════════════ -->
 <div id="pg-dashboard" class="page active">
-  <div class="stats-grid">
-    <div class="stat-card"><div class="stat-label">Portfolio</div><div class="stat-value" id="d-portfolio">€3,150</div><div class="stat-change neu" id="d-portfolio-chg">PAPER TRADING</div></div>
-    <div class="stat-card"><div class="stat-label">Vandaag PnL</div><div class="stat-value pos" id="d-pnl">€0.00</div><div class="stat-change neu" id="d-pnl-pct">0.00%</div></div>
-    <div class="stat-card"><div class="stat-label">Actieve Bots</div><div class="stat-value" id="d-bots">20</div><div class="stat-change neu">Van 20 totaal</div></div>
-    <div class="stat-card"><div class="stat-label">Systeem</div><div class="stat-value pos" id="d-health">99.9%</div><div class="stat-change pos" id="d-uptime">GROEN</div></div>
+
+  <!-- Scrollende prijzen ticker -->
+  <div style="overflow:hidden;background:var(--bg2);border:1px solid var(--border);border-radius:var(--r2);margin-bottom:12px;height:30px;display:flex;align-items:center">
+    <div id="price-ticker" style="display:flex;gap:24px;animation:tickerScroll 25s linear infinite;white-space:nowrap;padding:0 12px;font-family:var(--mono);font-size:11px">
+      <span style="color:var(--text3)">BTC <span class="pos">€84,250</span></span>
+      <span style="color:var(--text3)">ETH <span class="pos">€1,820</span></span>
+      <span style="color:var(--text3)">SOL <span class="pos">€128</span></span>
+      <span style="color:var(--text3)">XRP <span class="pos">€2.14</span></span>
+      <span style="color:var(--text3)">ADA <span class="neg">€0.68</span></span>
+    </div>
   </div>
 
-  <div class="xp-card">
+  <!-- Portfolio groot centraal -->
+  <div style="text-align:center;padding:16px;background:linear-gradient(135deg,var(--bg2),var(--bg3));border:1px solid var(--border2);border-radius:var(--r);margin-bottom:12px">
+    <div style="font-size:11px;color:var(--text3);text-transform:uppercase;letter-spacing:.8px;margin-bottom:4px">Totaal Portfolio</div>
+    <div style="font-size:36px;font-weight:700;font-family:var(--mono);color:var(--green);margin-bottom:4px" id="d-portfolio">€3,150</div>
+    <div style="display:flex;align-items:center;justify-content:center;gap:8px">
+      <span class="pos mono fw7" id="d-pnl" style="font-size:16px">+€0.00</span>
+      <span class="neu mono" id="d-pnl-pct" style="font-size:13px">0.00%</span>
+      <span class="tag tag-blue" style="font-size:9px">PAPER</span>
+    </div>
+  </div>
+
+  <div class="stats-grid mb12">
+    <div class="stat-card"><div class="stat-label">Actieve Bots</div><div class="stat-value" id="d-bots">20</div><div class="stat-change neu">Van 20</div></div>
+    <div class="stat-card"><div class="stat-label">Systeem</div><div class="stat-value pos" id="d-health">99.9%</div><div class="stat-change pos" id="d-uptime">GROEN</div></div>
+    <div class="stat-card"><div class="stat-label">Flows Actief</div><div class="stat-value pos">19</div><div class="stat-change neu">Van 38</div></div>
+    <div class="stat-card"><div class="stat-label">Exchanges</div><div class="stat-value">3</div><div class="stat-change neu">Verbonden</div></div>
+  </div>
+
+  <div class="xp-card mb12">
     <div class="xp-badge" id="xp-badge">🥉</div>
     <div class="xp-info">
       <div class="xp-top"><span class="xp-name" id="xp-level-name">BRONZE — Level 1</span><span class="xp-pts mono" id="xp-display">0 / 500 XP</span></div>
@@ -448,7 +487,8 @@ canvas{display:block;width:100%;border-radius:var(--r2)}
     <div style="font-size:11px;color:var(--text3);flex-shrink:0">€1 PnL = 10 XP</div>
   </div>
 
-  <div class="price-grid" id="price-grid">
+  <!-- Prijskaarten -->
+  <div class="price-grid mb12" id="price-grid">
     <div class="price-card skeleton" style="height:70px"></div>
     <div class="price-card skeleton" style="height:70px"></div>
     <div class="price-card skeleton" style="height:70px"></div>
@@ -456,13 +496,13 @@ canvas{display:block;width:100%;border-radius:var(--r2)}
     <div class="price-card skeleton" style="height:70px"></div>
   </div>
 
-  <div class="grid-2 mb16">
+  <div class="grid-2 mb12">
     <div class="card">
       <div class="card-hdr"><div class="card-title">📈 Portfolio Waarde</div><div class="card-action" onclick="showTab('portfolio')">Details →</div></div>
       <canvas id="chart-portfolio" height="80"></canvas>
     </div>
     <div class="card">
-      <div class="card-hdr"><div class="card-title">🤖 Bot Prestaties</div><div class="card-action" onclick="showTab('bots')">Alle bots →</div></div>
+      <div class="card-hdr"><div class="card-title">🤖 Bot Scores</div><div class="card-action" onclick="showTab('bots')">Alle bots →</div></div>
       <div id="dash-bot-scores"></div>
     </div>
   </div>
@@ -541,23 +581,8 @@ canvas{display:block;width:100%;border-radius:var(--r2)}
 <!-- ═══════════════════════════ C-SUITE ══════════════════════════════════ -->
 <div id="pg-csuite" class="page">
   <div class="page-title">🏛️ C-Suite AI Raad</div>
-  <div class="card mb16">
-    <div class="card-hdr">
-      <div>
-        <div class="card-title">🎯 Systeem Confidence</div>
-        <div style="font-size:11px;color:var(--text3);margin-top:2px" id="csuite-timestamp">Laatste analyse: —</div>
-      </div>
-      <button class="btn btn-primary" onclick="startCSuiteAnalysis()" id="csuite-btn">▶ Nieuwe Analyse</button>
-    </div>
-    <div style="display:flex;align-items:center;gap:12px">
-      <div style="flex:1;height:10px;background:var(--bg);border-radius:5px;overflow:hidden">
-        <div id="csuite-conf-bar" style="height:100%;background:linear-gradient(90deg,var(--purple),var(--blue),var(--green));border-radius:5px;width:0%;transition:width .8s ease"></div>
-      </div>
-      <div id="csuite-conf-val" class="mono fw7" style="font-size:18px;color:var(--green);min-width:48px">—%</div>
-    </div>
-    <div id="csuite-top-rec" style="margin-top:10px;font-size:12px;color:var(--text2)"></div>
-  </div>
-  <div class="csuite-grid" id="csuite-grid"></div>
+  <div class="csuite-tabs" id="csuite-tabs"></div>
+  <div id="csuite-panels"></div>
 </div>
 
 <!-- ═══════════════════════════ SIGNALEN ═════════════════════════════════ -->
@@ -1024,6 +1049,25 @@ function renderPriceGrid(prices) {
       '<div class="price-chg ' + cls + '">' + (chg >= 0 ? '+' : '') + chg.toFixed(2) + '%</div>' +
       '</div>';
   }).join('');
+  // Update scrollende ticker met live prijzen
+  const ticker = document.getElementById('price-ticker');
+  if (ticker) {
+    ticker.innerHTML = assets.map(sym => {
+      const p = prices[sym] || {price:0,change:0};
+      const chg = p.change || 0;
+      const cls = chg >= 0 ? 'pos' : 'neg';
+      const fmt = p.price >= 1000 ? '€' + p.price.toLocaleString('nl-NL', {maximumFractionDigits:0}) :
+                  p.price >= 1 ? '€' + p.price.toFixed(2) : '€' + p.price.toFixed(4);
+      return '<span style="color:var(--text3)">' + sym + ' <span class="' + cls + '">' + fmt + '</span> <span style="font-size:10px;color:' + (chg>=0?'var(--green)':'var(--red)') + '">' + (chg>=0?'+':'') + chg.toFixed(2) + '%</span></span>';
+    }).join('') + '&nbsp;&nbsp;&nbsp;&nbsp;' + assets.map(sym => {
+      const p = prices[sym] || {price:0,change:0};
+      const chg = p.change || 0;
+      const cls = chg >= 0 ? 'pos' : 'neg';
+      const fmt = p.price >= 1000 ? '€' + p.price.toLocaleString('nl-NL', {maximumFractionDigits:0}) :
+                  p.price >= 1 ? '€' + p.price.toFixed(2) : '€' + p.price.toFixed(4);
+      return '<span style="color:var(--text3)">' + sym + ' <span class="' + cls + '">' + fmt + '</span> <span style="font-size:10px;color:' + (chg>=0?'var(--green)':'var(--red)') + '">' + (chg>=0?'+':'') + chg.toFixed(2) + '%</span></span>';
+    }).join('');
+  }
 }
 
 function showPriceModal(sym) {
@@ -1269,66 +1313,209 @@ function showBotDetail(name) {
 async function botAction(name, action) {
   toast(name + ' → ' + action + ' wordt uitgevoerd...', 'info');
   try {
-    await apiFetch(ACTIONS_URL, {action: 'bot_' + action, bot: name, timestamp: new Date().toISOString()});
-    toast(name + ' succesvol: ' + action, 'success');
+    const res = await apiFetch(ACTIONS_URL, {action: 'bot_' + action, bot: name, timestamp: new Date().toISOString()});
+    toast(name + ' succesvol: ' + action + (res?.status ? ' — ' + res.status : ''), 'success');
   } catch(e) {
-    toast(name + ': actie verstuurd (offline modus)', 'warn');
+    toast(name + ' fout: ' + (e?.name === 'AbortError' ? 'API reageert niet (timeout)' : e?.message || 'verbindingsfout'), 'error');
   }
 }
 
 // ─── C-SUITE ──────────────────────────────────────────────────────────────────
+const CSUITE_CONFIG = {
+  CFO: {
+    emoji:'💰', name:'FinanceX', color:'var(--amber)',
+    system:'Je bent CFO van GenesisX™. Expertise: kapitaalstructuur, cashflow, risico/rendement, exchange allocatie, 75/25 reinvestering. Portfolio: €3,150 verdeeld over 10 exchanges. Geef bondige financiële adviezen.',
+    actions:[
+      {label:'📊 Analyseer kapitaal', q:'Geef een volledige analyse van onze kapitaalstructuur en exchange allocatie.'},
+      {label:'🚀 Deployment advies', q:'Welk deel van het kapitaal moeten we nu deployen en in welke assets?'},
+      {label:'📋 Risk rapport', q:'Maak een beknopt risicorapport voor het huidige portfolio.'},
+    ]
+  },
+  COO: {
+    emoji:'⚙️', name:'OpsX', color:'var(--cyan)',
+    system:'Je bent COO van GenesisX™. Expertise: operationele efficiëntie, n8n flows, systeem uptime, bot coördinatie, automatisering. 38 flows actief, 20 bots. Geef operationele adviezen.',
+    actions:[
+      {label:'🔍 Systeem status', q:'Geef een volledige systeem status check van alle flows en bots.'},
+      {label:'⚡ Flow optimalisatie', q:'Welke flows kunnen we optimaliseren voor betere performance?'},
+      {label:'📈 Uptime rapport', q:'Maak een uptime en performance rapport van het systeem.'},
+    ]
+  },
+  CMO: {
+    emoji:'📊', name:'MarketX', color:'var(--blue)',
+    system:'Je bent CMO van GenesisX™. Expertise: marktanalyse, asset selectie, momentum trading, sentiment, technische analyse. Focus assets: BTC, ETH, SOL, XRP, ADA. Geef markt adviezen.',
+    actions:[
+      {label:'🌍 Markt analyse', q:'Geef een volledige marktanalyse voor de top 5 crypto assets.'},
+      {label:'🎯 Asset selectie', q:'Welke assets bieden nu de beste kans/risico verhouding?'},
+      {label:'📡 Momentum scan', q:'Scan het huidige momentum in de markt en geef trading aanbevelingen.'},
+    ]
+  },
+  CTO: {
+    emoji:'🔧', name:'TechX', color:'var(--green)',
+    system:'Je bent CTO van GenesisX™. Expertise: API integraties, exchange connectiviteit, n8n automatisering, technische infrastructuur, webhooks. Geef technische adviezen.',
+    actions:[
+      {label:'🔌 API status check', q:'Controleer de status van alle API verbindingen en exchange integraties.'},
+      {label:'🌐 Exchange health', q:'Geef een health check rapport van alle 10 exchanges.'},
+      {label:'📄 Tech rapport', q:'Maak een technisch rapport van de huidige infrastructuur.'},
+    ]
+  },
+  CHRO: {
+    emoji:'🤖', name:'BotX', color:'var(--purple)',
+    system:'Je bent CHRO (Chief Human-Robot Officer) van GenesisX™. Expertise: bot performance, bot strategie, bot promotie van paper naar live, win rates, optimalisatie van de 20 subbots. Geef bot adviezen.',
+    actions:[
+      {label:'📊 Bot performance', q:'Geef een performance overzicht van alle 20 bots.'},
+      {label:'⬆️ Bot promoveren', q:'Welke bots zijn klaar om gepromoveerd te worden van PAPER naar LIVE?'},
+      {label:'🎯 Bot strategie', q:'Welke botstrategieën werken het best in de huidige markt?'},
+    ]
+  },
+  CIO: {
+    emoji:'🧠', name:'IntelX', color:'var(--red)',
+    system:'Je bent CIO (Chief Intelligence Officer) van GenesisX™. Expertise: AI analyse, sentiment, marktvoorspellingen, leergeheugen, Claude AI optimalisatie, intelligence reports. Geef AI-gedreven adviezen.',
+    actions:[
+      {label:'🧠 AI Brain rapport', q:'Genereer een volledig AI Brain rapport met de nieuwste inzichten.'},
+      {label:'🌡️ Sentiment analyse', q:'Geef een diepgaande sentiment analyse van de huidige markt.'},
+      {label:'🔮 Voorspelling', q:'Geef een AI-gebaseerde voorspelling voor de komende 24 uur.'},
+    ]
+  },
+};
+
+if (!state.csuiteHistory) state.csuiteHistory = {};
+if (!state.activeRole) state.activeRole = 'CFO';
+
 function renderCSuiteShell() {
-  const grid = document.getElementById('csuite-grid');
-  if (!grid) return;
-  const defaultAdvice = {
-    CEO: 'Systeem operationeel in paper trading modus. Wachten op live trading activering.',
-    CFO: 'Kapitaalstructuur gezond: €3,150 verdeeld over 10 exchanges. Cash reserve: 100%.',
-    CRO: 'Risiconiveau: LAAG. Geen actieve posities. Failsafe systemen operationeel.',
-    CMO: 'Markt sentiment: NEUTRAAL. BTC consolideert. Kansen in altcoins.',
-    CTO: 'Alle 38 n8n flows geconfigureerd. TelegramFilter actief. API verbindingen stabiel.',
-    CAIO: 'AI Brain klaar voor live analyse. Sentiment systemen actief. Leergeheugen geïnitialiseerd.',
-  };
-  const colorMap = {green:'var(--green)',amber:'var(--amber)',red:'var(--red)',blue:'var(--blue)',cyan:'var(--cyan)',purple:'var(--purple)'};
-  grid.innerHTML = CSUITE_ROLES.map(r => {
-    const advice = state.csuite?.roles?.[r.role] || defaultAdvice[r.role] || 'Analyse wordt geladen...';
-    const conf = state.csuite?.confidence || 0;
-    return '<div class="csuite-card">' +
-      '<div class="csuite-role" style="color:' + colorMap[r.color] + '">' + r.role + '</div>' +
-      '<div class="csuite-name">' + r.emoji + ' ' + r.name + '</div>' +
-      '<div class="csuite-focus">' + r.focus + '</div>' +
-      '<div class="csuite-advice">' + advice + '</div>' +
-      '<div class="csuite-conf"><span>' + conf + '% conf</span>' +
-        '<div class="conf-bar"><div class="conf-fill" style="width:' + conf + '%"></div></div>' +
-      '</div></div>';
+  const tabsEl = document.getElementById('csuite-tabs');
+  const panelsEl = document.getElementById('csuite-panels');
+  if (!tabsEl || !panelsEl) return;
+
+  const roles = Object.keys(CSUITE_CONFIG);
+
+  tabsEl.innerHTML = roles.map(role => {
+    const cfg = CSUITE_CONFIG[role];
+    const active = role === state.activeRole ? ' active' : '';
+    return '<button class="csuite-tab' + active + '" onclick="switchCSuiteRole(\'' + role + '\')">' + cfg.emoji + ' ' + role + '</button>';
   }).join('');
+
+  panelsEl.innerHTML = roles.map(role => {
+    const cfg = CSUITE_CONFIG[role];
+    const active = role === state.activeRole ? ' active' : '';
+    const msgId = 'csuite-msgs-' + role;
+    const inputId = 'csuite-input-' + role;
+    return '<div class="csuite-panel' + active + '" id="csuite-panel-' + role + '">' +
+      '<div class="csuite-role-hdr">' +
+        '<div class="csuite-role-icon">' + cfg.emoji + '</div>' +
+        '<div class="csuite-role-info">' +
+          '<div class="csuite-role-title" style="color:' + cfg.color + '">' + role + ' — ' + cfg.name + '</div>' +
+          '<div class="csuite-role-sub">' + (CSUITE_ROLES.find(r=>r.role===role)?.focus || '') + '</div>' +
+        '</div>' +
+      '</div>' +
+      '<div class="csuite-actions">' +
+        cfg.actions.map(a => '<button class="csuite-act-btn" onclick="csuiteSendQuick(\'' + role + '\',\'' + a.q.replace(/'/g,"\\'") + '\')">' + a.label + '</button>').join('') +
+      '</div>' +
+      '<div class="csuite-msgs" id="' + msgId + '"></div>' +
+      '<div class="csuite-input-row">' +
+        '<input class="csuite-input" id="' + inputId + '" placeholder="Vraag ' + cfg.name + ' iets..." onkeydown="csuiteKey(event,\'' + role + '\')">' +
+        '<button class="csuite-send" id="csuite-send-' + role + '" onclick="csuiteSend(\'' + role + '\')">➤</button>' +
+      '</div>' +
+    '</div>';
+  }).join('');
+
+  // Laad bestaande gesprekshistorie per rol
+  roles.forEach(role => {
+    const hist = state.csuiteHistory[role] || [];
+    if (hist.length === 0) {
+      const cfg = CSUITE_CONFIG[role];
+      appendCSuiteMsg(role, 'ai', '👋 Hallo! Ik ben ' + cfg.name + ', de ' + role + ' van GenesisX™. ' + (CSUITE_ROLES.find(r=>r.role===role)?.focus || '') + '. Hoe kan ik je helpen?', false);
+    } else {
+      hist.forEach(m => appendCSuiteMsg(role, m.role, m.content, false));
+    }
+  });
 }
 
-async function startCSuiteAnalysis() {
-  const btn = document.getElementById('csuite-btn');
-  btn.textContent = '⏳ Analyseren...';
-  btn.disabled = true;
-  toast('C-Suite analyse gestart via DataHub...', 'info');
-  try {
-    const data = await apiFetch(HUB_URL);
-    state.csuite = data;
-    const conf = data?.confidence || data?.overallConfidence || 74;
-    document.getElementById('csuite-conf-bar').style.width = conf + '%';
-    document.getElementById('csuite-conf-val').textContent = conf + '%';
-    document.getElementById('csuite-timestamp').textContent = 'Laatste analyse: ' + new Date().toLocaleTimeString('nl-NL');
-    if (data?.topRecommendation) document.getElementById('csuite-top-rec').textContent = '🎯 ' + data.topRecommendation;
-    renderCSuiteShell();
-    toast('C-Suite analyse compleet! Confidence: ' + conf + '%', 'success');
-  } catch(e) {
-    // Show demo data
-    const conf = 74;
-    document.getElementById('csuite-conf-bar').style.width = conf + '%';
-    document.getElementById('csuite-conf-val').textContent = conf + '%';
-    document.getElementById('csuite-timestamp').textContent = 'Laatste analyse: ' + new Date().toLocaleTimeString('nl-NL');
-    document.getElementById('csuite-top-rec').textContent = '🎯 XRP arbitrage kans gedetecteerd — 74% confidence';
-    toast('Analyse voltooid (demo modus)', 'warn');
+function switchCSuiteRole(role) {
+  state.activeRole = role;
+  document.querySelectorAll('.csuite-tab').forEach(t => t.classList.remove('active'));
+  document.querySelectorAll('.csuite-panel').forEach(p => p.classList.remove('active'));
+  const activeTab = document.querySelector('.csuite-tab[onclick*="\'' + role + '\'"]');
+  if (activeTab) activeTab.classList.add('active');
+  const panel = document.getElementById('csuite-panel-' + role);
+  if (panel) panel.classList.add('active');
+}
+
+function csuiteSendQuick(role, question) {
+  const input = document.getElementById('csuite-input-' + role);
+  if (input) input.value = question;
+  csuiteSend(role);
+}
+
+function csuiteKey(e, role) {
+  if (e.key === 'Enter') csuiteSend(role);
+}
+
+async function csuiteSend(role) {
+  const input = document.getElementById('csuite-input-' + role);
+  const sendBtn = document.getElementById('csuite-send-' + role);
+  const msg = (input?.value || '').trim();
+  if (!msg) return;
+  input.value = '';
+  if (sendBtn) sendBtn.disabled = true;
+
+  if (!state.csuiteHistory[role]) state.csuiteHistory[role] = [];
+  state.csuiteHistory[role].push({role:'user', content:msg});
+  appendCSuiteMsg(role, 'user', msg);
+
+  // Typing indicator
+  const cfg = CSUITE_CONFIG[role];
+  const typingId = 'cs-typing-' + Date.now();
+  const msgsEl = document.getElementById('csuite-msgs-' + role);
+  if (msgsEl) {
+    const t = document.createElement('div');
+    t.className = 'csuite-msg ai'; t.id = typingId;
+    t.innerHTML = '<div class="csuite-msg-av" style="background:var(--purple3)">' + cfg.emoji + '</div><div class="csuite-msg-bubble"><span style="opacity:.5">' + cfg.name + ' denkt...</span></div>';
+    msgsEl.appendChild(t);
+    msgsEl.scrollTop = msgsEl.scrollHeight;
   }
-  btn.textContent = '▶ Nieuwe Analyse';
-  btn.disabled = false;
+
+  try {
+    const ctx = {
+      role, portfolio:'€3,150 PAPER TRADING', prices: Object.entries(state.priceData).map(([k,v])=>k+':€'+(v.price||0)).join(', '),
+      systemStatus:'38 flows, 20 bots actief', history: state.csuiteHistory[role].slice(-6),
+    };
+    const data = await apiFetch(CAIO_URL, {question: msg, role, systemPrompt: cfg.system, context: JSON.stringify(ctx), history: ctx.history});
+    document.getElementById(typingId)?.remove();
+    const reply = data?.answer || data?.response || data?.message || 'Analyse verwerkt. Kan je de vraag specificeren?';
+    state.csuiteHistory[role].push({role:'assistant', content:reply});
+    appendCSuiteMsg(role, 'ai', reply);
+    // Uitvoerbare actie-knoppen uit response
+    if (data?.actions && data.actions.length) appendCSuiteActions(role, data.actions);
+  } catch(e) {
+    document.getElementById(typingId)?.remove();
+    const fallback = cfg.name + ' is momenteel niet bereikbaar via de API. Controleer of n8n draait en ngrok actief is.';
+    state.csuiteHistory[role].push({role:'assistant', content:fallback});
+    appendCSuiteMsg(role, 'ai', fallback);
+  }
+  if (sendBtn) sendBtn.disabled = false;
+}
+
+function appendCSuiteMsg(role, sender, content, scroll = true) {
+  const msgsEl = document.getElementById('csuite-msgs-' + role);
+  if (!msgsEl) return;
+  const cfg = CSUITE_CONFIG[role] || {};
+  const el = document.createElement('div');
+  el.className = 'csuite-msg ' + (sender === 'user' ? 'user' : 'ai');
+  const avStyle = sender === 'user' ? 'background:var(--blue3);border:1px solid var(--blue)' : 'background:var(--purple3);border:1px solid var(--purple)';
+  const av = sender === 'user' ? '👤' : cfg.emoji || '🤖';
+  el.innerHTML = '<div class="csuite-msg-av" style="' + avStyle + '">' + av + '</div><div class="csuite-msg-bubble">' + content.replace(/\n/g,'<br>') + '</div>';
+  msgsEl.appendChild(el);
+  if (scroll) msgsEl.scrollTop = msgsEl.scrollHeight;
+}
+
+function appendCSuiteActions(role, actions) {
+  const msgsEl = document.getElementById('csuite-msgs-' + role);
+  if (!msgsEl || !actions?.length) return;
+  const el = document.createElement('div');
+  el.style.cssText = 'display:flex;gap:6px;flex-wrap:wrap;padding:4px 34px';
+  el.innerHTML = actions.map(a => '<button class="csuite-result-btn" onclick="executeAction(\'' + a.action + '\',\'' + (a.params||'') + '\')">' + (a.label||a.action) + '</button>').join('');
+  msgsEl.appendChild(el);
+  msgsEl.scrollTop = msgsEl.scrollHeight;
 }
 
 // ─── SIGNALS ──────────────────────────────────────────────────────────────────
@@ -1554,10 +1741,19 @@ function clearCaioHistory() {
 async function executeAction(action, params) {
   toast('Actie: ' + action + ' wordt uitgevoerd...', 'info');
   try {
-    await apiFetch(ACTIONS_URL, {action, params, timestamp:new Date().toISOString()});
-    toast('Actie uitgevoerd: ' + action, 'success');
+    const res = await apiFetch(ACTIONS_URL, {action, params: params || {}, timestamp: new Date().toISOString()});
+    // Verwerk de response en update UI
+    const label = res?.label || res?.result || res?.message || action;
+    const detail = res?.data ? JSON.stringify(res.data).slice(0, 80) : '';
+    toast('✅ ' + label + (detail ? ' — ' + detail : ''), 'success');
+    // Update dashboard als data meekomt
+    if (res?.portfolio || res?.bots || res?.positions) updateDashFromData(res);
+    if (res?.balance !== undefined) {
+      const el = document.getElementById('d-portfolio');
+      if (el) el.textContent = '€' + Number(res.balance).toLocaleString('nl-NL', {minimumFractionDigits:2});
+    }
   } catch(e) {
-    toast('Actie verstuurd (offline modus)', 'warn');
+    toast('❌ ' + action + ': ' + (e?.name === 'AbortError' ? 'API reageert niet (timeout)' : e?.message || 'verbindingsfout'), 'error');
   }
 }
 
@@ -1593,7 +1789,7 @@ async function toggleFlow(idx, active) {
     await apiFetch(ACTIONS_URL, {action: active ? 'activate_flow' : 'deactivate_flow', flow: flow.name});
     toast(flow.name + ' ' + (active ? 'geactiveerd' : 'gedeactiveerd'), 'success');
   } catch(e) {
-    toast(flow.name + ': status bijgewerkt (offline)', 'warn');
+    toast(flow.name + ' fout: ' + (e?.name === 'AbortError' ? 'timeout' : e?.message || 'verbindingsfout'), 'error');
   }
   renderFlows();
 }
@@ -1619,7 +1815,7 @@ async function generateReport(type) {
     await apiFetch(REPORTS_URL, {type, format: REPORTS.find(r => r.type === type)?.format || 'HTML'});
     toast('Rapport gegenereerd!', 'success');
   } catch(e) {
-    toast('Rapport aangevraagd (offline modus)', 'warn');
+    toast('Rapport fout: ' + (e?.name === 'AbortError' ? 'API reageert niet (timeout)' : e?.message || 'verbindingsfout'), 'error');
   }
 }
 
@@ -1672,7 +1868,7 @@ async function testExchange(name) {
     await apiFetch(ACTIONS_URL, {action:'test_exchange', exchange:name});
     toast(name + ': verbinding OK!', 'success');
   } catch(e) {
-    toast(name + ': test verstuurd (offline)', 'warn');
+    toast(name + ' fout: ' + (e?.name === 'AbortError' ? 'verbinding timeout na 8s' : e?.message || 'verbindingsfout'), 'error');
   }
 }
 
@@ -1808,7 +2004,7 @@ async function closePosition(id) {
       renderPortfolio();
     }
   } catch(e) {
-    toast('Sluit-order verstuurd (offline modus)', 'warn');
+    toast('Positie sluiten fout: ' + (e?.name === 'AbortError' ? 'timeout' : e?.message || 'verbindingsfout'), 'error');
   }
 }
 
@@ -1819,7 +2015,7 @@ async function submitTrade() {
     await apiFetch(ACTIONS_URL, {action:'place_trade', paperTrading:true, timestamp:new Date().toISOString()});
     toast('Trade geplaatst (paper modus)!', 'success');
   } catch(e) {
-    toast('Trade verstuurd (offline modus)', 'warn');
+    toast('Trade fout: ' + (e?.name === 'AbortError' ? 'API reageert niet (timeout)' : e?.message || 'verbindingsfout'), 'error');
   }
 }
 
