@@ -182,33 +182,50 @@ input,textarea,select{font-family:var(--font);outline:none}
 .status-paused{background:var(--amber3);color:var(--amber)}
 
 /* ── CSUITE ────────────────────────────────────────────────────────────── */
-.csuite-tabs{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:14px}
-.csuite-tab{padding:6px 14px;border-radius:20px;font-size:12px;font-weight:600;cursor:pointer;border:1px solid var(--border);color:var(--text2);background:var(--bg3);transition:.2s}
+.csuite-tabs{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:14px;border-bottom:1px solid var(--border);padding-bottom:12px}
+.csuite-tab{display:flex;flex-direction:column;align-items:center;gap:2px;padding:8px 12px;border-radius:var(--r2);font-size:11px;font-weight:600;cursor:pointer;border:1px solid var(--border);color:var(--text2);background:var(--bg3);transition:.2s;min-width:64px}
+.csuite-tab .ct-emoji{font-size:20px;line-height:1}
+.csuite-tab .ct-role{font-size:10px;font-weight:700;letter-spacing:.3px}
+.csuite-tab .ct-status{font-size:9px;padding:1px 5px;border-radius:8px;background:var(--bg2);color:var(--text3);margin-top:1px;font-family:var(--mono)}
 .csuite-tab.active{background:var(--purple3);border-color:var(--purple);color:var(--purple)}
+.ct-status.analyzing{background:var(--amber3);color:var(--amber)}
+.ct-status.waiting{background:var(--red3);color:var(--red);animation:pulse 1.2s infinite}
 .csuite-panel{display:none}.csuite-panel.active{display:flex;flex-direction:column;gap:10px}
-.csuite-role-hdr{display:flex;align-items:center;gap:12px;padding:12px 14px;background:linear-gradient(135deg,var(--purple3),var(--blue3));border:1px solid var(--purple);border-radius:var(--r)}
+.csuite-role-hdr{display:flex;align-items:center;gap:12px;padding:12px 14px;background:var(--bg2);border:1px solid var(--border2);border-radius:var(--r)}
 .csuite-role-icon{font-size:28px;flex-shrink:0}
-.csuite-role-info{flex:1}
-.csuite-role-title{font-size:15px;font-weight:700}
-.csuite-role-sub{font-size:11px;color:var(--text3);margin-top:2px}
+.csuite-role-info{flex:1;min-width:0}
+.csuite-role-title{font-size:14px;font-weight:700}
+.csuite-status-badge{display:inline-flex;align-items:center;gap:4px;font-size:10px;font-weight:700;padding:2px 8px;border-radius:10px;background:var(--green3);color:var(--green);border:1px solid var(--green);font-family:var(--mono);margin-top:4px}
+.csuite-status-badge.analyzing{background:var(--amber3);color:var(--amber);border-color:var(--amber)}
+.csuite-status-badge.waiting{background:var(--red3);color:var(--red);border-color:var(--red);animation:pulse 1.2s infinite}
 .csuite-actions{display:flex;gap:6px;flex-wrap:wrap}
 .csuite-act-btn{background:var(--bg3);border:1px solid var(--border2);color:var(--text2);border-radius:6px;padding:5px 12px;font-size:11px;font-weight:600;cursor:pointer;transition:.2s}
 .csuite-act-btn:hover{border-color:var(--purple);color:var(--purple);background:var(--purple3)}
-.csuite-msgs{max-height:340px;overflow-y:auto;display:flex;flex-direction:column;gap:8px;padding:4px 0}
+.csuite-msgs{height:320px;overflow-y:auto;display:flex;flex-direction:column;gap:8px;padding:4px 0}
 .csuite-msg{display:flex;gap:8px;animation:fadeUp .2s ease}
 .csuite-msg.user{flex-direction:row-reverse}
-.csuite-msg-bubble{background:var(--card2);border:1px solid var(--border);border-radius:10px;padding:9px 13px;max-width:90%;font-size:12px;line-height:1.6}
+.csuite-msg-bubble{background:var(--bg3);border:1px solid var(--border);border-radius:10px;padding:9px 13px;max-width:88%;font-size:12px;line-height:1.6;word-break:break-word}
 .csuite-msg.user .csuite-msg-bubble{background:var(--blue3);border-color:var(--blue)}
-.csuite-msg.ai .csuite-msg-bubble{background:var(--purple3);border-color:var(--purple)}
-.csuite-msg-av{width:26px;height:26px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:12px;flex-shrink:0;margin-top:2px}
+.csuite-msg.ai .csuite-msg-bubble{background:var(--bg3);border-color:var(--border2)}
+.csuite-msg.confirmed .csuite-msg-bubble{background:var(--green3);border-color:var(--green)}
+.csuite-msg.rejected .csuite-msg-bubble{background:var(--red3);border-color:var(--red)}
+.csuite-msg-av{width:28px;height:28px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:13px;flex-shrink:0;margin-top:2px;border:1px solid var(--border)}
+.csuite-approval-box{background:var(--amber3);border:2px solid var(--amber);border-radius:var(--r);padding:12px;margin-top:4px}
+.csuite-approval-title{font-size:12px;font-weight:700;color:var(--amber);margin-bottom:8px}
+.csuite-approval-detail{font-size:11px;color:var(--text2);margin-bottom:4px;line-height:1.5}
+.csuite-approval-detail code{background:var(--bg2);padding:1px 5px;border-radius:4px;font-family:var(--mono);font-size:10px;color:var(--cyan)}
+.csuite-approval-btns{display:flex;gap:8px;margin-top:10px}
+.cs-approve-btn{flex:1;background:var(--green);color:#000;font-weight:700;font-size:12px;padding:9px;border-radius:6px;border:none;cursor:pointer;transition:.2s}
+.cs-approve-btn:hover{background:var(--green2)}
+.cs-reject-btn{flex:1;background:transparent;color:var(--red);font-weight:700;font-size:12px;padding:9px;border-radius:6px;border:1px solid var(--red);cursor:pointer;transition:.2s}
+.cs-reject-btn:hover{background:var(--red);color:#fff}
 .csuite-input-row{display:flex;gap:8px;margin-top:4px}
 .csuite-input{flex:1;background:var(--bg3);border:1px solid var(--border2);color:var(--text);border-radius:var(--r2);padding:8px 12px;font-size:12px;font-family:var(--font)}
 .csuite-input:focus{border-color:var(--purple);outline:none}
-.csuite-send{background:linear-gradient(135deg,var(--purple),var(--blue));color:#fff;border-radius:var(--r2);padding:0 16px;font-size:14px;font-weight:700;cursor:pointer;border:none}
-.csuite-send:disabled{opacity:.4;cursor:not-allowed}
-.csuite-result-btns{display:flex;gap:6px;flex-wrap:wrap;margin-top:4px}
-.csuite-result-btn{background:var(--green);color:#000;font-size:11px;font-weight:700;padding:4px 10px;border-radius:6px;cursor:pointer;border:none;transition:.2s}
-.csuite-result-btn:hover{background:var(--green2)}
+.csuite-send{background:linear-gradient(135deg,var(--purple),var(--blue));color:#fff;border-radius:var(--r2);padding:0 16px;font-size:14px;font-weight:700;cursor:pointer;border:none;transition:.2s}
+.csuite-send:hover{opacity:.85}.csuite-send:disabled{opacity:.4;cursor:not-allowed}
+.cs-clear-btn{background:var(--bg3);border:1px solid var(--border);color:var(--text3);border-radius:6px;padding:6px 10px;font-size:11px;cursor:pointer;transition:.2s;white-space:nowrap}
+.cs-clear-btn:hover{border-color:var(--red);color:var(--red)}
 
 /* ── SIGNALS ───────────────────────────────────────────────────────────── */
 .signal-row{display:flex;align-items:center;gap:12px;padding:12px;background:var(--card);border:1px solid var(--border);border-radius:var(--r2);margin-bottom:8px;cursor:pointer;transition:.2s}
@@ -1323,109 +1340,106 @@ async function botAction(name, action) {
 // ─── C-SUITE ──────────────────────────────────────────────────────────────────
 const CSUITE_CONFIG = {
   CFO: {
-    emoji:'💰', name:'FinanceX', color:'var(--amber)',
-    system:'Je bent CFO van GenesisX™. Expertise: kapitaalstructuur, cashflow, risico/rendement, exchange allocatie, 75/25 reinvestering. Portfolio: €3,150 verdeeld over 10 exchanges. Geef bondige financiële adviezen.',
-    actions:[
-      {label:'📊 Analyseer kapitaal', q:'Geef een volledige analyse van onze kapitaalstructuur en exchange allocatie.'},
-      {label:'🚀 Deployment advies', q:'Welk deel van het kapitaal moeten we nu deployen en in welke assets?'},
-      {label:'📋 Risk rapport', q:'Maak een beknopt risicorapport voor het huidige portfolio.'},
-    ]
+    emoji:'💰', name:'Chief Financial Officer', color:'var(--amber)',
+    system:'Je bent de CFO van GenesisX trading systeem van Rafik Bourziz. Je expertise is kapitaalbeheer, risicospreiding, deployment strategie en financiële rapportage. Je analyseert altijd de live portfolio data. BELANGRIJK: Als je een actie wilt uitvoeren zoals kapitaal deployen of risico aanpassen, stel je dit voor als een concrete actie met een GOEDKEURING VERZOEK. Gebruik dit format: [ACTIE_VERZOEK: beschrijving | action: api_actie_naam | params: {}]. Wacht altijd op goedkeuring van Rafik voor je iets uitvoert.',
+    quickActions:['Analyseer kapitaal allocatie','Geef deployment advies','Bereken risico/rendement','Genereer financieel rapport']
   },
   COO: {
-    emoji:'⚙️', name:'OpsX', color:'var(--cyan)',
-    system:'Je bent COO van GenesisX™. Expertise: operationele efficiëntie, n8n flows, systeem uptime, bot coördinatie, automatisering. 38 flows actief, 20 bots. Geef operationele adviezen.',
-    actions:[
-      {label:'🔍 Systeem status', q:'Geef een volledige systeem status check van alle flows en bots.'},
-      {label:'⚡ Flow optimalisatie', q:'Welke flows kunnen we optimaliseren voor betere performance?'},
-      {label:'📈 Uptime rapport', q:'Maak een uptime en performance rapport van het systeem.'},
-    ]
+    emoji:'⚙️', name:'Chief Operations Officer', color:'var(--cyan)',
+    system:'Je bent de COO van GenesisX van Rafik. Je beheert alle 38 n8n flows en systeem operaties. Je monitort uptime, performance en procesoptimalisatie. BELANGRIJK: Als je een flow wilt aan/uitzetten of systeem actie wilt uitvoeren, gebruik je dit format voor goedkeuring: [ACTIE_VERZOEK: beschrijving | action: api_actie_naam | params: {}]. Wacht altijd op goedkeuring van Rafik.',
+    quickActions:['Systeem status check','Optimaliseer flows','Uptime rapport','Identificeer bottlenecks']
   },
   CMO: {
-    emoji:'📊', name:'MarketX', color:'var(--blue)',
-    system:'Je bent CMO van GenesisX™. Expertise: marktanalyse, asset selectie, momentum trading, sentiment, technische analyse. Focus assets: BTC, ETH, SOL, XRP, ADA. Geef markt adviezen.',
-    actions:[
-      {label:'🌍 Markt analyse', q:'Geef een volledige marktanalyse voor de top 5 crypto assets.'},
-      {label:'🎯 Asset selectie', q:'Welke assets bieden nu de beste kans/risico verhouding?'},
-      {label:'📡 Momentum scan', q:'Scan het huidige momentum in de markt en geef trading aanbevelingen.'},
-    ]
+    emoji:'📊', name:'Chief Market Officer', color:'var(--blue)',
+    system:'Je bent de CMO van GenesisX van Rafik. Je expertise is marktanalyse, asset selectie, momentum trading en sentiment. Je analyseert BTC/ETH/SOL/ADA/XRP live. BELANGRIJK: Als je een trade wilt plaatsen of signaal wilt uitvoeren, gebruik je dit format: [ACTIE_VERZOEK: beschrijving | action: paper_trade | params: {"asset":"BTC","side":"buy","amount":100,"reason":"momentum"}]. Wacht altijd op goedkeuring van Rafik.',
+    quickActions:['Volledige markt analyse','Top asset selectie','Momentum scan','Beste trade nu']
   },
   CTO: {
-    emoji:'🔧', name:'TechX', color:'var(--green)',
-    system:'Je bent CTO van GenesisX™. Expertise: API integraties, exchange connectiviteit, n8n automatisering, technische infrastructuur, webhooks. Geef technische adviezen.',
-    actions:[
-      {label:'🔌 API status check', q:'Controleer de status van alle API verbindingen en exchange integraties.'},
-      {label:'🌐 Exchange health', q:'Geef een health check rapport van alle 10 exchanges.'},
-      {label:'📄 Tech rapport', q:'Maak een technisch rapport van de huidige infrastructuur.'},
-    ]
+    emoji:'🔧', name:'Chief Technology Officer', color:'var(--green)',
+    system:'Je bent de CTO van GenesisX van Rafik. Je beheert alle API integraties, exchange connectiviteit en technische infrastructuur. BELANGRIJK: Als je een technische actie wilt uitvoeren zoals exchange testen of API resetten, gebruik je: [ACTIE_VERZOEK: beschrijving | action: api_actie | params: {}]. Wacht altijd op goedkeuring.',
+    quickActions:['API status alle exchanges','Exchange health check','Technisch rapport','Beveiligingsscan']
   },
   CHRO: {
-    emoji:'🤖', name:'BotX', color:'var(--purple)',
-    system:'Je bent CHRO (Chief Human-Robot Officer) van GenesisX™. Expertise: bot performance, bot strategie, bot promotie van paper naar live, win rates, optimalisatie van de 20 subbots. Geef bot adviezen.',
-    actions:[
-      {label:'📊 Bot performance', q:'Geef een performance overzicht van alle 20 bots.'},
-      {label:'⬆️ Bot promoveren', q:'Welke bots zijn klaar om gepromoveerd te worden van PAPER naar LIVE?'},
-      {label:'🎯 Bot strategie', q:'Welke botstrategieën werken het best in de huidige markt?'},
-    ]
+    emoji:'🤖', name:'Chief Human Resources Officer', color:'var(--purple)',
+    system:'Je bent de CHRO van GenesisX van Rafik. Je beheert de bot army van 20 trading bots. Je analyseert performance en beslist over promoties. BELANGRIJK: Als je een bot wilt pauzeren, hervatten of promoveren naar live, gebruik je: [ACTIE_VERZOEK: beschrijving | action: pause_bot | params: {"bot":"ScalpX","reden":"underperformance"}]. Wacht altijd op goedkeuring van Rafik.',
+    quickActions:['Bot performance rapport','Wie is klaar voor live?','Pauzeer underperformers','Bot vergelijking']
   },
   CIO: {
-    emoji:'🧠', name:'IntelX', color:'var(--red)',
-    system:'Je bent CIO (Chief Intelligence Officer) van GenesisX™. Expertise: AI analyse, sentiment, marktvoorspellingen, leergeheugen, Claude AI optimalisatie, intelligence reports. Geef AI-gedreven adviezen.',
-    actions:[
-      {label:'🧠 AI Brain rapport', q:'Genereer een volledig AI Brain rapport met de nieuwste inzichten.'},
-      {label:'🌡️ Sentiment analyse', q:'Geef een diepgaande sentiment analyse van de huidige markt.'},
-      {label:'🔮 Voorspelling', q:'Geef een AI-gebaseerde voorspelling voor de komende 24 uur.'},
-    ]
-  },
+    emoji:'🧠', name:'Chief Intelligence Officer', color:'var(--red)',
+    system:'Je bent de CIO van GenesisX van Rafik. Je interpreteert alle AI signalen, Claude AI Brain analyses en voorspellingsmodellen. BELANGRIJK: Als je een AI actie wilt uitvoeren zoals confidence aanpassen of strategie wijzigen, gebruik je: [ACTIE_VERZOEK: beschrijving | action: api_actie | params: {}]. Wacht altijd op goedkeuring van Rafik.',
+    quickActions:['AI Brain analyse','Voorspelling komende 24u','Sentiment diepteanalyse','Beste strategie nu']
+  }
 };
 
-if (!state.csuiteHistory) state.csuiteHistory = {};
+if (!state.csuiteStatus) state.csuiteStatus = {};
 if (!state.activeRole) state.activeRole = 'CFO';
+state.pendingApproval = null;
+
+function csLoadHistory(role) {
+  try { return JSON.parse(localStorage.getItem('csuite_' + role.toLowerCase() + '_history') || '[]'); } catch(e) { return []; }
+}
+function csSaveHistory(role, hist) {
+  try { localStorage.setItem('csuite_' + role.toLowerCase() + '_history', JSON.stringify(hist.slice(-30))); } catch(e) {}
+}
+
+function csuiteSetStatus(role, status) {
+  state.csuiteStatus[role] = status;
+  const cls = status === 'ANALYSEERT' ? 'analyzing' : status === 'WACHT OP GOEDKEURING' ? 'waiting' : '';
+  const dot = status === 'ACTIEF' ? '🟢' : status === 'ANALYSEERT' ? '🟡' : '🔴';
+  const badge = document.getElementById('csuite-badge-' + role);
+  if (badge) { badge.textContent = dot + ' ' + status; badge.className = 'csuite-status-badge ' + cls; }
+  const tabStatus = document.getElementById('csuite-tab-status-' + role);
+  if (tabStatus) { tabStatus.textContent = status === 'WACHT OP GOEDKEURING' ? 'WACHT...' : status; tabStatus.className = 'ct-status ' + cls; }
+}
 
 function renderCSuiteShell() {
   const tabsEl = document.getElementById('csuite-tabs');
   const panelsEl = document.getElementById('csuite-panels');
   if (!tabsEl || !panelsEl) return;
-
   const roles = Object.keys(CSUITE_CONFIG);
 
   tabsEl.innerHTML = roles.map(role => {
     const cfg = CSUITE_CONFIG[role];
     const active = role === state.activeRole ? ' active' : '';
-    return '<button class="csuite-tab' + active + '" onclick="switchCSuiteRole(\'' + role + '\')">' + cfg.emoji + ' ' + role + '</button>';
+    return '<button class="csuite-tab' + active + '" id="csuite-tab-' + role + '" onclick="switchCSuiteRole(\'' + role + '\')">' +
+      '<span class="ct-emoji">' + cfg.emoji + '</span>' +
+      '<span class="ct-role">' + role + '</span>' +
+      '<span class="ct-status" id="csuite-tab-status-' + role + '">ACTIEF</span>' +
+    '</button>';
   }).join('');
 
   panelsEl.innerHTML = roles.map(role => {
     const cfg = CSUITE_CONFIG[role];
     const active = role === state.activeRole ? ' active' : '';
-    const msgId = 'csuite-msgs-' + role;
-    const inputId = 'csuite-input-' + role;
+    const qaButtons = cfg.quickActions.map((q, i) =>
+      '<button class="csuite-act-btn" onclick="csuiteSendQuick(\'' + role + '\',' + i + ')">' + q + '</button>'
+    ).join('');
     return '<div class="csuite-panel' + active + '" id="csuite-panel-' + role + '">' +
       '<div class="csuite-role-hdr">' +
         '<div class="csuite-role-icon">' + cfg.emoji + '</div>' +
         '<div class="csuite-role-info">' +
           '<div class="csuite-role-title" style="color:' + cfg.color + '">' + role + ' — ' + cfg.name + '</div>' +
-          '<div class="csuite-role-sub">' + (CSUITE_ROLES.find(r=>r.role===role)?.focus || '') + '</div>' +
+          '<div id="csuite-badge-' + role + '" class="csuite-status-badge">🟢 ACTIEF</div>' +
         '</div>' +
+        '<button class="cs-clear-btn" onclick="csuiteClear(\'' + role + '\')">🗑️ Reset</button>' +
       '</div>' +
-      '<div class="csuite-actions">' +
-        cfg.actions.map(a => '<button class="csuite-act-btn" onclick="csuiteSendQuick(\'' + role + '\',\'' + a.q.replace(/'/g,"\\'") + '\')">' + a.label + '</button>').join('') +
-      '</div>' +
-      '<div class="csuite-msgs" id="' + msgId + '"></div>' +
+      '<div class="csuite-actions">' + qaButtons + '</div>' +
+      '<div class="csuite-msgs" id="csuite-msgs-' + role + '"></div>' +
       '<div class="csuite-input-row">' +
-        '<input class="csuite-input" id="' + inputId + '" placeholder="Vraag ' + cfg.name + ' iets..." onkeydown="csuiteKey(event,\'' + role + '\')">' +
+        '<input class="csuite-input" id="csuite-input-' + role + '" placeholder="Vraag de ' + role + ' iets..." onkeydown="csuiteKey(event,\'' + role + '\')">' +
         '<button class="csuite-send" id="csuite-send-' + role + '" onclick="csuiteSend(\'' + role + '\')">➤</button>' +
       '</div>' +
     '</div>';
   }).join('');
 
-  // Laad bestaande gesprekshistorie per rol
+  // Load history per role from localStorage
   roles.forEach(role => {
-    const hist = state.csuiteHistory[role] || [];
+    const hist = csLoadHistory(role);
     if (hist.length === 0) {
       const cfg = CSUITE_CONFIG[role];
-      appendCSuiteMsg(role, 'ai', '👋 Hallo! Ik ben ' + cfg.name + ', de ' + role + ' van GenesisX™. ' + (CSUITE_ROLES.find(r=>r.role===role)?.focus || '') + '. Hoe kan ik je helpen?', false);
+      csAppendMsg(role, 'ai', '👋 Hallo Rafik! Ik ben je ' + cfg.name + '. Ik heb toegang tot je live portfolio data en marktprijzen. Als ik een actie wil uitvoeren, vraag ik altijd eerst jouw goedkeuring. Hoe kan ik je helpen?', false);
     } else {
-      hist.forEach(m => appendCSuiteMsg(role, m.role, m.content, false));
+      hist.forEach(m => csAppendMsg(role, m.type || (m.role === 'user' ? 'user' : 'ai'), m.content, false));
     }
   });
 }
@@ -1434,20 +1448,41 @@ function switchCSuiteRole(role) {
   state.activeRole = role;
   document.querySelectorAll('.csuite-tab').forEach(t => t.classList.remove('active'));
   document.querySelectorAll('.csuite-panel').forEach(p => p.classList.remove('active'));
-  const activeTab = document.querySelector('.csuite-tab[onclick*="\'' + role + '\'"]');
-  if (activeTab) activeTab.classList.add('active');
-  const panel = document.getElementById('csuite-panel-' + role);
-  if (panel) panel.classList.add('active');
+  document.getElementById('csuite-tab-' + role)?.classList.add('active');
+  document.getElementById('csuite-panel-' + role)?.classList.add('active');
 }
 
-function csuiteSendQuick(role, question) {
+function csuiteSendQuick(role, idx) {
+  const cfg = CSUITE_CONFIG[role];
+  const q = cfg.quickActions[idx];
+  if (!q) return;
   const input = document.getElementById('csuite-input-' + role);
-  if (input) input.value = question;
+  if (input) { input.value = q; }
   csuiteSend(role);
 }
 
 function csuiteKey(e, role) {
-  if (e.key === 'Enter') csuiteSend(role);
+  if (e.key === 'Enter' && !e.shiftKey) csuiteSend(role);
+}
+
+function csuiteClear(role) {
+  localStorage.removeItem('csuite_' + role.toLowerCase() + '_history');
+  const msgsEl = document.getElementById('csuite-msgs-' + role);
+  if (msgsEl) msgsEl.innerHTML = '';
+  const cfg = CSUITE_CONFIG[role];
+  csAppendMsg(role, 'ai', '🗑️ Chat gewist. Hallo opnieuw Rafik! Ik ben je ' + cfg.name + '. Hoe kan ik je helpen?', false);
+  csuiteSetStatus(role, 'ACTIEF');
+  toast(role + ' chat gewist', 'info');
+}
+
+function csuiteParseAction(text) {
+  // Detecteer [ACTIE_VERZOEK: beschrijving | action: naam | params: {...}]
+  const rx = /\[ACTIE_VERZOEK:\s*([^|]+)\|\s*action:\s*([^|]+)\|\s*params:\s*(\{[\s\S]*?\})\s*\]/;
+  const m = text.match(rx);
+  if (!m) return null;
+  let params = {};
+  try { params = JSON.parse(m[3].trim()); } catch(e) {}
+  return { description: m[1].trim(), action: m[2].trim(), params };
 }
 
 async function csuiteSend(role) {
@@ -1457,10 +1492,12 @@ async function csuiteSend(role) {
   if (!msg) return;
   input.value = '';
   if (sendBtn) sendBtn.disabled = true;
+  csuiteSetStatus(role, 'ANALYSEERT');
 
-  if (!state.csuiteHistory[role]) state.csuiteHistory[role] = [];
-  state.csuiteHistory[role].push({role:'user', content:msg});
-  appendCSuiteMsg(role, 'user', msg);
+  const hist = csLoadHistory(role);
+  hist.push({role:'user', type:'user', content:msg});
+  csSaveHistory(role, hist);
+  csAppendMsg(role, 'user', msg);
 
   // Typing indicator
   const cfg = CSUITE_CONFIG[role];
@@ -1469,53 +1506,155 @@ async function csuiteSend(role) {
   if (msgsEl) {
     const t = document.createElement('div');
     t.className = 'csuite-msg ai'; t.id = typingId;
-    t.innerHTML = '<div class="csuite-msg-av" style="background:var(--purple3)">' + cfg.emoji + '</div><div class="csuite-msg-bubble"><span style="opacity:.5">' + cfg.name + ' denkt...</span></div>';
+    t.innerHTML = '<div class="csuite-msg-av" style="background:var(--bg3);border:1px solid var(--border2)">' + cfg.emoji + '</div>' +
+      '<div class="csuite-msg-bubble" style="opacity:.6">' + role + ' analyseert<span class="typing-dots">...</span></div>';
     msgsEl.appendChild(t);
     msgsEl.scrollTop = msgsEl.scrollHeight;
   }
 
+  // Live context meesturen
+  const liveData = {
+    portfolio: state.apiData?.portfolio || {value:3150, currency:'EUR', mode:'PAPER'},
+    prices: state.priceData,
+    bots: BOTS.slice(0,8).map(b => ({name:b.name, status:b.status, strategy:b.strategy})),
+    flowsActive: FLOWS_LIST.filter(f=>f.active).length,
+    totalFlows: FLOWS_LIST.length,
+    timestamp: new Date().toISOString()
+  };
+
   try {
-    const ctx = {
-      role, portfolio:'€3,150 PAPER TRADING', prices: Object.entries(state.priceData).map(([k,v])=>k+':€'+(v.price||0)).join(', '),
-      systemStatus:'38 flows, 20 bots actief', history: state.csuiteHistory[role].slice(-6),
-    };
-    const data = await apiFetch(CAIO_URL, {question: msg, role, systemPrompt: cfg.system, context: JSON.stringify(ctx), history: ctx.history});
+    const apiHistory = hist.slice(-10).map(h => ({
+      role: h.role === 'user' ? 'user' : 'assistant',
+      content: h.content
+    }));
+    const data = await apiFetch(CAIO_URL, {
+      question: msg,
+      role,
+      systemPrompt: cfg.system,
+      context: role,
+      history: apiHistory,
+      liveData: JSON.stringify(liveData)
+    });
     document.getElementById(typingId)?.remove();
-    const reply = data?.answer || data?.response || data?.message || 'Analyse verwerkt. Kan je de vraag specificeren?';
-    state.csuiteHistory[role].push({role:'assistant', content:reply});
-    appendCSuiteMsg(role, 'ai', reply);
-    // Uitvoerbare actie-knoppen uit response
-    if (data?.actions && data.actions.length) appendCSuiteActions(role, data.actions);
+    const reply = data?.answer || data?.response || data?.message || data?.content?.[0]?.text || 'Analyse compleet. Stel gerust een specifiekere vraag.';
+
+    // Parse [ACTIE_VERZOEK: ...]
+    const actionReq = csuiteParseAction(reply);
+    const cleanReply = reply.replace(/\[ACTIE_VERZOEK:[\s\S]*?\]/g, '').trim();
+
+    hist.push({role:'assistant', type:'ai', content: cleanReply || reply});
+    csSaveHistory(role, hist);
+
+    if (actionReq) {
+      csuiteSetStatus(role, 'WACHT OP GOEDKEURING');
+      state.pendingApproval = {role, ...actionReq};
+      if (cleanReply) csAppendMsg(role, 'ai', cleanReply);
+      csAppendApproval(role, actionReq);
+    } else {
+      csuiteSetStatus(role, 'ACTIEF');
+      csAppendMsg(role, 'ai', reply);
+    }
   } catch(e) {
     document.getElementById(typingId)?.remove();
-    const fallback = cfg.name + ' is momenteel niet bereikbaar via de API. Controleer of n8n draait en ngrok actief is.';
-    state.csuiteHistory[role].push({role:'assistant', content:fallback});
-    appendCSuiteMsg(role, 'ai', fallback);
+    csuiteSetStatus(role, 'ACTIEF');
+    const errMsg = e?.name === 'AbortError'
+      ? '⚠️ API reageert niet (timeout na 8s). Controleer of n8n en ngrok actief zijn.'
+      : '⚠️ Verbindingsfout: ' + (e?.message || 'Onbekende fout');
+    hist.push({role:'assistant', type:'ai', content: errMsg});
+    csSaveHistory(role, hist);
+    csAppendMsg(role, 'ai', errMsg);
   }
   if (sendBtn) sendBtn.disabled = false;
 }
 
-function appendCSuiteMsg(role, sender, content, scroll = true) {
+function csAppendMsg(role, type, content, scroll = true) {
   const msgsEl = document.getElementById('csuite-msgs-' + role);
   if (!msgsEl) return;
   const cfg = CSUITE_CONFIG[role] || {};
   const el = document.createElement('div');
-  el.className = 'csuite-msg ' + (sender === 'user' ? 'user' : 'ai');
-  const avStyle = sender === 'user' ? 'background:var(--blue3);border:1px solid var(--blue)' : 'background:var(--purple3);border:1px solid var(--purple)';
-  const av = sender === 'user' ? '👤' : cfg.emoji || '🤖';
-  el.innerHTML = '<div class="csuite-msg-av" style="' + avStyle + '">' + av + '</div><div class="csuite-msg-bubble">' + content.replace(/\n/g,'<br>') + '</div>';
+  el.className = 'csuite-msg ' + type;
+  const avBg = type === 'user' ? 'background:var(--blue3);border:1px solid var(--blue)'
+    : type === 'confirmed' ? 'background:var(--green3);border:1px solid var(--green)'
+    : type === 'rejected'  ? 'background:var(--red3);border:1px solid var(--red)'
+    : 'background:var(--bg3);border:1px solid var(--border2)';
+  const av = type === 'user' ? '👤' : type === 'confirmed' ? '✅' : type === 'rejected' ? '❌' : (cfg.emoji || '🤖');
+  el.innerHTML = '<div class="csuite-msg-av" style="' + avBg + '">' + av + '</div>' +
+    '<div class="csuite-msg-bubble">' + content.replace(/\*\*([^*]+)\*\*/g,'<strong>$1</strong>').replace(/\n/g,'<br>') + '</div>';
   msgsEl.appendChild(el);
   if (scroll) msgsEl.scrollTop = msgsEl.scrollHeight;
 }
 
-function appendCSuiteActions(role, actions) {
+function csAppendApproval(role, actionReq) {
   const msgsEl = document.getElementById('csuite-msgs-' + role);
-  if (!msgsEl || !actions?.length) return;
+  if (!msgsEl) return;
   const el = document.createElement('div');
-  el.style.cssText = 'display:flex;gap:6px;flex-wrap:wrap;padding:4px 34px';
-  el.innerHTML = actions.map(a => '<button class="csuite-result-btn" onclick="executeAction(\'' + a.action + '\',\'' + (a.params||'') + '\')">' + (a.label||a.action) + '</button>').join('');
+  el.className = 'csuite-msg ai';
+  el.id = 'csuite-approval-' + role;
+  const paramsDisplay = JSON.stringify(actionReq.params, null, 0);
+  el.innerHTML = '<div class="csuite-msg-av" style="background:var(--amber3);border:1px solid var(--amber)">⚠️</div>' +
+    '<div class="csuite-msg-bubble" style="max-width:95%">' +
+      '<div class="csuite-approval-box">' +
+        '<div class="csuite-approval-title">⚠️ GOEDKEURING VEREIST — ' + role + '</div>' +
+        '<div class="csuite-approval-detail"><strong>Actie:</strong> ' + actionReq.description + '</div>' +
+        '<div class="csuite-approval-detail"><strong>API call:</strong> <code>' + actionReq.action + '</code></div>' +
+        '<div class="csuite-approval-detail"><strong>Parameters:</strong> <code>' + paramsDisplay + '</code></div>' +
+        '<div class="csuite-approval-btns">' +
+          '<button class="cs-approve-btn" onclick="csuiteApprove(\'' + role + '\')">✅ Goedkeuren & Uitvoeren</button>' +
+          '<button class="cs-reject-btn" onclick="csuiteReject(\'' + role + '\')">❌ Afwijzen</button>' +
+        '</div>' +
+      '</div>' +
+    '</div>';
   msgsEl.appendChild(el);
   msgsEl.scrollTop = msgsEl.scrollHeight;
+}
+
+async function csuiteApprove(role) {
+  const pending = state.pendingApproval;
+  if (!pending || pending.role !== role) return;
+  document.getElementById('csuite-approval-' + role)?.remove();
+  state.pendingApproval = null;
+  csuiteSetStatus(role, 'ANALYSEERT');
+  toast('⚡ ' + role + ' voert actie uit: ' + pending.action + '...', 'info');
+  try {
+    const res = await apiFetch(ACTIONS_URL, {
+      action: pending.action,
+      params: pending.params,
+      timestamp: new Date().toISOString(),
+      approvedBy: 'Rafik',
+      requestedByRole: role
+    });
+    csuiteSetStatus(role, 'ACTIEF');
+    const resultMsg = res?.message || res?.result || res?.status || 'Actie succesvol uitgevoerd';
+    const confirmMsg = '✅ Actie uitgevoerd!\n\n**' + pending.description + '**\n\nResultaat: ' + resultMsg;
+    const hist = csLoadHistory(role);
+    hist.push({role:'assistant', type:'confirmed', content: confirmMsg});
+    csSaveHistory(role, hist);
+    csAppendMsg(role, 'confirmed', confirmMsg);
+    toast('✅ ' + role + ': ' + pending.action + ' succesvol uitgevoerd', 'success');
+    if (res?.portfolio || res?.bots || res?.positions) updateDashFromData(res);
+  } catch(e) {
+    csuiteSetStatus(role, 'ACTIEF');
+    const errMsg = '❌ Actie mislukt: ' + (e?.name === 'AbortError' ? 'API timeout na 8s' : e?.message || 'fout');
+    const hist = csLoadHistory(role);
+    hist.push({role:'assistant', type:'rejected', content: errMsg});
+    csSaveHistory(role, hist);
+    csAppendMsg(role, 'rejected', errMsg);
+    toast('❌ ' + role + ': actie mislukt', 'error');
+  }
+}
+
+function csuiteReject(role) {
+  const pending = state.pendingApproval;
+  if (!pending || pending.role !== role) return;
+  document.getElementById('csuite-approval-' + role)?.remove();
+  state.pendingApproval = null;
+  csuiteSetStatus(role, 'ACTIEF');
+  const rejectMsg = '❌ Actie afgewezen door Rafik.\n\n**' + pending.description + '**\n\nBegrepen. Ik onderneem geen verdere actie. Geef het aan als je het toch wilt uitvoeren.';
+  const hist = csLoadHistory(role);
+  hist.push({role:'assistant', type:'rejected', content: rejectMsg});
+  csSaveHistory(role, hist);
+  csAppendMsg(role, 'rejected', rejectMsg);
+  toast(role + ': actie afgewezen', 'warn');
 }
 
 // ─── SIGNALS ──────────────────────────────────────────────────────────────────
