@@ -1595,6 +1595,24 @@ async function csuiteSend(role) {
   if (sendBtn) sendBtn.disabled = false;
 }
 
+function simpleMarkdown(text) {
+  return text
+    .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
+    .replace(/^### (.+)$/gm, '<h3 style="font-size:13px;font-weight:700;margin:8px 0 4px;color:var(--text)">$1</h3>')
+    .replace(/^## (.+)$/gm, '<h2 style="font-size:14px;font-weight:700;margin:10px 0 4px;color:var(--text)">$1</h2>')
+    .replace(/^# (.+)$/gm, '<h1 style="font-size:15px;font-weight:700;margin:10px 0 6px;color:var(--text)">$1</h1>')
+    .replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>')
+    .replace(/\*(.+?)\*/g, '<em>$1</em>')
+    .replace(/`([^`]+)`/g, '<code style="background:var(--bg2);padding:1px 5px;border-radius:4px;font-family:var(--mono);font-size:10px;color:var(--cyan)">$1</code>')
+    .replace(/^---$/gm, '<hr style="border:none;border-top:1px solid var(--border);margin:8px 0">')
+    .replace(/^\| (.+) \|$/gm, (_, row) => '<tr>' + row.split(' | ').map(c => '<td style="padding:3px 8px;border:1px solid var(--border);font-size:11px">' + c + '</td>').join('') + '</tr>')
+    .replace(/(<tr>[\s\S]*?<\/tr>)/g, '<table style="border-collapse:collapse;width:100%;margin:6px 0;font-size:11px">$1</table>')
+    .replace(/^- (.+)$/gm, '<li style="margin-left:14px;margin-bottom:2px">$1</li>')
+    .replace(/(<li[\s\S]*?<\/li>)/g, '<ul style="padding-left:4px;margin:4px 0">$1</ul>')
+    .replace(/\n\n/g, '<br><br>')
+    .replace(/\n/g, '<br>');
+}
+
 function csAppendMsg(role, type, content, scroll = true) {
   const msgsEl = document.getElementById('csuite-msgs-' + role);
   if (!msgsEl) return;
@@ -1606,8 +1624,9 @@ function csAppendMsg(role, type, content, scroll = true) {
     : type === 'rejected'  ? 'background:var(--red3);border:1px solid var(--red)'
     : 'background:var(--bg3);border:1px solid var(--border2)';
   const av = type === 'user' ? '👤' : type === 'confirmed' ? '✅' : type === 'rejected' ? '❌' : (cfg.emoji || '🤖');
+  const rendered = type === 'user' ? content.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/\n/g,'<br>') : simpleMarkdown(content);
   el.innerHTML = '<div class="csuite-msg-av" style="' + avBg + '">' + av + '</div>' +
-    '<div class="csuite-msg-bubble">' + content.replace(/\*\*([^*]+)\*\*/g,'<strong>$1</strong>').replace(/\n/g,'<br>') + '</div>';
+    '<div class="csuite-msg-bubble">' + rendered + '</div>';
   msgsEl.appendChild(el);
   if (scroll) msgsEl.scrollTop = msgsEl.scrollHeight;
 }
