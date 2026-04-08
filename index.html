@@ -979,16 +979,24 @@ async function liveRefresh() {
 }
 
 function updateDashFromData(data) {
-  const prices = data?.prices || {
-    BTC: {price: 84250, change: 1.2},
-    ETH: {price: 1820, change: -0.5},
-    SOL: {price: 128, change: 2.8},
-    XRP: {price: 2.14, change: 0.9},
-    ADA: {price: 0.68, change: -1.1},
+  // Normaliseer prijzen: API geeft change24h, fallback gebruikt change
+  const rawPrices = data?.prices || {
+    BTC: {price: 84250, change24h: 1.2},
+    ETH: {price: 1820,  change24h: -0.5},
+    SOL: {price: 128,   change24h: 2.8},
+    XRP: {price: 2.14,  change24h: 0.9},
+    ADA: {price: 0.68,  change24h: -1.1},
   };
+  // Normaliseer: zorg dat zowel .change als .change24h beschikbaar zijn
+  const prices = {};
+  Object.entries(rawPrices).forEach(([sym, d]) => {
+    const chg = d.change24h ?? d.change ?? 0;
+    prices[sym] = {...d, change: chg, change24h: chg};
+  });
   state.priceData = prices;
   renderPriceGrid(prices);
-  renderDashBots(data?.bots);
+  // API geeft botScores array, bots array, of beiden
+  renderDashBots(data?.botScores || data?.bots);
   renderDashSignals(data?.signals);
   updateDashStats(data);
   // Update exchange balances van live data
@@ -996,17 +1004,24 @@ function updateDashFromData(data) {
   // Update portfolio stats van live data
   if (data?.portfolio) updatePortfolioStats(data.portfolio);
   // XP bijwerken op basis van echte PnL (alleen bij positieve data)
-  if (data && typeof data.pnl === 'number' && data.pnl !== 0) addXP(data.pnl);
+  const pnlVal = data?.pnl ?? data?.portfolio?.weekPnl ?? null;
+  if (pnlVal !== null && typeof pnlVal === 'number' && pnlVal !== 0) addXP(pnlVal);
   // Sentiment bijwerken als signals-tab actief is
   if (data?.sentiment && state.tab === 'signals') renderSentiment(data.sentiment);
 }
 
 function updateDashStats(data) {
-  const pnl = data?.pnl || 0;
-  const pnlPct = data?.pnlPct || 0;
-  const total = data?.portfolio?.total || data?.totalCapital || 3150;
-  const activeBots = data?.activeBots || data?.bots?.filter(b => b.status === 'ACTIVE')?.length || 20;
-  const health = data?.systemHealth || data?.uptime || 99.9;
+  const pnl = data?.pnl ?? data?.portfolio?.weekPnl ?? 0;
+  const pnlPct = data?.pnlPct || data?.portfolio?.weekPnl || 0;
+  const total = data?.portfolio?.total || data?.portfolio?.totalCapital || data?.totalCapital || 3150;
+  // API geeft botScores array met {bot, score, status} of bots array
+  const botsArr = data?.botScores || data?.bots || [];
+  const activeBots = data?.activeBots
+    || botsArr.filter(b => (b.status||'').toUpperCase() === 'ACTIVE' || (b.status||'').toUpperCase() === 'READY').length
+    || 20;
+  // API geeft flowStatus.uptime als string "99.9%", parse naar getal
+  const rawUptime = data?.systemHealth || data?.flowStatus?.uptime || data?.uptime || '99.9';
+  const health = parseFloat(String(rawUptime).replace('%', ''));
 
   const pnlEl = document.getElementById('d-pnl');
   if (pnlEl) { pnlEl.textContent = (pnl >= 0 ? '+' : '') + '€' + Math.abs(pnl).toFixed(2); pnlEl.className = 'stat-value ' + (pnl >= 0 ? 'pos' : 'neg'); }
@@ -1093,7 +1108,7 @@ function showPriceModal(sym) {
   showModal(sym + ' Details', '<div style="text-align:center;padding:20px">' +
     '<div style="font-size:40px;margin-bottom:12px">' + {BTC:'₿',ETH:'Ξ',SOL:'◎',XRP:'✕',ADA:'₳'}[sym] + '</div>' +
     '<div style="font-size:32px;font-weight:700;font-family:var(--mono);margin-bottom:8px">€' + (p.price||0).toLocaleString('nl-NL') + '</div>' +
-    '<div class="' + (p.change >= 0 ? 'pos' : 'neg') + '" style="font-size:18px;margin-bottom:16px">' + (p.change >= 0 ? '+' : '') + (p.change||0).toFixed(2) + '%</div>' +
+    '<div class="' + ((p.change24h||p.change||0) >= 0 ? 'pos' : 'neg') + '" style="font-size:18px;margin-bottom:16px">' + ((p.change24h||p.change||0) >= 0 ? '+' : '') + (p.change24h||p.change||0).toFixed(2) + '%</div>' +
     '<button class="btn btn-primary" onclick="closeModal()">Sluiten</button></div>');
 }
 
@@ -1109,7 +1124,11 @@ function renderDashBots(botData) {
   if (!el) return;
   const top5 = BOTS.slice(0, 5);
   el.innerHTML = top5.map(b => {
-    const apiBot = Array.isArray(botData) ? botData.find(ab => ab.name === b.name || ab.id === b.id) : null;
+    // API geeft {bot: "naam", score, status, trend} of {name: "naam", score, status}
+    const apiBot = Array.isArray(botData) ? botData.find(ab =>
+      (ab.bot || ab.name || '').toLowerCase().includes(b.name.toLowerCase().split(' ')[0]) ||
+      b.name.toLowerCase().includes((ab.bot || ab.name || '').toLowerCase().split(' ')[0])
+    ) : null;
     // Gebruik echte score/winRate van API, anders behoud vorige of genereer stabiele waarde
     const score = apiBot?.score ?? apiBot?.winRate ?? (state.botScores?.[b.name] || Math.floor(Math.random() * 20 + 65));
     if (!state.botScores) state.botScores = {};
