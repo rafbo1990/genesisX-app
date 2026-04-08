@@ -942,7 +942,8 @@ function closeModal() {
 // ─── FETCH ────────────────────────────────────────────────────────────────────
 async function apiFetch(url, body = null) {
   const controller = new AbortController();
-  const tid = setTimeout(() => controller.abort(), 8000);
+  const timeoutMs = url.includes('genesisxcaio') || url.includes('genesisxhub') ? 60000 : 8000;
+  const tid = setTimeout(() => controller.abort(), timeoutMs);
   try {
     const opts = {headers: HDR, signal: controller.signal};
     if (body) { opts.method = 'POST'; opts.body = JSON.stringify(body); }
