@@ -1530,29 +1530,56 @@ async function csuiteSend(role) {
     const data = await apiFetch(CAIO_URL, {
       question: msg,
       role,
-      systemPrompt: cfg.system,
-      context: role,
       history: apiHistory,
-      liveData: JSON.stringify(liveData)
+      context: 'csuite'
     });
     document.getElementById(typingId)?.remove();
-    const reply = data?.answer || data?.response || data?.message || data?.content?.[0]?.text || 'Analyse compleet. Stel gerust een specifiekere vraag.';
+    const reply = data?.message || data?.answer || data?.response || data?.content?.[0]?.text || 'Analyse compleet. Stel gerust een specifiekere vraag.';
 
-    // Parse [ACTIE_VERZOEK: ...]
+    // Parse [ACTIE_VERZOEK: ...] uit reply
     const actionReq = csuiteParseAction(reply);
     const cleanReply = reply.replace(/\[ACTIE_VERZOEK:[\s\S]*?\]/g, '').trim();
+    const finalReply = cleanReply || reply;
 
-    hist.push({role:'assistant', type:'ai', content: cleanReply || reply});
+    hist.push({role:'assistant', type:'ai', content: finalReply});
     csSaveHistory(role, hist);
 
     if (actionReq) {
       csuiteSetStatus(role, 'WACHT OP GOEDKEURING');
       state.pendingApproval = {role, ...actionReq};
-      if (cleanReply) csAppendMsg(role, 'ai', cleanReply);
+      if (finalReply) csAppendMsg(role, 'ai', finalReply);
       csAppendApproval(role, actionReq);
     } else {
       csuiteSetStatus(role, 'ACTIEF');
-      csAppendMsg(role, 'ai', reply);
+      csAppendMsg(role, 'ai', finalReply);
+    }
+
+    // Toon suggestions als snelknoppen onder het antwoord
+    if (data?.suggestions?.length) {
+      const msgsEl2 = document.getElementById('csuite-msgs-' + role);
+      if (msgsEl2) {
+        const sugEl = document.createElement('div');
+        sugEl.style.cssText = 'display:flex;gap:6px;flex-wrap:wrap;padding:2px 36px 4px';
+        sugEl.innerHTML = data.suggestions.map(s =>
+          '<button class="csuite-act-btn" style="font-size:10px;padding:4px 8px" onclick="(function(){var i=document.getElementById(\'csuite-input-' + role + '\');if(i){i.value=' + JSON.stringify(s) + ';csuiteSend(\'' + role + '\');}})()">💬 ' + s.slice(0,50) + '</button>'
+        ).join('');
+        msgsEl2.appendChild(sugEl);
+        msgsEl2.scrollTop = msgsEl2.scrollHeight;
+      }
+    }
+
+    // Toon actions uit response als goedkeuringsverzoeken
+    if (!actionReq && data?.actions?.length) {
+      const msgsEl3 = document.getElementById('csuite-msgs-' + role);
+      if (msgsEl3) {
+        const actEl = document.createElement('div');
+        actEl.style.cssText = 'display:flex;gap:6px;flex-wrap:wrap;padding:2px 36px 4px';
+        actEl.innerHTML = data.actions.map(a =>
+          '<button class="csuite-result-btn" onclick="csuiteApproveAction(\'' + role + '\',' + JSON.stringify(JSON.stringify(a)) + ')">⚡ ' + (a.label || a.action) + '</button>'
+        ).join('');
+        msgsEl3.appendChild(actEl);
+        msgsEl3.scrollTop = msgsEl3.scrollHeight;
+      }
     }
   } catch(e) {
     document.getElementById(typingId)?.remove();
@@ -1655,6 +1682,30 @@ function csuiteReject(role) {
   csSaveHistory(role, hist);
   csAppendMsg(role, 'rejected', rejectMsg);
   toast(role + ': actie afgewezen', 'warn');
+}
+
+async function csuiteApproveAction(role, actionJson) {
+  let a;
+  try { a = JSON.parse(actionJson); } catch(e) { return; }
+  toast('⚡ ' + role + ': ' + (a.label || a.action) + '...', 'info');
+  try {
+    const res = await apiFetch(ACTIONS_URL, {
+      action: a.action,
+      params: a.params || {},
+      timestamp: new Date().toISOString(),
+      approvedBy: 'Rafik',
+      requestedByRole: role
+    });
+    const resultMsg = '✅ **' + (a.label || a.action) + '** uitgevoerd\n\n' + (res?.message || res?.result || 'Actie succesvol');
+    const hist = csLoadHistory(role);
+    hist.push({role:'assistant', type:'confirmed', content: resultMsg});
+    csSaveHistory(role, hist);
+    csAppendMsg(role, 'confirmed', resultMsg);
+    toast('✅ ' + role + ': ' + (a.label || a.action) + ' klaar', 'success');
+    if (res?.portfolio || res?.bots || res?.positions) updateDashFromData(res);
+  } catch(e) {
+    toast('❌ ' + role + ': ' + (e?.name === 'AbortError' ? 'timeout' : e?.message || 'fout'), 'error');
+  }
 }
 
 // ─── SIGNALS ──────────────────────────────────────────────────────────────────
