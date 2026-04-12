@@ -458,6 +458,7 @@ canvas{display:block;width:100%;border-radius:var(--r2)}
   <div class="sb-item" data-tab="rapporten" onclick="showTab('rapporten',this)"><span class="sb-icon">📋</span>Rapporten</div>
   <div class="sb-item" data-tab="exchanges" onclick="showTab('exchanges',this)"><span class="sb-icon">🌐</span>Exchanges</div>
   <div class="sb-item" data-tab="instellingen" onclick="showTab('instellingen',this)"><span class="sb-icon">⚙️</span>Instellingen</div>
+  <div class="sb-item" data-tab="trades" onclick="showTab('trades',this)" id="sb-trades"><span class="sb-icon">📜</span>Trades<span class="sb-badge" id="sb-trades-badge">0</span></div>
 </nav>
 
 <!-- ── MAIN CONTENT ──────────────────────────────────────────────────────── -->
@@ -689,6 +690,62 @@ canvas{display:block;width:100%;border-radius:var(--r2)}
 <div id="pg-instellingen" class="page">
   <div class="page-title">⚙️ Instellingen</div>
   <div id="settings-content"></div>
+</div>
+
+
+<!-- ── TRADE HISTORY PAGE ────────────────────────────────────────────────── -->
+<div id="pg-trades" class="page">
+  <div class="page-title">📜 Trade History</div>
+  <div style="display:flex;gap:12px;margin-bottom:16px;flex-wrap:wrap;align-items:center">
+    <div style="flex:1;min-width:200px">
+      <div style="font-size:11px;color:var(--text3);margin-bottom:4px">TOTAAL TRADES</div>
+      <div style="font-size:28px;font-weight:700;color:var(--green);font-family:var(--mono)" id="trades-count">0</div>
+    </div>
+    <div style="flex:1;min-width:200px">
+      <div style="font-size:11px;color:var(--text3);margin-bottom:4px">TOTAAL P&L</div>
+      <div style="font-size:28px;font-weight:700;font-family:var(--mono)" id="trades-pnl">€0,00</div>
+    </div>
+    <div style="flex:1;min-width:200px">
+      <div style="font-size:11px;color:var(--text3);margin-bottom:4px">WIN RATE</div>
+      <div style="font-size:28px;font-weight:700;color:var(--accent);font-family:var(--mono)" id="trades-winrate">0%</div>
+    </div>
+    <button onclick="loadTrades()" style="background:var(--accent);color:#000;border:none;padding:8px 16px;border-radius:6px;cursor:pointer;font-weight:600">🔄 Vernieuwen</button>
+  </div>
+
+  <!-- Bot Leaderboard -->
+  <div class="card" style="margin-bottom:16px">
+    <div class="card-hdr"><div class="card-title">🏆 Bot Leaderboard</div></div>
+    <div id="bot-leaderboard" style="padding:12px">
+      <div style="color:var(--text3);text-align:center;padding:20px">Laden...</div>
+    </div>
+  </div>
+
+  <!-- Trade tabel -->
+  <div class="card">
+    <div class="card-hdr">
+      <div class="card-title">📋 Uitgevoerde Trades (Paper Trading)</div>
+      <div style="font-size:11px;color:var(--text3)">Bron: VPS /opt/genesisX/trades.json</div>
+    </div>
+    <div style="overflow-x:auto">
+      <table id="trades-table" style="width:100%;border-collapse:collapse;font-size:13px">
+        <thead>
+          <tr style="border-bottom:1px solid var(--border)">
+            <th style="padding:8px;text-align:left;color:var(--text3);font-weight:500">Tijd</th>
+            <th style="padding:8px;text-align:left;color:var(--text3);font-weight:500">Asset</th>
+            <th style="padding:8px;text-align:left;color:var(--text3);font-weight:500">Actie</th>
+            <th style="padding:8px;text-align:right;color:var(--text3);font-weight:500">Prijs</th>
+            <th style="padding:8px;text-align:right;color:var(--text3);font-weight:500">Bedrag</th>
+            <th style="padding:8px;text-align:right;color:var(--text3);font-weight:500">Confidence</th>
+            <th style="padding:8px;text-align:right;color:var(--text3);font-weight:500">P&L</th>
+            <th style="padding:8px;text-align:left;color:var(--text3);font-weight:500">Reden</th>
+          </tr>
+        </thead>
+        <tbody id="trades-tbody">
+          <tr><td colspan="8" style="text-align:center;padding:20px;color:var(--text3)">Laden...</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
 </div>
 
 </main>
