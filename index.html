@@ -716,11 +716,11 @@ canvas{display:block;width:100%;border-radius:var(--r2)}
 <script>
 'use strict';
 // ─── CONFIG ──────────────────────────────────────────────────────────────────
-const API_URL     = 'http://46.62.245.18/webhook/genesisxapi';
-const ACTIONS_URL = 'http://46.62.245.18/webhook/genesisxactions';
-const CAIO_URL    = 'http://46.62.245.18/webhook/genesisxcaio';
-const REPORTS_URL = 'http://46.62.245.18/webhook/genesisxreports';
-const HUB_URL     = 'http://46.62.245.18/webhook/genesisxhub';
+const API_URL     = 'https://releases-civic-oxford-formation.trycloudflare.com/webhook/genesisxapi';
+const ACTIONS_URL = 'https://releases-civic-oxford-formation.trycloudflare.com/webhook/genesisxactions';
+const CAIO_URL    = 'https://releases-civic-oxford-formation.trycloudflare.com/webhook/genesisxcaio';
+const REPORTS_URL = 'https://releases-civic-oxford-formation.trycloudflare.com/webhook/genesisxreports';
+const HUB_URL     = 'https://releases-civic-oxford-formation.trycloudflare.com/webhook/genesisxhub';
 const HDR = {'Content-Type':'application/json'};
 const SESSION_KEY = 'gx_session';
 const INACTIVITY_MS = 30 * 60 * 1000;
@@ -1605,7 +1605,7 @@ async function csuiteSend(role) {
     document.getElementById(typingId)?.remove();
     csuiteSetStatus(role, 'ACTIEF');
     const errMsg = e?.name === 'AbortError'
-      ? '⚠️ API reageert niet (timeout na 8s). Controleer of de VPS (46.62.245.18) bereikbaar is.'
+      ? '⚠️ API reageert niet (timeout na 8s). Controleer of de VPS tunnel (Cloudflare) actief is.'
       : '⚠️ Verbindingsfout: ' + (e?.message || 'Onbekende fout');
     hist.push({role:'assistant', type:'ai', content: errMsg});
     csSaveHistory(role, hist);
