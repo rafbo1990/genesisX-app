@@ -773,11 +773,13 @@ canvas{display:block;width:100%;border-radius:var(--r2)}
 <script>
 'use strict';
 // ─── CONFIG ──────────────────────────────────────────────────────────────────
-const API_URL     = 'https://sir-internationally-upgrade-supervisor.trycloudflare.com/webhook/genesisxapi';
-const ACTIONS_URL = 'https://sir-internationally-upgrade-supervisor.trycloudflare.com/webhook/genesisxactions';
-const CAIO_URL    = 'https://sir-internationally-upgrade-supervisor.trycloudflare.com/webhook/genesisxcaio';
-const REPORTS_URL = 'https://sir-internationally-upgrade-supervisor.trycloudflare.com/webhook/genesisxreports';
-const HUB_URL     = 'https://sir-internationally-upgrade-supervisor.trycloudflare.com/webhook/genesisxhub';
+const TUNNEL      = 'https://sir-internationally-upgrade-supervisor.trycloudflare.com';
+const API_URL     = TUNNEL + '/webhook/genesisxapi';
+const ACTIONS_URL = TUNNEL + '/webhook/genesisxactions';
+const CAIO_URL    = TUNNEL + '/webhook/genesisxcaio';
+const REPORTS_URL = TUNNEL + '/webhook/genesisxreports';
+const HUB_URL     = TUNNEL + '/webhook/genesisxhub';
+const TRADES_URL  = TUNNEL + '/trades-api';
 const HDR = {'Content-Type':'application/json'};
 const SESSION_KEY = 'gx_session';
 const INACTIVITY_MS = 30 * 60 * 1000;
@@ -960,6 +962,7 @@ function showTab(id, sbEl, bnId) {
     rapporten: renderReports,
     exchanges: renderExchanges,
     instellingen: renderSettings,
+    trades: loadTrades,
   };
   if (tabLoaders[id]) tabLoaders[id]();
 }
@@ -1897,6 +1900,109 @@ async function executeArbitrage(asset) {
     toast('Arbitrage order geplaatst voor ' + asset + '!', 'success');
   } catch(e) {
     toast(asset + ' arbitrage verstuurd (paper modus)', 'warn');
+  }
+}
+
+// ─── TRADES ────────────────────────────────────────────────────────────────────
+async function loadTrades() {
+  const tableEl = document.getElementById('trades-table');
+  const lbEl    = document.getElementById('bot-leaderboard');
+  if (tableEl) tableEl.innerHTML = '<tr><td colspan="7" style="text-align:center;padding:20px;color:var(--text3)">Laden...</td></tr>';
+  if (lbEl)    lbEl.innerHTML    = '<div style="color:var(--text3);padding:12px">Laden...</div>';
+  try {
+    const [openRes, closedRes, portfolio] = await Promise.all([
+      fetch(TRADES_URL + '/open-trades').then(r => r.json()),
+      fetch(TRADES_URL + '/trades').then(r => r.json()),
+      fetch(TRADES_URL + '/portfolio').then(r => r.json()),
+    ]);
+    const openTrades   = openRes.trades   || [];
+    const closedTrades = Array.isArray(closedRes) ? closedRes : [];
+    const allTrades    = [...openTrades, ...closedTrades];
+
+    // Summary stats
+    const countEl   = document.getElementById('trades-count');
+    const pnlEl     = document.getElementById('trades-pnl');
+    const winrateEl = document.getElementById('trades-winrate');
+    if (countEl)   countEl.textContent   = allTrades.length;
+    if (pnlEl) {
+      const pnl = portfolio.pnl || 0;
+      pnlEl.textContent  = (pnl >= 0 ? '+' : '') + '\u20ac' + pnl.toFixed(2);
+      pnlEl.style.color  = pnl >= 0 ? 'var(--green)' : 'var(--red)';
+    }
+    if (winrateEl && closedTrades.length > 0) {
+      const wins = closedTrades.filter(t => (t.pnl || 0) > 0).length;
+      winrateEl.textContent = Math.round((wins / closedTrades.length) * 100) + '%';
+    }
+    const badge = document.getElementById('sb-trades-badge');
+    if (badge) badge.textContent = openTrades.length || allTrades.length;
+
+    // Trade table (open first, then closed, newest 50)
+    if (tableEl) {
+      const rows = [...openTrades.map(t => ({...t, _open:true})), ...closedTrades].reverse().slice(0, 50);
+      if (rows.length === 0) {
+        tableEl.innerHTML = '<tr><td colspan="7" style="text-align:center;padding:20px;color:var(--text3)">Nog geen trades</td></tr>';
+      } else {
+        const hdr = '<tr style="color:var(--text3);font-size:11px;border-bottom:1px solid var(--border)">' +
+          '<th style="padding:8px 6px;text-align:left">Datum</th>' +
+          '<th style="padding:8px 6px;text-align:left">Asset</th>' +
+          '<th style="padding:8px 6px;text-align:right">Prijs</th>' +
+          '<th style="padding:8px 6px;text-align:right">Bedrag</th>' +
+          '<th style="padding:8px 6px;text-align:right">SL / TP</th>' +
+          '<th style="padding:8px 6px;text-align:center">Status</th>' +
+          '<th style="padding:8px 6px;text-align:right">PnL</th></tr>';
+        const body = rows.map(t => {
+          const d   = new Date(t.timestamp || t.closed_at || Date.now());
+          const dt  = d.toLocaleDateString('nl-NL',{day:'2-digit',month:'2-digit'}) + ' ' + d.toLocaleTimeString('nl-NL',{hour:'2-digit',minute:'2-digit'});
+          const sl  = t.stop_loss   ? '\u20ac' + parseFloat(t.stop_loss).toFixed(2)   : '-';
+          const tp  = t.take_profit ? '\u20ac' + parseFloat(t.take_profit).toFixed(2) : '-';
+          const isOpen = t._open || t.status === 'OPEN';
+          const sc  = isOpen ? 'var(--amber)' : ((t.pnl||0) >= 0 ? 'var(--green)' : 'var(--red)');
+          const sl2 = '<span style="background:' + sc + '22;color:' + sc + ';padding:2px 6px;border-radius:4px;font-size:11px">' + (isOpen ? 'OPEN' : (t.close_reason || 'CLOSED')) + '</span>';
+          const pnl = t.pnl != null ? t.pnl : (t.unrealized_pnl || 0);
+          const pc  = pnl >= 0 ? 'var(--green)' : 'var(--red)';
+          return '<tr style="border-bottom:1px solid var(--border)">' +
+            '<td style="padding:7px 6px;color:var(--text2);font-size:11px">' + dt + '</td>' +
+            '<td style="padding:7px 6px"><strong>' + (t.asset||'?') + '</strong></td>' +
+            '<td style="padding:7px 6px;text-align:right;font-family:var(--mono)">\u20ac' + parseFloat(t.entry_price||t.price||0).toFixed(2) + '</td>' +
+            '<td style="padding:7px 6px;text-align:right;font-family:var(--mono)">\u20ac' + parseFloat(t.amount||0).toFixed(0) + '</td>' +
+            '<td style="padding:7px 6px;text-align:right;font-family:var(--mono);font-size:11px;color:var(--text2)">' + sl + ' / ' + tp + '</td>' +
+            '<td style="padding:7px 6px;text-align:center">' + sl2 + '</td>' +
+            '<td style="padding:7px 6px;text-align:right;font-family:var(--mono);color:' + pc + '">' + (pnl>=0?'+':'') + '\u20ac' + parseFloat(pnl).toFixed(2) + '</td></tr>';
+        }).join('');
+        tableEl.innerHTML = hdr + body;
+      }
+    }
+
+    // Bot leaderboard (grouped by exchange/asset)
+    if (lbEl) {
+      const stats = {};
+      closedTrades.forEach(t => {
+        const k = t.exchange || t.asset || 'Unknown';
+        if (!stats[k]) stats[k] = {trades:0, pnl:0, wins:0};
+        stats[k].trades++;
+        stats[k].pnl += t.pnl || 0;
+        if ((t.pnl||0) > 0) stats[k].wins++;
+      });
+      const sorted = Object.entries(stats).sort((a,b) => b[1].pnl - a[1].pnl);
+      if (sorted.length === 0) {
+        lbEl.innerHTML = '<div style="color:var(--text3);text-align:center;padding:20px">Nog geen gesloten trades</div>';
+      } else {
+        lbEl.innerHTML = sorted.slice(0,8).map(([name,s],i) => {
+          const m  = i===0 ? '\ud83e\udd47' : i===1 ? '\ud83e\udd48' : i===2 ? '\ud83e\udd49' : '\u00a0\u00a0';
+          const wr = s.trades > 0 ? Math.round((s.wins/s.trades)*100) : 0;
+          const pc = s.pnl >= 0 ? 'var(--green)' : 'var(--red)';
+          return '<div style="display:flex;align-items:center;gap:10px;padding:8px 0;border-bottom:1px solid var(--border)">' +
+            '<div style="width:24px;text-align:center">' + m + '</div>' +
+            '<div style="flex:1;font-weight:500">' + name + '</div>' +
+            '<div style="color:var(--text2);font-size:12px">' + s.trades + ' trades</div>' +
+            '<div style="color:var(--text2);font-size:12px;width:40px;text-align:right">' + wr + '%</div>' +
+            '<div style="font-family:var(--mono);color:' + pc + ';font-weight:600;width:70px;text-align:right">' + (s.pnl>=0?'+':'') + '\u20ac' + s.pnl.toFixed(2) + '</div></div>';
+        }).join('');
+      }
+    }
+  } catch(e) {
+    if (tableEl) tableEl.innerHTML = '<tr><td colspan="7" style="text-align:center;padding:20px;color:var(--red)">Fout: ' + e.message + '</td></tr>';
+    if (lbEl)    lbEl.innerHTML    = '<div style="color:var(--red);padding:12px">Kan trades niet laden: ' + e.message + '</div>';
   }
 }
 
