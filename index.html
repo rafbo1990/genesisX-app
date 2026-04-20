@@ -831,44 +831,44 @@ const EXCHANGES = [
 ];
 
 const FLOWS_LIST = [
-  {name:'Market Data v4',         desc:'Live marktdata aggregator',         icon:'📊', active:true},
-  {name:'Telegram Command Center',desc:'Telegram bot command handler',       icon:'📱', active:true},
-  {name:'AI Strategy v1',         desc:'AI strategie beslissingen',         icon:'🧠', active:true},
-  {name:'CSuite Commander',       desc:'C-Suite coördinatie hub',           icon:'🏛️', active:true},
-  {name:'Cashflow Engine',        desc:'75/25 winst reinvestering',         icon:'💵', active:true},
-  {name:'Dashboard Final',        desc:'Dagelijks masterrapport',           icon:'📊', active:false},
-  {name:'Governance Monitor',     desc:'30min systeem governance check',    icon:'🔍', active:true},
-  {name:'SubBot Army',            desc:'20 subbots coördinatie',            icon:'🤖', active:true},
-  {name:'Bot Registry',           desc:'Bot performance tracker',           icon:'📋', active:true},
-  {name:'Risk Management',        desc:'Stop-loss & drawdown bewaking',     icon:'🛡️', active:true},
-  {name:'Failsafe Security',      desc:'5min veiligheidscheck',             icon:'🔐', active:true},
-  {name:'Exchange Mesh v1',       desc:'15 exchanges integratie',           icon:'🌐', active:true},
-  {name:'AI Brain v1',            desc:'Claude AI marktanalyse (30min)',    icon:'🧠', active:false},
-  {name:'Trading Engine',         desc:'15min trading engine',              icon:'⚡', active:false},
-  {name:'Learning Memory',        desc:'AI leergeheugen (6-uurlijks)',      icon:'💾', active:false},
-  {name:'Sentiment Analysis',     desc:'Nieuws sentiment analyse (30min)',  icon:'📰', active:false},
-  {name:'CSuite AI v1',           desc:'C-Suite AI beslissingen',           icon:'🤖', active:true},
-  {name:'StopLoss Manager',       desc:'Auto stop-loss beheer (5min)',      icon:'🛑', active:false},
-  {name:'Backtesting Engine',     desc:'Strategie backtester',              icon:'⏮️', active:false},
-  {name:'Portfolio Rebalancer',   desc:'Portfolio herbalancering',          icon:'⚖️', active:false},
-  {name:'Email Reports',          desc:'Wekelijkse email rapporten',        icon:'📧', active:false},
-  {name:'Arbitrage Engine',       desc:'2min arbitrage scanner',            icon:'🔄', active:false},
-  {name:'CAIO v3',                desc:'Chief AI Officer chat',             icon:'🧠', active:true},
-  {name:'Telegram Control',       desc:'Telegram handelsbeheer',            icon:'📱', active:true},
-  {name:'AI Autonomie v1',        desc:'Bot persoonlijkheid optimalisatie', icon:'🦾', active:false},
-  {name:'GenesisX API',           desc:'Externe API endpoints',             icon:'🔌', active:true},
-  {name:'GenesisX Actions',       desc:'Actie uitvoering engine',           icon:'▶️', active:true},
-  {name:'GenesisX Reports',       desc:'Rapport generator',                 icon:'📋', active:true},
-  {name:'GenesisX DataHub',       desc:'Data centralisatie hub',            icon:'🗄️', active:true},
-  {name:'TelegramFilter',         desc:'Centrale Telegram filter',          icon:'📨', active:true},
-  {name:'Visual Dashboard',       desc:'Visueel dashboard generator',       icon:'🎨', active:false},
-  {name:'Alert Flow',             desc:'Kritieke alerts systeem',           icon:'🚨', active:true},
-  {name:'Sheets Logger',          desc:'Google Sheets logging',             icon:'📊', active:true},
-  {name:'Paper Trading Engine',   desc:'Paper trading simulator',           icon:'🧪', active:false},
-  {name:'Performance Dashboard',  desc:'Performance metrics dashboard',     icon:'📈', active:false},
-  {name:'PumpDump Detector',      desc:'Pump & dump detectie',              icon:'🔍', active:false},
-  {name:'CSuite AI Upgrade',      desc:'C-Suite AI v2 upgrade',             icon:'⬆️', active:false},
-  {name:'Market Data Legacy',     desc:'Legacy marktdata flow',             icon:'📡', active:false},
+  {name:'Market Data v4',         desc:'Live marktdata aggregator',         icon:'📊', active:true,  n8nId:'genesisX-market-data-v4'},
+  {name:'Telegram Control',       desc:'Telegram handelsbeheer',            icon:'📱', active:true,  n8nId:'736d630a-4d1a-48cf-a3c2-84c738cb5cd7'},
+  {name:'AI Strategy v1',         desc:'AI strategie beslissingen',         icon:'🧠', active:true,  n8nId:'6f3ca6ef-203b-42f8-a81d-ba50c391ebf3'},
+  {name:'CSuite Commander',       desc:'C-Suite coördinatie hub',           icon:'🏛️', active:false, n8nId:'1f8b24ba-2246-4332-b100-8114722dfbef'},
+  {name:'Cashflow Engine',        desc:'75/25 winst reinvestering',         icon:'💵', active:false, n8nId:'340aa03d-8f1c-416e-9ebf-040e50b3ae6f'},
+  {name:'Dashboard Final',        desc:'Dagelijks masterrapport',           icon:'📊', active:false, n8nId:'aa1ac14a-ba0c-47e8-9806-98c8ff88d42b'},
+  {name:'Governance Monitor',     desc:'30min systeem governance check',    icon:'🔍', active:true,  n8nId:'2c12b9f4-dabe-466b-8e7d-caf524e0c513'},
+  {name:'SubBot Army',            desc:'20 subbots coördinatie',            icon:'🤖', active:true,  n8nId:'09158a4e-e9d8-43e8-b9d1-310e0c4dcfd0'},
+  {name:'Failsafe Security',      desc:'5min veiligheidscheck',             icon:'🔐', active:true,  n8nId:'1a037715-d91c-4021-92cd-02860b323f6e'},
+  {name:'Exchange Mesh v1',       desc:'15 exchanges integratie',           icon:'🌐', active:false, n8nId:'685ebd45-21c4-4221-84ad-60ed9f240373'},
+  {name:'AI Brain v1',            desc:'Claude AI marktanalyse (30min)',    icon:'🧠', active:true,  n8nId:'a2aa9814-b16e-4ccc-b920-f07a8e7ad5aa'},
+  {name:'Trading Engine',         desc:'15min trading engine',              icon:'⚡', active:true,  n8nId:'f646b93d-3556-4550-b04e-18f5ac501c5b'},
+  {name:'Learning Memory',        desc:'AI leergeheugen (6-uurlijks)',      icon:'💾', active:true,  n8nId:'cd3f45d2-e3e6-4a6a-b8b0-1b5055bcfd71'},
+  {name:'Sentiment Analysis',     desc:'Nieuws sentiment analyse (30min)',  icon:'📰', active:true,  n8nId:'51bfcdd2-1e2b-4fcf-b473-9d6da9e04b0e'},
+  {name:'StopLoss Manager',       desc:'Auto stop-loss beheer (5min)',      icon:'🛑', active:true,  n8nId:'eaaa7c22-6a3b-4cc9-a0ac-bef1d81c3648'},
+  {name:'Backtesting Engine',     desc:'Strategie backtester',              icon:'⏮️', active:false, n8nId:'0ead4dd2-cffa-4e1f-934e-b695a91f4be4'},
+  {name:'Portfolio Rebalancer',   desc:'Portfolio herbalancering',          icon:'⚖️', active:false, n8nId:'525dfae1-6aca-40c3-98b5-671356c11e71'},
+  {name:'Email Reports',          desc:'Wekelijkse email rapporten',        icon:'📧', active:false, n8nId:'36d90c85-74ec-4815-b5f3-b6b1a1c16fff'},
+  {name:'Arbitrage Engine',       desc:'2min arbitrage scanner',            icon:'🔄', active:false, n8nId:'110c5b25-ffe7-483f-b08f-52de996366ab'},
+  {name:'CAIO v3',                desc:'Chief AI Officer chat',             icon:'🧠', active:true,  n8nId:'genesisx-caio-flow-v3'},
+  {name:'AI Autonomie v1',        desc:'Bot persoonlijkheid optimalisatie', icon:'🦾', active:false, n8nId:'17285a12-fea1-4b7d-bc79-4dc126655475'},
+  {name:'GenesisX API',           desc:'Externe API endpoints',             icon:'🔌', active:true,  n8nId:'NutDYcNMHLYO8vUO'},
+  {name:'GenesisX Actions',       desc:'Actie uitvoering engine',           icon:'▶️', active:true,  n8nId:'genesisx-actions-flow-v1'},
+  {name:'GenesisX Reports',       desc:'Rapport generator',                 icon:'📋', active:true,  n8nId:'genesisx-reports-flow-v1'},
+  {name:'GenesisX DataHub',       desc:'Data centralisatie hub',            icon:'🗄️', active:true,  n8nId:'genesisx-datahub-flow-v1'},
+  {name:'Visual Dashboard',       desc:'Visueel dashboard generator',       icon:'🎨', active:false, n8nId:'28234b6f-a0b0-48dd-b5e4-99f92502d161'},
+  {name:'Alert Flow',             desc:'Kritieke alerts systeem',           icon:'🚨', active:true,  n8nId:'genesisX-alert-flow-v1'},
+  {name:'GenesisX EmergencyStop', desc:'Noodstop systeem',                  icon:'🚨', active:true,  n8nId:'genesisX-emergency-stop-flow'},
+  {name:'GenesisX PriceMonitor',  desc:'Prijsmonitor (5min)',               icon:'💹', active:true,  n8nId:'genesisX-price-monitor'},
+  {name:'GenesisX DailyReport',   desc:'Dagelijks rapport',                 icon:'📅', active:true,  n8nId:'genesisX-daily-report-flow'},
+  {name:'GenesisX TradeExecutor', desc:'Trade uitvoering',                  icon:'💱', active:true,  n8nId:'genesisxtrade'},
+  {name:'CORE Decision Engine',   desc:'Centrale beslissingsengine',        icon:'🧮', active:true,  n8nId:'5VmEDFs5us5UcHwP'},
+  {name:'CSuite AI Upgrade',      desc:'C-Suite AI v2 upgrade',             icon:'⬆️', active:false, n8nId:'c5699155-7809-4875-8a6e-0d4d393086bc'},
+  {name:'AI CAIO v1',             desc:'CAIO v1 legacy',                    icon:'👑', active:false, n8nId:'daaa31a0-356b-495f-9a43-ef051a58ba71'},
+  {name:'CAIO Fase33',            desc:'CAIO fase 33',                      icon:'🔮', active:false, n8nId:'a387c234-f22b-4498-9a87-a1e90007ee31'},
+  {name:'CAIO v2',                desc:'CAIO v2',                           icon:'👑', active:false, n8nId:'0509d746-b2dc-4fcf-b0a9-716d325ec0b8'},
+  {name:'Telegram Command Center',desc:'Telegram bot command handler',      icon:'📱', active:false, n8nId:'736d630a-4d1a-48cf-a3c2-84c738cb5cd7'},
+  {name:'Visual Dashboard v1',    desc:'Visueel dashboard',                 icon:'🎨', active:false, n8nId:'28234b6f-a0b0-48dd-b5e4-99f92502d161'},
 ];
 
 const REPORTS = [
@@ -958,7 +958,7 @@ function showTab(id, sbEl, bnId) {
     csuite: renderCSuiteShell,
     signals: loadSignals,
     caio: initCAIO,
-    flows: renderFlows,
+    flows: () => { renderFlows(); syncFlowsFromN8n(); },
     rapporten: renderReports,
     exchanges: renderExchanges,
     instellingen: renderSettings,
@@ -1000,17 +1000,21 @@ function closeModal() {
 }
 
 // ─── FETCH ────────────────────────────────────────────────────────────────────
-async function apiFetch(url, body = null) {
+async function apiFetch(url, body = null, method = null) {
   const controller = new AbortController();
   const timeoutMs = url.includes('genesisxcaio') || url.includes('genesisxhub') ? 60000 : 8000;
   const tid = setTimeout(() => controller.abort(), timeoutMs);
   try {
     const opts = {headers: HDR, signal: controller.signal};
-    if (body) { opts.method = 'POST'; opts.body = JSON.stringify(body); }
+    if (body || method) {
+      opts.method = method || 'POST';
+      if (body) opts.body = JSON.stringify(body);
+    }
     const resp = await fetch(url, opts);
     clearTimeout(tid);
-    if (!resp.ok) throw new Error('HTTP ' + resp.status);
-    return resp.json();
+    if (!resp.ok) throw new Error('HTTP ' + resp.status + ' ' + resp.statusText);
+    const text = await resp.text();
+    return text.trim() ? JSON.parse(text) : {};
   } catch(e) {
     clearTimeout(tid);
     throw e;
@@ -2175,15 +2179,44 @@ function renderFlows() {
 async function toggleFlow(idx, active) {
   const flow = FLOWS_LIST[idx];
   if (!flow) return;
+  if (!flow.n8nId) {
+    toast(flow.name + ': geen n8n ID bekend', 'warn');
+    flow.active = active;
+    renderFlows();
+    return;
+  }
   flow.active = active;
+  renderFlows();
   toast(flow.name + ' → ' + (active ? 'Activeren' : 'Deactiveren') + '...', 'info');
   try {
-    await apiFetch(ACTIONS_URL, {action: active ? 'activate_flow' : 'deactivate_flow', flow: flow.name});
-    toast(flow.name + ' ' + (active ? 'geactiveerd' : 'gedeactiveerd'), 'success');
+    const action = active ? 'activate' : 'deactivate';
+    const url = TUNNEL + '/n8n-api/workflows/' + flow.n8nId + '/' + action;
+    const result = await apiFetch(url, null, 'POST');
+    const realState = result.active !== undefined ? result.active : active;
+    flow.active = realState;
+    toast(flow.name + ' ' + (realState ? '✅ geactiveerd' : '⏸️ gedeactiveerd'), 'success');
   } catch(e) {
-    toast(flow.name + ' fout: ' + (e?.name === 'AbortError' ? 'timeout' : e?.message || 'verbindingsfout'), 'error');
+    flow.active = !active; // revert on error
+    const msg = e?.name === 'AbortError' ? 'timeout' : (e?.message || 'verbindingsfout');
+    toast(flow.name + ' fout: ' + msg, 'error');
   }
   renderFlows();
+}
+
+async function syncFlowsFromN8n() {
+  try {
+    const data = await apiFetch(TUNNEL + '/n8n-api/workflows?limit=100');
+    const wfs = data.data || [];
+    if (!wfs.length) return;
+    const byId = {};
+    wfs.forEach(w => { byId[w.id] = w.active; });
+    FLOWS_LIST.forEach(f => {
+      if (f.n8nId && byId[f.n8nId] !== undefined) f.active = byId[f.n8nId];
+    });
+    renderFlows();
+  } catch(e) {
+    // silent fail — keep local state
+  }
 }
 
 // ─── REPORTS ──────────────────────────────────────────────────────────────────
